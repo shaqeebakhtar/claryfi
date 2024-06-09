@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: claryfidb
+    image: postgres:15
+    volumes:
+      - claryfidata:/var/lib/postgresql/data
+    ports:
+      - '5500:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: claryfi
+      POSTGRES_PASSWORD: password
+
+volumes:
+  claryfidata:
