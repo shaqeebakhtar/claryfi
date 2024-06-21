@@ -64,7 +64,7 @@ const CreateBoardForm = () => {
           render={({ field }) => (
             <FormItem>
               <div className="space-y-1">
-                <FormLabel>Project Slug</FormLabel>
+                <FormLabel>Board Slug</FormLabel>
                 <div className="flex items-center">
                   <div className="inline-flex items-center h-9 bg-muted text-muted-foreground px-3 text-sm font-medium rounded-md rounded-r-none border border-input border-r-0 select-none">
                     claryfi.to/b/
