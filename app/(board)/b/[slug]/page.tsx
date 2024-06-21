@@ -22,6 +22,7 @@ const FeedbackBoard = () => {
             <SelectItem value="least-upvotes">Least Upvotes</SelectItem>
             <SelectItem value="most-comments">Most Comments</SelectItem>
             <SelectItem value="least-comments">Least Comments</SelectItem>
+            <SelectItem value="latest">Latest</SelectItem>
           </SelectContent>
         </Select>
 

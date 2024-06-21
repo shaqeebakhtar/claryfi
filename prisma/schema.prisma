@@ -6,3 +6,18 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Feedback {
+  id      String @id @default(cuid())
+  title   String
+  detail  String
+  upvotes Int    @default(0)
+  status  Status @default(NEW)
+}
+
+enum Status {
+  NEW
+  CANCELLED
+  INPROGRESS
+  LIVE
+}

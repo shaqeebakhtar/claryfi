@@ -1,5 +1,4 @@
 'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -9,17 +8,20 @@ import { DialogClose, DialogFooter } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { feedbackSchema } from '@/validations/feedback';
+import slugify from '@sindresorhus/slugify';
+import { useState } from 'react';
 
-const FeedbackDialogForm = () => {
+const CreateBoardForm = () => {
+  const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
+
   const form = useForm<z.infer<typeof feedbackSchema>>({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
@@ -39,33 +41,43 @@ const FeedbackDialogForm = () => {
           render={({ field }) => (
             <FormItem>
               <div className="space-y-1">
-                <FormLabel>Feedback Title</FormLabel>
+                <FormLabel>Board Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Dark mode for blogs" {...field} />
+                  <Input
+                    placeholder="Acme Inc"
+                    {...field}
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.currentTarget.value);
+                      setSlug(slugify(e.currentTarget.value));
+                    }}
+                  />
                 </FormControl>
               </div>
-              <FormDescription>Add a short, descriptive title</FormDescription>
-              <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
               <div className="space-y-1">
-                <FormLabel>Feedback Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Needed dark mode for better readability and reduce eye strain"
+                <FormLabel>Project Slug</FormLabel>
+                <div className="flex items-center">
+                  <div className="inline-flex items-center h-9 bg-muted text-muted-foreground px-3 text-sm font-medium rounded-md rounded-r-none border border-input border-r-0 select-none">
+                    claryfi.to/b/
+                  </div>
+                  <Input
+                    placeholder="acme"
                     {...field}
+                    className="rounded-l-none"
+                    value={slug}
+                    onChange={(e) => setSlug(e.currentTarget.value)}
                   />
-                </FormControl>
+                </div>
               </div>
-              <FormDescription>
-                Explain in detail what should be improved, added, etc.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -76,11 +88,11 @@ const FeedbackDialogForm = () => {
               Cancel
             </Button>
           </DialogClose>
-          <Button>Submit</Button>
+          <Button>Create</Button>
         </DialogFooter>
       </form>
     </Form>
   );
 };
 
-export default FeedbackDialogForm;
+export default CreateBoardForm;

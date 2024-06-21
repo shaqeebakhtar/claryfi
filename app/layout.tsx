@@ -1,7 +1,8 @@
+import { cn } from '@/lib/utils';
+import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Kumbh_Sans as FontSans } from 'next/font/google';
-import '@/styles/globals.css';
-import { cn } from '@/lib/utils';
+import Providers from './providers';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -20,14 +21,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={cn(
-          'min-h-screen font-sans antialiased bg-gray-50',
-          fontSans.variable
-        )}
-      >
-        {children}
-      </body>
+      <Providers>
+        <body
+          className={cn(
+            'min-h-screen font-sans antialiased bg-gray-50',
+            fontSans.variable
+          )}
+        >
+          {children}
+        </body>
+      </Providers>
     </html>
   );
 }
