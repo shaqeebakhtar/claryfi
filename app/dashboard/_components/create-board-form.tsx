@@ -14,30 +14,28 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { feedbackSchema } from '@/validations/feedback';
+import { boardSchema } from '@/validations/board';
 import slugify from '@sindresorhus/slugify';
-import { useState } from 'react';
 
 const CreateBoardForm = () => {
-  const [name, setName] = useState('');
-  const [slug, setSlug] = useState('');
-
-  const form = useForm<z.infer<typeof feedbackSchema>>({
-    resolver: zodResolver(feedbackSchema),
+  const form = useForm<z.infer<typeof boardSchema>>({
+    resolver: zodResolver(boardSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      name: '',
+      slug: '',
     },
   });
 
-  const onSubmit = (data: z.infer<typeof feedbackSchema>) => {};
+  const onSubmit = (data: z.infer<typeof boardSchema>) => {
+    console.log(data);
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="title"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <div className="space-y-1">
@@ -46,10 +44,9 @@ const CreateBoardForm = () => {
                   <Input
                     placeholder="Acme Inc"
                     {...field}
-                    value={name}
                     onChange={(e) => {
-                      setName(e.currentTarget.value);
-                      setSlug(slugify(e.currentTarget.value));
+                      form.setValue('name', e.currentTarget.value);
+                      form.setValue('slug', slugify(e.currentTarget.value));
                     }}
                   />
                 </FormControl>
@@ -60,7 +57,7 @@ const CreateBoardForm = () => {
 
         <FormField
           control={form.control}
-          name="description"
+          name="slug"
           render={({ field }) => (
             <FormItem>
               <div className="space-y-1">
@@ -71,10 +68,8 @@ const CreateBoardForm = () => {
                   </div>
                   <Input
                     placeholder="acme"
-                    {...field}
                     className="rounded-l-none"
-                    value={slug}
-                    onChange={(e) => setSlug(e.currentTarget.value)}
+                    {...field}
                   />
                 </div>
               </div>
