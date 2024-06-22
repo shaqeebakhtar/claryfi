@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import AddFeedbackDialog from '../../_components/add-feedback-dialog';
-import Feedback from '../../_components/feedback';
+import FeedbackCard from '../../_components/feedback';
 
 const FeedbackBoard = () => {
   return (
@@ -29,10 +29,9 @@ const FeedbackBoard = () => {
         <AddFeedbackDialog />
       </div>
       <ul className="space-y-5">
-        <Feedback />
-        <Feedback />
-        <Feedback />
-        <Feedback />
+        <FeedbackCard />
+        <FeedbackCard />
+        <FeedbackCard />
       </ul>
     </MaxWidthContainer>
   );
