@@ -14,10 +14,22 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { checkSlugExists, createBoard } from '@/data-access/board';
 import { boardSchema } from '@/validations/board';
 import slugify from '@sindresorhus/slugify';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useDebounce } from '@uidotdev/usehooks';
+import { CircleCheck, CircleX, Loader } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-const CreateBoardForm = () => {
+type CreateBoardFormProps = {
+  closeDialog: () => void;
+};
+
+const CreateBoardForm = ({ closeDialog }: CreateBoardFormProps) => {
+  const [slugExists, setSlugExists] = useState(false);
+
   const form = useForm<z.infer<typeof boardSchema>>({
     resolver: zodResolver(boardSchema),
     defaultValues: {
@@ -26,9 +38,47 @@ const CreateBoardForm = () => {
     },
   });
 
+  const queryClient = useQueryClient();
+
+  const debouncedSlug = useDebounce(form.watch('slug'), 500);
+
+  const checkSlugExistsMutation = useMutation({
+    mutationFn: checkSlugExists,
+    onSuccess: (data) => {
+      if (data.available) {
+        setSlugExists(true);
+        form.clearErrors('slug');
+      } else {
+        setSlugExists(false);
+        form.setError('slug', { message: 'Slug already taken' });
+      }
+    },
+  });
+
+  const createBoardMutation = useMutation({
+    mutationFn: createBoard,
+    onSuccess: () => {
+      closeDialog();
+      toast.success('Your board has been created');
+      queryClient.invalidateQueries({ queryKey: ['boards'] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const onSubmit = (data: z.infer<typeof boardSchema>) => {
-    console.log(data);
+    if (slugExists) {
+      createBoardMutation.mutate(data);
+    }
   };
+
+  useEffect(() => {
+    if (debouncedSlug.length > 1) {
+      checkSlugExistsMutation.mutate({ slug: form.getValues('slug') });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSlug]);
 
   return (
     <Form {...form}>
@@ -62,7 +112,7 @@ const CreateBoardForm = () => {
             <FormItem>
               <div className="space-y-1">
                 <FormLabel>Board Slug</FormLabel>
-                <div className="flex items-center">
+                <div className="flex items-center relative">
                   <div className="inline-flex items-center h-9 bg-muted text-muted-foreground px-3 text-sm font-medium rounded-md rounded-r-none border border-input border-r-0 select-none">
                     claryfi.to/b/
                   </div>
@@ -70,7 +120,26 @@ const CreateBoardForm = () => {
                     placeholder="acme"
                     className="rounded-l-none"
                     {...field}
+                    onChange={(e) => {
+                      form.setValue('slug', e.currentTarget.value);
+                    }}
                   />
+                  <div className="absolute right-3">
+                    {/* {checkSlugExistsMutation.isPending &&
+                      debouncedSlug.length > 1 && (
+                        <Loader className="w-4 h-4 animate-spin" />
+                      )}
+                    {!checkSlugExistsMutation.isPending &&
+                      slugExists &&
+                      debouncedSlug.length > 1 && (
+                        <CircleCheck className="w-4 h-4 text-primary" />
+                      )} */}
+                    {!checkSlugExistsMutation.isPending &&
+                      !slugExists &&
+                      debouncedSlug.length > 1 && (
+                        <CircleX className="w-4 h-4 text-destructive" />
+                      )}
+                  </div>
                 </div>
               </div>
               <FormMessage />
@@ -83,7 +152,12 @@ const CreateBoardForm = () => {
               Cancel
             </Button>
           </DialogClose>
-          <Button>Create</Button>
+          <Button disabled={!slugExists || createBoardMutation.isPending}>
+            {createBoardMutation.isPending && (
+              <Loader className="w-4 h-4 mr-1.5 animate-spin" />
+            )}
+            Create
+          </Button>
         </DialogFooter>
       </form>
     </Form>

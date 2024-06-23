@@ -1,4 +1,5 @@
 import { boardSchema } from '@/validations/board';
+import { db } from '@/lib/db';
 
 export const POST = async (req: Request) => {
   const body = await req.json();
@@ -6,8 +7,28 @@ export const POST = async (req: Request) => {
   const validateFields = boardSchema.safeParse(body);
 
   if (!validateFields.success) {
-    return Response.json({ message: 'Invalid Fields' }, { status: 400 });
+    return Response.json({ error: 'Invalid Fields' }, { status: 400 });
   }
 
   const { name, slug } = validateFields.data;
+
+  let createdBoard = null;
+
+  try {
+    createdBoard = await db.board.create({
+      data: {
+        name,
+        slug,
+      },
+    });
+  } catch (error) {
+    throw new Error('Failed to create the board');
+  }
+
+  return Response.json(
+    { createdBoard },
+    {
+      status: 200,
+    }
+  );
 };

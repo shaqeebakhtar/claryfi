@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -8,10 +10,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import CreateBoardForm from './create-board-form';
+import { useState } from 'react';
 
 const CreateBoardDialog = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button size={'lg'}>Create Board</Button>
       </DialogTrigger>
@@ -23,7 +28,7 @@ const CreateBoardDialog = () => {
             and customers.
           </DialogDescription>
         </DialogHeader>
-        <CreateBoardForm />
+        <CreateBoardForm closeDialog={() => setIsDialogOpen(false)} />
       </DialogContent>
     </Dialog>
   );

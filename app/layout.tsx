@@ -3,6 +3,7 @@ import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Kumbh_Sans as FontSans } from 'next/font/google';
 import Providers from './providers';
+import { Toaster } from '@/components/ui/sonner';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -29,6 +30,7 @@ export default function RootLayout({
           )}
         >
           {children}
+          <Toaster closeButton />
         </body>
       </Providers>
     </html>
