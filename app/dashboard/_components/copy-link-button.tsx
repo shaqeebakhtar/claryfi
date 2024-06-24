@@ -12,6 +12,7 @@ const CopyLinkButton = ({ value }: CopyLinkButtonProps) => {
   return (
     <Button
       onClick={(e) => {
+        e.preventDefault();
         e.stopPropagation();
         setCopied(true);
         navigator.clipboard.writeText(value);

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import UserProfileDropdown from './user-profile-dropdown';
+import UserProfileDropdown from '@/components/user-profile-dropdown';
 
 const Header = () => {
   return (
@@ -7,12 +7,14 @@ const Header = () => {
       <div className="mx-auto w-full max-w-screen-xl px-3 lg:px-20">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <span className="font-bold">Claryfi</span>
+            <Link href={'/dashboard'}>
+              <span className="font-bold">Claryfi</span>
+            </Link>
           </div>
           <div className="flex items-center space-x-6">
             <Link
               href="#"
-              className="hidden text-sm text-gray-500 transition-colors hover:text-gray-700 sm:block"
+              className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:block"
               target="_blank"
             >
               Share feedback

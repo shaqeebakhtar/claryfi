@@ -1,6 +1,5 @@
-import React from 'react';
+import BoardDisplayGrid from './_components/board-display-grid';
 import CreateBoardDialog from './_components/create-board-dialog';
-import BoardCard from './_components/board-card';
 
 const Dashboard = () => {
   return (
@@ -14,11 +13,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="mx-auto w-full max-w-screen-xl px-3 lg:px-20 flex flex-col space-y-4 py-4 pb-20">
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          <BoardCard />
-          <BoardCard />
-          <BoardCard />
-        </div>
+        <BoardDisplayGrid />
       </div>
     </>
   );

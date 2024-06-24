@@ -33,3 +33,16 @@ export const checkSlugExists = async ({ slug }: { slug: string }) => {
 
   return await res.json();
 };
+
+export const getBoards = async () => {
+  const res = await fetch('/api/boards', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { boards } = await res.json();
+
+  return boards;
+};

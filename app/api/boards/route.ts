@@ -32,3 +32,9 @@ export const POST = async (req: Request) => {
     }
   );
 };
+
+export const GET = async (req: Request) => {
+  const boards = await db.board.findMany();
+
+  return Response.json({ boards }, { status: 200 });
+};
