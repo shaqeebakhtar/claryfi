@@ -18,7 +18,7 @@ const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <>
+    <div className="min-h-[calc(100vh-16px)] bg-background">
       <div className="flex h-32 items-center border-b border-gray-200">
         <MaxWidthContainer>
           <h1 className="text-2xl font-medium tracking-tight text-foreground">
@@ -36,7 +36,7 @@ const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
         <div className="grid gap-5 lg:col-span-4">{children}</div>
       </MaxWidthContainer>
-    </>
+    </div>
   );
 };
 
