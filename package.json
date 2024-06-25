@@ -13,7 +13,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.4.1",
     "@hookform/resolvers": "^3.6.0",
     "@prisma/client": "5.15.0",
     "@radix-ui/react-avatar": "^1.1.0",
@@ -30,7 +29,6 @@
     "color-hash": "^2.0.2",
     "lucide-react": "^0.394.0",
     "next": "14.2.3",
-    "next-auth": "5.0.0-beta.19",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
