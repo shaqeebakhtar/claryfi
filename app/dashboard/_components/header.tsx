@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import UserProfileDropdown from '@/components/user-profile-dropdown';
+import Link from 'next/link';
 
-const Header = () => {
+const Header = async () => {
   return (
     <header className="sticky left-0 right-0 top-0 z-20 border-b border-gray-200 bg-white">
       <div className="mx-auto w-full max-w-screen-xl px-3 lg:px-20">

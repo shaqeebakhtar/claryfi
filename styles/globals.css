@@ -20,3 +20,43 @@
     --radius: 0.75rem;
   }
 }
+
+/* clerk form design */
+
+.cl-footer div:last-child {
+  display: none;
+}
+
+.cl-form {
+  gap: 24px;
+}
+
+.cl-formFieldInput {
+  height: 36px;
+}
+
+.cl-formButtonPrimary {
+  height: 36px;
+  background: hsl(151.8deg 47.1% 40.8%);
+  box-shadow: 0 !important;
+}
+
+.cl-formButtonPrimary:hover {
+  background: hsl(151.8deg 47.1% 40.8% / 90%);
+}
+
+.cl-formButtonPrimary .cl-buttonArrowIcon {
+  display: none;
+}
+
+.cl-formButtonPrimary[data-variant='solid'][data-color='primary'] {
+  box-shadow: none;
+}
+
+.cl-socialButtonsBlockButton {
+  height: 36px;
+}
+
+.cl-socialButtonsBlockButtonText {
+  font-weight: 600;
+}

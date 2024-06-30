@@ -1,7 +1,7 @@
 'use client';
 
 import { generateAvatar } from '@/components/random-avatar';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,35 +12,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useClerk, useUser } from '@clerk/nextjs';
 import { CircleHelp, LogOut, MessageCircleReply, Settings } from 'lucide-react';
-// import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 
 const UserProfileDropdown = () => {
-  //   const { data: session } = useSession();
-  const { slug } = useParams() as { slug?: string };
   const [avatar, setAvatar] = useState<ReactNode>('');
-
-  //     useEffect(() => {
-  //       if (session?.user?.email) {
-  //   const generatedAvatar = generateAvatar(session.user.email as string);
-  //         setAvatar(generatedAvatar);
-  //       }
-  //     }, [session]);
+  const { signOut } = useClerk();
+  const { user } = useUser();
 
   useEffect(() => {
-    const generatedAvatar = generateAvatar('test123');
-    setAvatar(generatedAvatar);
-  }, []);
+    if (user?.emailAddresses[0].emailAddress) {
+      const generatedAvatar = generateAvatar(
+        user?.emailAddresses[0].emailAddress as string
+      );
+      setAvatar(generatedAvatar);
+    }
+  }, [user]);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar>
-            {/* <AvatarImage src={session?.user.image as string} /> */}
+            <AvatarImage src={user?.imageUrl as string} />
             <AvatarFallback>{avatar}</AvatarFallback>
           </Avatar>
         </Button>
@@ -52,8 +48,10 @@ const UserProfileDropdown = () => {
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1 overflow-hidden">
             <p className="text-xs text-gray-700 font-normal">Logged in as</p>
-            {/* <p className="font-medium truncate">{session?.user?.email}</p> */}
-            <p className="font-medium truncate">test123@gmail.com</p>
+
+            <p className="font-medium truncate">
+              {user?.emailAddresses[0].emailAddress}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -78,9 +76,7 @@ const UserProfileDropdown = () => {
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-        // onClick={() => signOut({ callbackUrl: '/' })}
-        >
+        <DropdownMenuItem onClick={() => signOut({ redirectUrl: '/login' })}>
           <LogOut className="w-4 h-4 mr-2 text-gray-700" />
           <span className="font-normal">Log out</span>
         </DropdownMenuItem>

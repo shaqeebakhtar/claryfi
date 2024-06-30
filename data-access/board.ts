@@ -46,3 +46,29 @@ export const getBoards = async () => {
 
   return boards;
 };
+
+export const getBoardBySlug = async ({ slug }: { slug: string }) => {
+  const res = await fetch(`/api/boards/${slug}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { board } = await res.json();
+
+  return board;
+};
+
+export const getBoardNameBySlug = async ({ slug }: { slug: string }) => {
+  const res = await fetch(`/api/boards/${slug}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { board } = await res.json();
+
+  return { name: board.name };
+};

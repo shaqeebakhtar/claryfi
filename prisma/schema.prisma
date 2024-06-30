@@ -60,12 +60,16 @@ model VerificationToken {
 }
 
 model Board {
-  id   String @id @default(cuid())
-  name String
-  slug String @unique
+  id     String @id @default(cuid())
+  name   String
+  slug   String @unique
+  userId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Feedback  Feedback[]
+
+  @@unique([slug, userId])
 }
 
 model Feedback {
@@ -74,6 +78,9 @@ model Feedback {
   detail  String
   upvotes Int    @default(0)
   status  Status @default(NEW)
+
+  boardId String
+  board   Board  @relation(fields: [boardId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

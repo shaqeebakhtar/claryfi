@@ -1,7 +1,15 @@
+import { auth } from '@clerk/nextjs/server';
 import BoardDisplayGrid from './_components/board-display-grid';
 import CreateBoardDialog from './_components/create-board-dialog';
+import { redirect } from 'next/navigation';
 
 const Dashboard = () => {
+  const { userId } = auth();
+
+  if (!userId) {
+    redirect('/login');
+  }
+
   return (
     <>
       <div className="flex h-28 items-center">

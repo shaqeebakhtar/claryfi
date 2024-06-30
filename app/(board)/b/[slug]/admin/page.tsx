@@ -1,4 +1,7 @@
-import FeedbackCard from '@/app/(board)/_components/feedback';
+'use client';
+import FeedbackCard, {
+  FeedbackCardSkeleton,
+} from '@/app/(board)/_components/feedback';
 import MaxWidthContainer from '@/components/max-width-container';
 import {
   Select,
@@ -7,10 +10,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import { getBoardBySlug } from '@/data-access/board';
+import { useUser } from '@clerk/nextjs';
+import { useQuery } from '@tanstack/react-query';
+import { notFound, redirect } from 'next/navigation';
 
-type BoardAdminDashboardProps = {};
+type BoardAdminDashboardProps = {
+  params: { slug: string };
+};
 
-const BoardAdminDashboard = ({}: BoardAdminDashboardProps) => {
+const BoardAdminDashboard = ({ params }: BoardAdminDashboardProps) => {
+  const { user, isLoaded } = useUser();
+
+  if (!user && isLoaded) {
+    redirect(`/login?next=/b/${params.slug}/admin`);
+  }
+
+  const { data: board, isPending } = useQuery({
+    queryKey: ['board', params.slug],
+    queryFn: () => getBoardBySlug({ slug: params.slug }),
+  });
+
+  if (isPending) {
+    return <BoardAdminDashboardSkeleton />;
+  }
+
+  if (!board) {
+    return notFound();
+  }
+
   return (
     <>
       <div className="flex h-32 items-center border-b border-gray-200">
@@ -46,3 +75,27 @@ const BoardAdminDashboard = ({}: BoardAdminDashboardProps) => {
 };
 
 export default BoardAdminDashboard;
+
+export const BoardAdminDashboardSkeleton = () => {
+  return (
+    <>
+      <div className="flex h-32 items-center border-b border-gray-200">
+        <MaxWidthContainer>
+          <h1 className="text-2xl font-medium tracking-tight text-foreground">
+            Feedbacks
+          </h1>
+        </MaxWidthContainer>
+      </div>
+      <MaxWidthContainer>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end pt-6 mb-5">
+          <Skeleton className="w-full sm:w-56 bg-background h-10 border border-input rounded-md" />
+        </div>
+        <ul className="space-y-5 mb-10">
+          {[...Array(3)].map((_, index) => (
+            <FeedbackCardSkeleton key={index} />
+          ))}
+        </ul>
+      </MaxWidthContainer>
+    </>
+  );
+};

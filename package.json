@@ -13,6 +13,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@clerk/nextjs": "^5.1.6",
     "@hookform/resolvers": "^3.6.0",
     "@prisma/client": "5.15.0",
     "@radix-ui/react-avatar": "^1.1.0",

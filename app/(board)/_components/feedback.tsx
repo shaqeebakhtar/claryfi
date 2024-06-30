@@ -3,6 +3,7 @@ import { ChevronUp, MessageCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type FeedbackCardProps = {};
 
@@ -77,3 +78,26 @@ const FeedbackCard = (props: FeedbackCardProps) => {
 };
 
 export default FeedbackCard;
+
+export const FeedbackCardSkeleton = () => {
+  return (
+    <li className="group relative">
+      <div className="p-8 bg-background rounded-xl shadow transition-all hover:shadow-md flex flex-col md:flex-row md:items-start justify-between gap-5 md:gap-8 relative">
+        <Skeleton className="w-12 h-16 rounded-lg hidden md:block" />
+        <div className="space-y-3 md:space-y-1 w-full">
+          <div className="flex flex-col-reverse md:flex-row items-start md:items-center gap-2.5">
+            <Skeleton className="w-56 h-6" />
+            <Skeleton className="w-20 h-5 rounded-full" />
+          </div>
+          <Skeleton className="w-full h-4" />
+          <Skeleton className="w-full h-4" />
+          <Skeleton className="w-1/2 h-4" />
+        </div>
+        <div className="flex items-center justify-between">
+          <Skeleton className="w-16 h-8 rounded-lg md:hidden" />
+          <Skeleton className="w-12 h-8 rounded-lg" />
+        </div>
+      </div>
+    </li>
+  );
+};
