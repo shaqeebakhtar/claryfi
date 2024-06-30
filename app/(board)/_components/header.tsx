@@ -3,13 +3,20 @@ import { Skeleton } from '@/components/ui/skeleton';
 import UserProfileDropdown from '@/components/user-profile-dropdown';
 import { getBoardNameBySlug } from '@/data-access/board';
 import { cn } from '@/lib/utils';
+import { useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
+import { redirect, useParams, usePathname } from 'next/navigation';
 
 const AdminDashboardHeader = () => {
   const pathname = usePathname();
   const { slug } = useParams() as { slug?: string };
+
+  const { user, isLoaded: userLoaded } = useUser();
+
+  if (!user && userLoaded) {
+    redirect(`/login?next=/b/${slug}/admin`);
+  }
 
   const { data: boardName, isPending } = useQuery({
     queryKey: ['boardName', slug],
@@ -40,7 +47,7 @@ const AdminDashboardHeader = () => {
                   <div className="w-9 h-9 bg-green-50 rounded-full text-center text-sm font-medium uppercase grid items-center text-green-600 select-none">
                     {boardName.name.slice(0, 2)}
                   </div>
-                  <h2 className="max-w-48 truncate font-medium leading-5">
+                  <h2 className="max-w-48 truncate font-semibold leading-5">
                     {boardName.name}
                   </h2>
                 </div>
@@ -61,7 +68,7 @@ const AdminDashboardHeader = () => {
         <nav className="flex h-11 items-center space-x-2">
           {tabs.map((tab) => {
             return isPending ? (
-              <NavTabSkeleton />
+              <NavTabSkeleton key={tab.href} />
             ) : (
               boardName && (
                 <Link key={tab.href} className="relative" href={tab.href}>

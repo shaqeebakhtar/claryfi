@@ -18,8 +18,23 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { feedbackSchema } from '@/validations/feedback';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { addFeedback } from '@/data-access/feedback';
+import { useParams } from 'next/navigation';
+import { Loader } from 'lucide-react';
 
-const FeedbackDialogForm = () => {
+type FeedbackDialogFormProps = {
+  closeDialog: () => void;
+};
+
+const FeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
+  const { slug } = useParams() as {
+    slug: string;
+  };
+
+  const queryClient = useQueryClient();
+
   const form = useForm<z.infer<typeof feedbackSchema>>({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
@@ -28,7 +43,25 @@ const FeedbackDialogForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof feedbackSchema>) => {};
+  const createFeedbackMutation = useMutation({
+    mutationFn: addFeedback,
+    onSuccess: () => {
+      closeDialog();
+      toast.success('Your feedback has been submitted');
+      queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof feedbackSchema>) => {
+    createFeedbackMutation.mutate({
+      slug,
+      title: data.title,
+      description: data.description,
+    });
+  };
 
   return (
     <Form {...form}>
@@ -76,7 +109,12 @@ const FeedbackDialogForm = () => {
               Cancel
             </Button>
           </DialogClose>
-          <Button>Submit</Button>
+          <Button disabled={createFeedbackMutation.isPending}>
+            {createFeedbackMutation.isPending && (
+              <Loader className="w-4 h-4 mr-1.5 animate-spin" />
+            )}
+            Submit
+          </Button>
         </DialogFooter>
       </form>
     </Form>

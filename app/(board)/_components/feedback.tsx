@@ -4,16 +4,22 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Feedback } from '@prisma/client';
+import { useParams } from 'next/navigation';
+import FeedbackStatus from './feedback-status';
 
-type FeedbackCardProps = {};
+type FeedbackCardProps = {
+  feedback: Feedback;
+};
 
-const FeedbackCard = (props: FeedbackCardProps) => {
+const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
+  const { slug } = useParams() as { slug: string };
   const [upvoted, setUpvoted] = useState<boolean>(false);
 
   return (
     <li className="group relative">
       <Link
-        href="/hello"
+        href={`/b/${slug}/f/${feedback.id}`}
         className="p-8 bg-background rounded-xl shadow transition-all hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-8 relative"
       >
         <button
@@ -31,22 +37,17 @@ const FeedbackCard = (props: FeedbackCardProps) => {
             className={cn('w-4 h-4 text-primary', upvoted && 'text-white')}
             strokeWidth={3}
           />
-          <span>99</span>
+          <span>{feedback.upvotes}</span>
         </button>
-        <div className="space-y-3 md:space-y-1">
+        <div className="space-y-3 md:space-y-1 w-full">
           <div className="flex flex-col-reverse md:flex-row items-start md:items-center gap-2.5">
             <h3 className="font-semibold text-base md:text-lg group-hover:text-primary transition-all">
-              Feedback title goes here
+              {feedback.title}
             </h3>
-            <div className="bg-destructive/10 text-xs font-medium text-destructive w-max px-2.5 py-0.5 rounded-full">
-              <span>Cancelled</span>
-            </div>
+            <FeedbackStatus status={feedback.status} />
           </div>
           <p className="text-muted-foreground text-sm md:text-base">
-            Feedback description text goes here Lorem ipsum dolor sit amet,
-            consectetur adipisicing elit. Dignissimos doloremque corrupti
-            aspernatur. Aliquid, nostrum fuga. Lorem ipsum dolor sit amet. Lorem
-            ipsum dolor sit amet.
+            {feedback.description}
           </p>
         </div>
         <div className="flex items-center justify-between">
@@ -65,7 +66,7 @@ const FeedbackCard = (props: FeedbackCardProps) => {
               className={cn('w-4 h-4 text-primary', upvoted && 'text-white')}
               strokeWidth={3}
             />
-            <span>99</span>
+            <span>{feedback.upvotes}</span>
           </button>
           <div className="flex items-center gap-1">
             <MessageCircle className="w-5 h-5 text-muted-foreground" />

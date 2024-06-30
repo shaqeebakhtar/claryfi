@@ -2,6 +2,7 @@
 import FeedbackCard, {
   FeedbackCardSkeleton,
 } from '@/app/(board)/_components/feedback';
+import FeedbackCards from '@/app/(board)/_components/feedback-cards';
 import MaxWidthContainer from '@/components/max-width-container';
 import {
   Select,
@@ -64,11 +65,7 @@ const BoardAdminDashboard = ({ params }: BoardAdminDashboardProps) => {
             </SelectContent>
           </Select>
         </div>
-        <ul className="space-y-5 mb-10">
-          <FeedbackCard />
-          <FeedbackCard />
-          <FeedbackCard />
-        </ul>
+        <FeedbackCards />
       </MaxWidthContainer>
     </>
   );

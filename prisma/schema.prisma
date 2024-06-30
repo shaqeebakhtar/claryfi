@@ -73,11 +73,11 @@ model Board {
 }
 
 model Feedback {
-  id      String @id @default(cuid())
-  title   String
-  detail  String
-  upvotes Int    @default(0)
-  status  Status @default(NEW)
+  id          String @id @default(cuid())
+  title       String
+  description String
+  upvotes     Int    @default(0)
+  status      Status @default(NEW)
 
   boardId String
   board   Board  @relation(fields: [boardId], references: [id])
@@ -89,6 +89,6 @@ model Feedback {
 enum Status {
   NEW
   CANCELLED
-  INPROGRESS
+  IN_PROGRESS
   LIVE
 }

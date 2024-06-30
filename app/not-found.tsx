@@ -36,22 +36,22 @@ const NotFound = () => {
               <FileX2 className="h-6 w-6 text-gray-600" />
             </div>
             <h1 className="my-3 text-xl font-semibold">Board Not Found</h1>
-            <p className="z-10 max-w-sm text-center text-sm text-muted-foreground">
+            <p className="max-w-sm text-center text-sm text-muted-foreground mb-8">
               The board you are looking for does not exist. You either typed in
               the wrong URL or dont have access to this board.
             </p>
-            <Image
-              src="/searching.png"
-              alt="No links yet"
-              width={400}
-              height={400}
-            />
             <Link
               href="/dashboard"
               className={buttonVariants({ variant: 'default' })}
             >
               Back to my dashboard
             </Link>
+            <Image
+              src="/searching.png"
+              alt="No links yet"
+              width={400}
+              height={400}
+            />
           </div>
         </MaxWidthContainer>
       </div>

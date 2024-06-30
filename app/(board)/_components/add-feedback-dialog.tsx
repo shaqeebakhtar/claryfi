@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,10 +10,13 @@ import {
 } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import FeedbackDialogForm from './feedback-dialog-form';
+import { useState } from 'react';
 
 const AddFeedbackDialog = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button size={'lg'}>
           <Plus className="w-3.5 h-3.5 mr-1.5" strokeWidth={3} />
@@ -26,7 +30,7 @@ const AddFeedbackDialog = () => {
             Submit a new feature request/suggestion to improve our product.
           </DialogDescription>
         </DialogHeader>
-        <FeedbackDialogForm />
+        <FeedbackDialogForm closeDialog={() => setIsDialogOpen(false)} />
       </DialogContent>
     </Dialog>
   );

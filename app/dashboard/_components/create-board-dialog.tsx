@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import CreateBoardForm from './create-board-form';
 import { useState } from 'react';
+import { Plus } from 'lucide-react';
 
 const CreateBoardDialog = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -18,7 +19,10 @@ const CreateBoardDialog = () => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button size={'lg'}>Create Board</Button>
+        <Button>
+          <Plus className="w-3.5 h-3.5 mr-1.5" strokeWidth={3} />
+          Create Board
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="mb-2">

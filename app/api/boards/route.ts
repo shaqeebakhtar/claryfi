@@ -8,7 +8,7 @@ export const POST = async (req: Request) => {
   const { userId } = auth();
 
   if (!userId) {
-    return new Response('Unauthorized', { status: 401 });
+    return Response.json('Unauthorized', { status: 401 });
   }
 
   const validateFields = boardSchema.safeParse(body);
