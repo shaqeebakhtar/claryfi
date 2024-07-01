@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { type Board } from '@prisma/client';
 import { ThumbsUp } from 'lucide-react';
 import Link from 'next/link';
-import CopyLinkButton from './copy-link-button';
+import CopyLinkButton from '@/components/copy-link-button';
 
 type BoardCardProps = {
   board: Board;

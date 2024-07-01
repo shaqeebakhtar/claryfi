@@ -1,10 +1,13 @@
 'use client';
+import CopyLinkButton from '@/components/copy-link-button';
+import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import UserProfileDropdown from '@/components/user-profile-dropdown';
 import { getBoardNameBySlug } from '@/data-access/board';
 import { cn } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
+import { Eye } from 'lucide-react';
 import Link from 'next/link';
 import { redirect, useParams, usePathname } from 'next/navigation';
 
@@ -33,27 +36,43 @@ const AdminDashboardHeader = () => {
       <div className="mx-auto w-full max-w-screen-xl px-3 lg:px-20">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href={'/dashboard'}>
+            <Link href={'/dashboard'} className="hidden sm:block">
               <span className="font-bold">Claryfi</span>
             </Link>
-            <span className="text-2xl text-gray-300 select-none font-extralight">
+            <span className="text-2xl text-gray-300 select-none font-extralight hidden sm:block">
               /
             </span>
             {isPending ? (
               <BoardNameSkeleton />
             ) : (
               boardName && (
-                <div className="flex items-center space-x-2">
-                  <div className="w-9 h-9 bg-green-50 rounded-full text-center text-sm font-medium uppercase grid items-center text-green-600 select-none">
-                    {boardName.name.slice(0, 2)}
+                <>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-9 h-9 bg-green-50 rounded-full text-center text-sm font-medium uppercase grid items-center text-green-600 select-none">
+                      {boardName.name.slice(0, 2)}
+                    </div>
+                    <h2 className="max-w-48 truncate font-semibold leading-5">
+                      {boardName.name}
+                    </h2>
                   </div>
-                  <h2 className="max-w-48 truncate font-semibold leading-5">
-                    {boardName.name}
-                  </h2>
-                </div>
+                  <div className="space-x-3 ml-2">
+                    <CopyLinkButton value={`/b/${slug}`} />
+                    <Link
+                      target="_blank"
+                      href={`/b/${slug}`}
+                      className={cn(
+                        buttonVariants({ variant: 'secondary', size: 'icon' }),
+                        'rounded-full text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all'
+                      )}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </>
               )
             )}
           </div>
+
           <div className="flex items-center space-x-6">
             <Link
               href="#"
