@@ -74,6 +74,20 @@ export const GET = async (
     where: {
       boardId: board.id,
     },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      status: true,
+      boardId: true,
+      createdAt: true,
+      updatedAt: true,
+      _count: {
+        select: {
+          upvotes: true,
+        },
+      },
+    },
   });
 
   return Response.json({ feedbacks }, { status: 200 });

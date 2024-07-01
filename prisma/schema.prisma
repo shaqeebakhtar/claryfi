@@ -14,7 +14,6 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  sessions      Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -41,24 +40,6 @@ model Account {
   @@id([provider, providerAccountId])
 }
 
-model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@id([identifier, token])
-}
-
 model Board {
   id     String @id @default(cuid())
   name   String
@@ -76,14 +57,14 @@ model Feedback {
   id          String @id @default(cuid())
   title       String
   description String
-  upvotes     Int    @default(0)
   status      Status @default(NEW)
 
   boardId String
-  board   Board  @relation(fields: [boardId], references: [id])
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  upvotes   Upvote[]
 }
 
 enum Status {
@@ -91,4 +72,20 @@ enum Status {
   CANCELLED
   IN_PROGRESS
   LIVE
+}
+
+model Upvote {
+  id String @id @default(cuid())
+
+  upvoterId String
+
+  upvotedFeedback   Feedback @relation(fields: [upvotedFeedbackId], references: [id], onDelete: Cascade)
+  upvotedFeedbackId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([upvoterId, upvotedFeedbackId])
+  @@index([upvoterId])
+  @@index([upvotedFeedbackId])
 }

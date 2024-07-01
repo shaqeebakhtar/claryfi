@@ -1,20 +1,84 @@
 'use client';
 import { ChevronUp, MessageCircle } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Feedback } from '@prisma/client';
 import { useParams } from 'next/navigation';
 import FeedbackStatus from './feedback-status';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  findUserHasUpvoted,
+  undovoteFeedback,
+  upvoteFeedback,
+} from '@/data-access/feedback';
+import { toast } from 'sonner';
 
 type FeedbackCardProps = {
-  feedback: Feedback;
+  feedback: Feedback & {
+    _count: {
+      upvotes: number;
+    };
+  };
 };
 
 const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   const { slug } = useParams() as { slug: string };
   const [upvoted, setUpvoted] = useState<boolean>(false);
+  const [upvotes, setUpvotes] = useState<number>(feedback._count.upvotes);
+
+  const queryClient = useQueryClient();
+
+  const { data: hasUpvoted } = useQuery({
+    queryKey: ['upvoted'],
+    queryFn: () => findUserHasUpvoted(slug, feedback.id),
+  });
+
+  const upvoteFeedbackMutation = useMutation({
+    mutationFn: upvoteFeedback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['upvoted'] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const undovoteFeedbackMutation = useMutation({
+    mutationFn: undovoteFeedback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['upvoted'] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  useEffect(() => {
+    setUpvoted(hasUpvoted as boolean);
+  }, [hasUpvoted]);
+
+  const handleUpvoteAndUndovote = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setUpvoted(!upvoted);
+    if (upvoted) {
+      undovoteFeedbackMutation.mutate({
+        slug,
+        feedbackId: feedback.id,
+      });
+      setUpvotes((prev) => prev - 1);
+    } else {
+      upvoteFeedbackMutation.mutate({
+        slug,
+        feedbackId: feedback.id,
+      });
+      setUpvotes((prev) => prev + 1);
+    }
+  };
 
   return (
     <li className="group relative">
@@ -27,17 +91,13 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
             'w-10 gap-1 items-center flex-col text-sm font-bold rounded-lg p-3 self-start bg-primary/10 hover:bg-primary/30 transition-all hidden md:flex',
             upvoted && 'bg-primary text-white hover:bg-primary/80'
           )}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setUpvoted(!upvoted);
-          }}
+          onClick={(e) => handleUpvoteAndUndovote(e)}
         >
           <ChevronUp
             className={cn('w-4 h-4 text-primary', upvoted && 'text-white')}
             strokeWidth={3}
           />
-          <span>{feedback.upvotes}</span>
+          <span>{upvotes}</span>
         </button>
         <div className="space-y-3 md:space-y-1 w-full">
           <div className="flex flex-col-reverse md:flex-row items-start md:items-center gap-2.5">
@@ -56,17 +116,13 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
               'gap-2 items-center text-sm font-bold rounded-lg py-1.5 px-3 bg-primary/10 hover:bg-primary/30 transition-all flex md:hidden',
               upvoted && 'bg-primary text-white hover:bg-primary/80'
             )}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setUpvoted(!upvoted);
-            }}
+            onClick={(e) => handleUpvoteAndUndovote(e)}
           >
             <ChevronUp
               className={cn('w-4 h-4 text-primary', upvoted && 'text-white')}
               strokeWidth={3}
             />
-            <span>{feedback.upvotes}</span>
+            <span>{upvotes}</span>
           </button>
           <div className="flex items-center gap-1">
             <MessageCircle className="w-5 h-5 text-muted-foreground" />

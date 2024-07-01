@@ -33,9 +33,17 @@ const FeedbackCards = () => {
 
   return (
     <ul className="space-y-5 mb-10">
-      {feedbacks.map((feedback: Feedback) => (
-        <FeedbackCard key={feedback.id} feedback={feedback} />
-      ))}
+      {feedbacks.map(
+        (
+          feedback: Feedback & {
+            _count: {
+              upvotes: number;
+            };
+          }
+        ) => (
+          <FeedbackCard key={feedback.id} feedback={feedback} />
+        )
+      )}
     </ul>
   );
 };
