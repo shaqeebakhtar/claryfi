@@ -48,7 +48,7 @@ model Board {
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  Feedback  Feedback[]
+  feedbacks Feedback[]
 
   @@unique([slug, userId])
 }

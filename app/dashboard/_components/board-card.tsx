@@ -5,7 +5,11 @@ import Link from 'next/link';
 import CopyLinkButton from '@/components/copy-link-button';
 
 type BoardCardProps = {
-  board: Board;
+  board: Board & {
+    _count: {
+      feedbacks: number;
+    };
+  };
 };
 
 const BoardCard = ({ board }: BoardCardProps) => {
@@ -33,7 +37,10 @@ const BoardCard = ({ board }: BoardCardProps) => {
       <div>
         <div className="flex items-center space-x-2 text-muted-foreground">
           <ThumbsUp className="w-4 h-4" />
-          <span className="whitespace-nowrap text-sm">6 feedbacks</span>
+          <span className="whitespace-nowrap text-sm">
+            {board._count.feedbacks} feedback
+            {board._count.feedbacks !== 1 && 's'}
+          </span>
         </div>
       </div>
     </Link>

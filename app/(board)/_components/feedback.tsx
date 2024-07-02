@@ -1,22 +1,20 @@
 'use client';
-import { ChevronUp, MessageCircle } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Feedback } from '@prisma/client';
+import { undovoteFeedback, upvoteFeedback } from '@/data-access/feedback';
+import { cn } from '@/lib/utils';
+import { useUser } from '@clerk/nextjs';
+import { Feedback, Upvote } from '@prisma/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ChevronUp, MessageCircle } from 'lucide-react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import FeedbackStatus from './feedback-status';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  findUserHasUpvoted,
-  undovoteFeedback,
-  upvoteFeedback,
-} from '@/data-access/feedback';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import FeedbackStatus from './feedback-status';
 
 type FeedbackCardProps = {
   feedback: Feedback & {
+    upvotes: Upvote[];
     _count: {
       upvotes: number;
     };
@@ -28,17 +26,14 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   const [upvoted, setUpvoted] = useState<boolean>(false);
   const [upvotes, setUpvotes] = useState<number>(feedback._count.upvotes);
 
-  const queryClient = useQueryClient();
+  const { user } = useUser();
 
-  const { data: hasUpvoted } = useQuery({
-    queryKey: ['upvoted'],
-    queryFn: () => findUserHasUpvoted(slug, feedback.id),
-  });
+  const queryClient = useQueryClient();
 
   const upvoteFeedbackMutation = useMutation({
     mutationFn: upvoteFeedback,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['upvoted'] });
+      queryClient.invalidateQueries({ queryKey: ['feedbacks', slug] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -48,7 +43,7 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   const undovoteFeedbackMutation = useMutation({
     mutationFn: undovoteFeedback,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['upvoted'] });
+      queryClient.invalidateQueries({ queryKey: ['feedbacks', slug] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -56,8 +51,11 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   });
 
   useEffect(() => {
-    setUpvoted(hasUpvoted as boolean);
-  }, [hasUpvoted]);
+    const hasUpvoted = feedback.upvotes.some(
+      (upvote) => upvote.upvoterId === user?.id
+    );
+    setUpvoted(hasUpvoted);
+  }, [feedback.upvotes, user?.id]);
 
   const handleUpvoteAndUndovote = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>

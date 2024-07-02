@@ -9,7 +9,7 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
-import { redirect, useParams, usePathname } from 'next/navigation';
+import { notFound, redirect, useParams, usePathname } from 'next/navigation';
 
 const AdminDashboardHeader = () => {
   const pathname = usePathname();
@@ -30,6 +30,10 @@ const AdminDashboardHeader = () => {
     { name: 'Feedbacks', href: `/b/${slug}/admin` },
     { name: 'Settings', href: `/b/${slug}/admin/settings` },
   ];
+
+  if (!isPending && !boardName) {
+    return notFound();
+  }
 
   return (
     <header className="sticky left-0 right-0 top-0 z-20 border-b border-gray-200 bg-white">

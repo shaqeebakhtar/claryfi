@@ -52,6 +52,13 @@ export const GET = async (req: Request) => {
     where: {
       userId,
     },
+    include: {
+      _count: {
+        select: {
+          feedbacks: true,
+        },
+      },
+    },
   });
 
   return Response.json({ boards }, { status: 200 });

@@ -74,14 +74,13 @@ export const GET = async (
     where: {
       boardId: board.id,
     },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      status: true,
-      boardId: true,
-      createdAt: true,
-      updatedAt: true,
+    include: {
+      upvotes: {
+        select: {
+          upvotedFeedbackId: true,
+          upvoterId: true,
+        },
+      },
       _count: {
         select: {
           upvotes: true,

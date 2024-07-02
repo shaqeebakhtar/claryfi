@@ -40,19 +40,6 @@ export const getFeedbacksByBoardSlug = async (slug: string) => {
   return feedbacks;
 };
 
-export const findUserHasUpvoted = async (slug: string, feedbackId: string) => {
-  const res = await fetch(`/api/boards/${slug}/feedback/${feedbackId}/upvote`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  const { hasUpvoted } = await res.json();
-
-  return !!hasUpvoted;
-};
-
 export const upvoteFeedback = async ({
   slug,
   feedbackId,

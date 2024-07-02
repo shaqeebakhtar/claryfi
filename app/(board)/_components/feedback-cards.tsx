@@ -5,7 +5,7 @@ import FeedbackCard, { FeedbackCardSkeleton } from './feedback';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { getFeedbacksByBoardSlug } from '@/data-access/feedback';
-import { Feedback } from '@prisma/client';
+import { Feedback, Upvote } from '@prisma/client';
 import { FileX2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -36,6 +36,7 @@ const FeedbackCards = () => {
       {feedbacks.map(
         (
           feedback: Feedback & {
+            upvotes: Upvote[];
             _count: {
               upvotes: number;
             };
