@@ -21,7 +21,7 @@ export const addFeedback = async ({
   });
 
   if (!res.ok) {
-    throw new Error('Failed to create monitor');
+    throw new Error('Failed to create feedback');
   }
 
   return await res.json();

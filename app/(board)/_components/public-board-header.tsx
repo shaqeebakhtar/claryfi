@@ -2,7 +2,7 @@
 import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import UserProfileDropdown from '@/components/user-profile-dropdown';
-import { getBoardNameBySlug } from '@/data-access/board';
+import { getBoardDetailsBySlug } from '@/data-access/board';
 import { cn } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
@@ -15,8 +15,8 @@ const PublicBoardHeader = () => {
   const { user, isLoaded: userLoaded } = useUser();
 
   const { data: boardName, isPending } = useQuery({
-    queryKey: ['boardName', slug],
-    queryFn: () => getBoardNameBySlug({ slug: slug as string }),
+    queryKey: ['board-details', slug],
+    queryFn: () => getBoardDetailsBySlug({ slug: slug as string }),
   });
 
   return (

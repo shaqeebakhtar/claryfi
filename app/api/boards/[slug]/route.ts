@@ -17,6 +17,7 @@ export const GET = async (
   const board = await db.board.findUnique({
     where: {
       slug,
+      userId,
     },
   });
 
@@ -60,6 +61,41 @@ export const PATCH = async (
 
   return Response.json(
     { updatedBoard },
+    {
+      status: 200,
+    }
+  );
+};
+
+export const DELETE = async (
+  req: Request,
+  { params }: { params: { slug: string } }
+) => {
+  const slug = params.slug;
+
+  const { userId } = auth();
+
+  if (!userId) {
+    return Response.json('Unauthorized', { status: 401 });
+  }
+
+  let deletedBoard = null;
+
+  try {
+    deletedBoard = await db.board.delete({
+      where: {
+        slug_userId: {
+          slug,
+          userId,
+        },
+      },
+    });
+  } catch (error) {
+    throw new Error('Failed to delete the board');
+  }
+
+  return Response.json(
+    { deletedBoard },
     {
       status: 200,
     }

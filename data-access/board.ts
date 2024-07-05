@@ -17,7 +17,7 @@ export const createBoard = async ({
   });
 
   if (!res.ok) {
-    throw new Error('Failed to create monitor');
+    throw new Error('Failed to create board');
   }
 
   return await res.json();
@@ -60,7 +60,11 @@ export const getBoardBySlug = async ({ slug }: { slug: string }) => {
   return board;
 };
 
-export const getBoardNameBySlug = async ({ slug }: { slug: string }) => {
+export const getBoardDetailsBySlugProtected = async ({
+  slug,
+}: {
+  slug: string;
+}) => {
   const res = await fetch(`/api/boards/${slug}`, {
     method: 'GET',
     headers: {
@@ -70,5 +74,56 @@ export const getBoardNameBySlug = async ({ slug }: { slug: string }) => {
 
   const { board } = await res.json();
 
-  return { name: board.name };
+  return { name: board.name, slug: board.slug };
+};
+
+export const getBoardDetailsBySlug = async ({ slug }: { slug: string }) => {
+  const res = await fetch(`/api/boards/${slug}/details`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { board } = await res.json();
+
+  return { name: board.name, slug: board.slug };
+};
+
+export const updateBoardDetails = async ({
+  name,
+  currSlug,
+  newSlug,
+}: {
+  name?: string;
+  currSlug: string;
+  newSlug?: string;
+}) => {
+  const res = await fetch(`/api/boards/${currSlug}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name,
+      slug: newSlug,
+    }),
+  });
+
+  const { updatedBoard } = await res.json();
+
+  return { name: updatedBoard.name, slug: updatedBoard.slug };
+};
+
+export const deleteBoard = async ({ slug }: { slug: string }) => {
+  const res = await fetch(`/api/boards/${slug}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { deletedBoard } = await res.json();
+
+  return deletedBoard;
 };
