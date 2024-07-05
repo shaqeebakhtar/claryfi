@@ -54,6 +54,7 @@ const BoardSlug = () => {
     mutationFn: updateBoardDetails,
     onSuccess: (data) => {
       toast.success('Updated board successfully');
+      setCurrBoardSlug(data.slug);
       queryClient.invalidateQueries({ queryKey: ['board-details', slug] });
       router.push(`/b/${data?.slug}/admin/settings`);
     },

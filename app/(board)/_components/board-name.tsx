@@ -50,8 +50,9 @@ const BoardName = () => {
 
   const updateBoardNameMutation = useMutation({
     mutationFn: updateBoardDetails,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success('Updated board successfully');
+      setCurrBoardName(data.name);
       queryClient.invalidateQueries({ queryKey: ['board-details', slug] });
     },
     onError: (error) => {

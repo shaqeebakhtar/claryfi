@@ -76,8 +76,11 @@ const UserProfileDropdown = () => {
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut({ redirectUrl: '/login' })}>
-          <LogOut className="w-4 h-4 mr-2 text-gray-700" />
+        <DropdownMenuItem
+          className="text-destructive focus:text-destructive focus:bg-destructive/10"
+          onClick={() => signOut({ redirectUrl: '/login' })}
+        >
+          <LogOut className="w-4 h-4 mr-2" />
           <span className="font-normal">Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -7,4 +7,5 @@ export const feedbackSchema = z.object({
   description: z.string().min(5, {
     message: 'Details must be at least 5 characters.',
   }),
+  status: z.enum(['NEW', 'CANCELLED', 'IN_PROGRESS', 'LIVE']),
 });

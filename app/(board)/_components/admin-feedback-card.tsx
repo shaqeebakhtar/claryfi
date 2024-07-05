@@ -7,13 +7,12 @@ import { Feedback, Upvote } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChevronUp, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import FeedbackDropdownMenu from './feedback-dropdown-menu';
 import FeedbackStatus from './feedback-status';
 
-type FeedbackCardProps = {
+type AdminFeedbackCardProps = {
   feedback: Feedback & {
     upvotes: Upvote[];
     _count: {
@@ -22,13 +21,10 @@ type FeedbackCardProps = {
   };
 };
 
-const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
+const AdminFeedbackCard = ({ feedback }: AdminFeedbackCardProps) => {
   const { slug } = useParams() as { slug: string };
-  const path = usePathname();
   const [upvoted, setUpvoted] = useState<boolean>(false);
-  const [canEdit, setCanEdit] = useState<boolean>(false);
   const [upvotes, setUpvotes] = useState<number>(feedback._count.upvotes);
-  const [status, setStatus] = useState<string>(feedback.status);
 
   const { user } = useUser();
 
@@ -60,10 +56,6 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
     );
     setUpvoted(hasUpvoted);
   }, [feedback.upvotes, user?.id]);
-
-  useEffect(() => {
-    setCanEdit(path === `/b/${slug}/admin`);
-  }, [path, slug]);
 
   const handleUpvoteAndUndovote = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -110,7 +102,7 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
             <h3 className="font-semibold text-base md:text-lg group-hover:text-primary transition-all">
               {feedback.title}
             </h3>
-            <FeedbackStatus status={status} />
+            <FeedbackStatus status={feedback.status} />
           </div>
           <p className="text-muted-foreground text-sm md:text-base">
             {feedback.description}
@@ -130,18 +122,9 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
             />
             <span>{upvotes}</span>
           </button>
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-1">
-              <MessageCircle className="w-5 h-5 text-muted-foreground" />
-              <span className="font-semibold text-sm md:text-base">12</span>
-            </div>
-            {canEdit && (
-              <FeedbackDropdownMenu
-                feedbackId={feedback.id}
-                status={status}
-                changeStatus={(value: string) => setStatus(value)}
-              />
-            )}
+          <div className="flex items-center gap-1">
+            <MessageCircle className="w-5 h-5 text-muted-foreground" />
+            <span className="font-semibold text-sm md:text-base">12</span>
           </div>
         </div>
       </Link>
@@ -149,9 +132,9 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   );
 };
 
-export default FeedbackCard;
+export default AdminFeedbackCard;
 
-export const FeedbackCardSkeleton = () => {
+export const AdminFeedbackCardSkeleton = () => {
   return (
     <li className="group relative">
       <div className="p-8 bg-background rounded-xl shadow transition-all hover:shadow-md flex flex-col md:flex-row md:items-start justify-between gap-5 md:gap-8 relative">

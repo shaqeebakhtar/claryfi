@@ -40,6 +40,7 @@ export const POST = async (
         boardId: board.id,
         title,
         description,
+        submittedBy: userId,
       },
     });
   } catch (error) {
