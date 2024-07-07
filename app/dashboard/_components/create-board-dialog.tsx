@@ -19,7 +19,7 @@ const CreateBoardDialog = () => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button size={'lg'}>
           <Plus className="w-3.5 h-3.5 mr-1.5" strokeWidth={3} />
           Create Board
         </Button>

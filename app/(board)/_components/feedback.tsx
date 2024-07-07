@@ -90,7 +90,7 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
     <li className="group relative list-none">
       <Link
         href={`/b/${slug}/f/${feedback.id}`}
-        className="p-8 bg-background rounded-xl shadow transition-all hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-8 relative"
+        className="p-6 sm:p-8 bg-background rounded-xl shadow transition-all hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-8 relative"
       >
         <button
           className={cn(

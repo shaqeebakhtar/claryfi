@@ -8,10 +8,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus } from 'lucide-react';
+import { Feedback } from '@prisma/client';
+import { PencilLine } from 'lucide-react';
 import { useState } from 'react';
 import EditFeedbackDialogForm from './edit-feedback-dialog-form';
-import { Feedback } from '@prisma/client';
 
 type EditFeedbackDialogProps = {
   feedback: Feedback;
@@ -24,7 +24,7 @@ const EditFeedbackDialog = ({ feedback }: EditFeedbackDialogProps) => {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button size={'lg'}>
-          <Plus className="w-3.5 h-3.5 mr-1.5" strokeWidth={3} />
+          <PencilLine className="w-3.5 h-3.5 mr-1.5" strokeWidth={3} />
           Edit feedback
         </Button>
       </DialogTrigger>
