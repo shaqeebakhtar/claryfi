@@ -9,10 +9,15 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
-import AddFeedbackDialogForm from './add-feedback-dialog-form';
 import { useState } from 'react';
+import EditFeedbackDialogForm from './edit-feedback-dialog-form';
+import { Feedback } from '@prisma/client';
 
-const AddFeedbackDialog = () => {
+type EditFeedbackDialogProps = {
+  feedback: Feedback;
+};
+
+const EditFeedbackDialog = ({ feedback }: EditFeedbackDialogProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
@@ -20,20 +25,23 @@ const AddFeedbackDialog = () => {
       <DialogTrigger asChild>
         <Button size={'lg'}>
           <Plus className="w-3.5 h-3.5 mr-1.5" strokeWidth={3} />
-          Add feedback
+          Edit feedback
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="mb-2">
-          <DialogTitle>Create New Feedback</DialogTitle>
+          <DialogTitle>Edit Your Feedback</DialogTitle>
           <DialogDescription>
             Submit a new feature request/suggestion to improve our product.
           </DialogDescription>
         </DialogHeader>
-        <AddFeedbackDialogForm closeDialog={() => setIsDialogOpen(false)} />
+        <EditFeedbackDialogForm
+          closeDialog={() => setIsDialogOpen(false)}
+          feedback={feedback}
+        />
       </DialogContent>
     </Dialog>
   );
 };
 
-export default AddFeedbackDialog;
+export default EditFeedbackDialog;

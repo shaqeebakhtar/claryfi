@@ -97,6 +97,36 @@ export const deleteFeedback = async ({
   return deletedFeedback;
 };
 
+export const updateFeedback = async ({
+  slug,
+  feedbackId,
+  status,
+  title,
+  description,
+}: {
+  slug: string;
+  feedbackId: string;
+  status?: string;
+  title?: string;
+  description?: string;
+}) => {
+  const res = await fetch(`/api/boards/${slug}/feedback/${feedbackId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      status,
+      title,
+      description,
+    }),
+  });
+
+  const { updatedFeedback } = await res.json();
+
+  return updatedFeedback;
+};
+
 export const updateFeedbackStatus = async ({
   slug,
   feedbackId,
@@ -119,4 +149,23 @@ export const updateFeedbackStatus = async ({
   const { updatedFeedback } = await res.json();
 
   return updatedFeedback;
+};
+
+export const getFeedbackById = async ({
+  slug,
+  feedbackId,
+}: {
+  slug: string;
+  feedbackId: string;
+}) => {
+  const res = await fetch(`/api/boards/${slug}/feedback/${feedbackId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { feedback } = await res.json();
+
+  return feedback;
 };

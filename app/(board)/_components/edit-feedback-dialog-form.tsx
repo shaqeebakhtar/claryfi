@@ -20,17 +20,23 @@ import { Textarea } from '@/components/ui/textarea';
 import { feedbackSchema } from '@/validations/feedback';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { addFeedback } from '@/data-access/feedback';
+import { updateFeedback } from '@/data-access/feedback';
 import { useParams } from 'next/navigation';
 import { Loader } from 'lucide-react';
+import { Feedback } from '@prisma/client';
 
 type FeedbackDialogFormProps = {
   closeDialog: () => void;
+  feedback: Feedback;
 };
 
-const FeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
-  const { slug } = useParams() as {
+const EditFeedbackDialogForm = ({
+  closeDialog,
+  feedback,
+}: FeedbackDialogFormProps) => {
+  const { slug, feedbackId } = useParams() as {
     slug: string;
+    feedbackId: string;
   };
 
   const queryClient = useQueryClient();
@@ -38,17 +44,17 @@ const FeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
   const form = useForm<z.infer<typeof feedbackSchema>>({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: feedback.title,
+      description: feedback.description,
     },
   });
 
-  const createFeedbackMutation = useMutation({
-    mutationFn: addFeedback,
+  const editFeedbackMutation = useMutation({
+    mutationFn: updateFeedback,
     onSuccess: () => {
       closeDialog();
-      toast.success('Your feedback has been submitted');
-      queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+      toast.success('Your feedback has been updated');
+      queryClient.invalidateQueries({ queryKey: ['feedback', feedbackId] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -56,8 +62,9 @@ const FeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
   });
 
   const onSubmit = (data: z.infer<typeof feedbackSchema>) => {
-    createFeedbackMutation.mutate({
+    editFeedbackMutation.mutate({
       slug,
+      feedbackId,
       title: data.title,
       description: data.description,
     });
@@ -109,11 +116,11 @@ const FeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
               Cancel
             </Button>
           </DialogClose>
-          <Button disabled={createFeedbackMutation.isPending}>
-            {createFeedbackMutation.isPending && (
+          <Button disabled={editFeedbackMutation.isPending}>
+            {editFeedbackMutation.isPending && (
               <Loader className="w-4 h-4 mr-1.5 animate-spin" />
             )}
-            Submit
+            Update
           </Button>
         </DialogFooter>
       </form>
@@ -121,4 +128,4 @@ const FeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
   );
 };
 
-export default FeedbackDialogForm;
+export default EditFeedbackDialogForm;
