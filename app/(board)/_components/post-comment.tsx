@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { postComment } from '@/data-access/comment';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -37,11 +38,11 @@ const PostComment = () => {
 
   return (
     <div className="p-6 sm:p-8 bg-background rounded-xl shadow space-y-4">
-      <h3 className="font-bold text-base md:text-lg">Post Comment</h3>
+      <h3 className="font-semibold text-base md:text-lg">Post Comment</h3>
       <form method="POST" onSubmit={onSubmit} className="space-y-5">
         <div className="space-y-1">
           <Textarea
-            className="shadow-none bg-muted font-medium min-h-24 max-h-40 p-3"
+            className="shadow-none bg-muted/70 font-medium min-h-24 max-h-40 p-3"
             placeholder="Add your response"
             maxLength={255}
             value={comment}
@@ -74,3 +75,21 @@ const PostComment = () => {
 };
 
 export default PostComment;
+
+export const PostCommentSkeleton = () => {
+  return (
+    <div className="p-6 sm:p-8 bg-background rounded-xl shadow space-y-4">
+      <Skeleton className="w-32 h-6" />
+
+      <div className="space-y-5">
+        <div className="space-y-1">
+          <Skeleton className="h-24 w-full" />
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <Skeleton className="w-32 h-4" />
+          <Skeleton className="w-48 h-10 rounded-lg" />
+        </div>
+      </div>
+    </div>
+  );
+};

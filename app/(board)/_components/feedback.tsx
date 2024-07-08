@@ -153,7 +153,7 @@ export default FeedbackCard;
 
 export const FeedbackCardSkeleton = () => {
   return (
-    <li className="group relative">
+    <li className="group relative list-none">
       <div className="p-8 bg-background rounded-xl shadow transition-all hover:shadow-md flex flex-col md:flex-row md:items-start justify-between gap-5 md:gap-8 relative">
         <Skeleton className="w-12 h-16 rounded-lg hidden md:block" />
         <div className="space-y-3 md:space-y-1 w-full">

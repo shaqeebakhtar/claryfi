@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ReplyIcon, Trash2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { formatDistance, subDays } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Comment = ({ comment }: { comment: TComment }) => {
   const { slug, feedbackId } = useParams() as {
@@ -18,9 +19,6 @@ const Comment = ({ comment }: { comment: TComment }) => {
     mutationFn: deleteComment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', feedbackId] });
-    },
-    onError: (error) => {
-      console.log(error);
     },
   });
 
@@ -73,3 +71,26 @@ const Comment = ({ comment }: { comment: TComment }) => {
 };
 
 export default Comment;
+
+export const CommentSkeleton = () => {
+  return (
+    <li className="pt-6 space-y-2 list-none">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Skeleton className="w-10 h-10 rounded-full" />
+
+          <div className="space-y-0.5">
+            <Skeleton className="w-16 h-5" />
+            <Skeleton className="w-24 h-4" />
+          </div>
+        </div>
+        <div className="flex space-x-3">
+          <Skeleton className="w-16 h-8" />
+          <Skeleton className="w-10 h-8" />
+        </div>
+      </div>
+      <Skeleton className="w-full sm:w-[calc(100%-56px)] h-4 sm:ml-14" />
+      <Skeleton className="w-1/2 h-4 sm:ml-14" />
+    </li>
+  );
+};
