@@ -20,7 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import { boardSchema } from '@/validations/board';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -41,7 +41,7 @@ const BoardName = () => {
     },
   });
 
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
 
   const { data: boardName, isPending: boardNamePending } = useQuery({
     queryKey: ['board-details', slug],

@@ -11,10 +11,9 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { deleteBoard } from '@/data-access/board';
-import { QueryClient, useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { toast } from 'sonner';
 
 const DeleteBoardDialog = () => {
@@ -22,7 +21,7 @@ const DeleteBoardDialog = () => {
 
   const router = useRouter();
 
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
 
   const deleteBoardMutation = useMutation({
     mutationFn: deleteBoard,

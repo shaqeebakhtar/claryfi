@@ -46,9 +46,10 @@ model Board {
   slug   String @unique
   userId String
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
   feedbacks Feedback[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([slug, userId])
 }
@@ -63,9 +64,11 @@ model Feedback {
   boardId String
   board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
+  upvotes  Upvote[]
+  comments Comment[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  upvotes   Upvote[]
 }
 
 enum Status {
@@ -89,4 +92,17 @@ model Upvote {
   @@unique([upvoterId, upvotedFeedbackId])
   @@index([upvoterId])
   @@index([upvotedFeedbackId])
+}
+
+model Comment {
+  id String @id @default(cuid())
+
+  content String @db.Text
+  userId  String
+
+  feedbackId String
+  feedback   Feedback @relation(fields: [feedbackId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
