@@ -14,7 +14,7 @@ const BackButton = ({}: BackButtonProps) => {
     <Button
       variant={'ghost'}
       className="font-semibold p-0 group hover:underline"
-      onClick={() => router.push(`/b/${slug}`)}
+      onClick={() => router.back()}
     >
       <div
         className={cn(
