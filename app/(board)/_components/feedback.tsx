@@ -18,6 +18,7 @@ type FeedbackCardProps = {
     upvotes: Upvote[];
     _count: {
       upvotes: number;
+      comments: number;
     };
   };
 };
@@ -133,7 +134,9 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
           <div className="flex items-center gap-5">
             <div className="flex items-center gap-1">
               <MessageCircle className="w-5 h-5 text-muted-foreground" />
-              <span className="font-semibold text-sm md:text-base">12</span>
+              <span className="font-semibold text-sm md:text-base">
+                {feedback._count.comments ?? '0'}
+              </span>
             </div>
             {canEdit && (
               <FeedbackDropdownMenu

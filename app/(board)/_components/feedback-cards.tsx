@@ -39,6 +39,7 @@ const FeedbackCards = () => {
             upvotes: Upvote[];
             _count: {
               upvotes: number;
+              comments: number;
             };
           }
         ) => (

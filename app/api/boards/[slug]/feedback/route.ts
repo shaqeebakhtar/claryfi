@@ -85,6 +85,7 @@ export const GET = async (
       _count: {
         select: {
           upvotes: true,
+          comments: true,
         },
       },
     },
