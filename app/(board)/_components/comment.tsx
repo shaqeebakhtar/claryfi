@@ -4,14 +4,19 @@ import { Comment as TComment } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ReplyIcon, Trash2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { formatDistance, subDays } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUser } from '@clerk/nextjs';
+import { useEffect, useState } from 'react';
 
 const Comment = ({ comment }: { comment: TComment }) => {
+  const [isCommentor, setIsCommentor] = useState(false);
   const { slug, feedbackId } = useParams() as {
     slug: string;
     feedbackId: string;
   };
+
+  const { user } = useUser();
 
   const queryClient = useQueryClient();
 
@@ -21,6 +26,10 @@ const Comment = ({ comment }: { comment: TComment }) => {
       queryClient.invalidateQueries({ queryKey: ['comments', feedbackId] });
     },
   });
+
+  useEffect(() => {
+    setIsCommentor(comment.userId === user?.id);
+  }, [user, comment]);
 
   return (
     <li className="pt-6 space-y-2">
@@ -47,20 +56,22 @@ const Comment = ({ comment }: { comment: TComment }) => {
             <ReplyIcon className="w-4 h-4 mr-1.5" strokeWidth={2.5} />
             Reply
           </Button>
-          <Button
-            size={'sm'}
-            variant={'ghost'}
-            className="text-destructive hover:bg-destructive/10"
-            onClick={() =>
-              deleteCommentMutation.mutate({
-                slug,
-                feedbackId,
-                commentId: comment.id,
-              })
-            }
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
+          {isCommentor && (
+            <Button
+              size={'sm'}
+              variant={'ghost'}
+              className="text-destructive hover:bg-destructive/10"
+              onClick={() =>
+                deleteCommentMutation.mutate({
+                  slug,
+                  feedbackId,
+                  commentId: comment.id,
+                })
+              }
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
       <p className="text-sm text-muted-foreground sm:ml-14">
