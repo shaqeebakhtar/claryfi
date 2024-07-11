@@ -47,7 +47,7 @@ export const deleteComment = async ({
   );
 
   if (!res.ok) {
-    throw new Error('Failed to post the comment');
+    throw new Error('Failed to delete the comment');
   }
 
   return await res.json();

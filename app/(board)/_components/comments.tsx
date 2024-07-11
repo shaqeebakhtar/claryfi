@@ -45,7 +45,7 @@ const Comments = () => {
       <h3 className="font-semibold text-base md:text-lg">
         {comments.length} Comment{comments.length !== 1 && 's'}
       </h3>
-      <ul className="divide-y-2 space-y-6">
+      <ul className="divide-y-2 divide-muted space-y-8">
         {comments.map((comment: TComment) => (
           <Comment key={comment.id} comment={comment} />
         ))}
@@ -60,7 +60,7 @@ export const CommentsSkeleton = () => {
   return (
     <div className="p-6 sm:p-8 bg-background rounded-xl shadow space-y-2">
       <Skeleton className="w-32 h-6" />
-      <ul className="divide-y-2 space-y-6">
+      <ul className="divide-y-2 divide-muted space-y-8">
         {[...Array(3)].map((_, index) => (
           <CommentSkeleton key={index} />
         ))}

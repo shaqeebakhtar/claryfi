@@ -100,8 +100,24 @@ model Comment {
   content String @db.Text
   userId  String
 
+  replies Reply[]
+
   feedbackId String
-  feedback   Feedback @relation(fields: [feedbackId], references: [id])
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reply {
+  id String @id @default(cuid())
+
+  content String @db.Text
+  userId  String
+  replyTo String
+
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

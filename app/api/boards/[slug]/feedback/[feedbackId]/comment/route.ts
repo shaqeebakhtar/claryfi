@@ -85,6 +85,9 @@ export const GET = async (
     orderBy: {
       createdAt: 'desc',
     },
+    include: {
+      replies: true,
+    },
   });
 
   return Response.json({ comments }, { status: 200 });
