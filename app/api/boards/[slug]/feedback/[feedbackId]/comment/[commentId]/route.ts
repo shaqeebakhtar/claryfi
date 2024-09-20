@@ -1,5 +1,5 @@
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
 
 export const PATCH = async (
   req: Request,
@@ -8,12 +8,12 @@ export const PATCH = async (
   }: { params: { slug: string; feedbackId: string; commentId: string } }
 ) => {
   const { slug, feedbackId, commentId } = params;
-  const { userId } = auth();
+  const session = await auth();
 
   const body = await req.json();
   const { content } = body;
 
-  if (!userId) {
+  if (!session?.user.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -30,7 +30,7 @@ export const PATCH = async (
   const comment = await db.comment.findFirst({
     where: {
       id: commentId,
-      userId,
+      userId: session.user.id,
       feedbackId,
     },
   });
@@ -45,7 +45,7 @@ export const PATCH = async (
     updatedComment = await db.comment.update({
       where: {
         id: commentId,
-        userId,
+        userId: session.user.id,
         feedbackId,
       },
       data: {
@@ -66,9 +66,9 @@ export const DELETE = async (
   }: { params: { slug: string; feedbackId: string; commentId: string } }
 ) => {
   const { slug, feedbackId, commentId } = params;
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -98,7 +98,7 @@ export const DELETE = async (
     comment = await db.comment.delete({
       where: {
         id: commentId,
-        userId,
+        userId: session.user.id,
       },
     });
   } catch (error) {

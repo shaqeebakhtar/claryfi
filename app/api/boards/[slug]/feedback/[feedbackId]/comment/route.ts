@@ -1,17 +1,17 @@
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
 
 export const POST = async (
   req: Request,
   { params }: { params: { slug: string; feedbackId: string } }
 ) => {
   const { slug, feedbackId } = params;
-  const { userId } = auth();
+  const session = await auth();
 
   const body = await req.json();
   const { content } = body;
 
-  if (!userId) {
+  if (!session?.user.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -42,7 +42,7 @@ export const POST = async (
       data: {
         feedbackId,
         content,
-        userId,
+        userId: session.user.id,
       },
     });
   } catch (error) {

@@ -1,6 +1,6 @@
 import { feedbackSchema } from '@/validations/feedback';
-import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 export const POST = async (
   req: Request,
@@ -8,9 +8,9 @@ export const POST = async (
 ) => {
   const body = await req.json();
   const slug = params.slug;
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user?.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -40,7 +40,7 @@ export const POST = async (
         boardId: board.id,
         title,
         description,
-        submittedBy: userId,
+        submittedBy: session.user.id,
       },
     });
   } catch (error) {

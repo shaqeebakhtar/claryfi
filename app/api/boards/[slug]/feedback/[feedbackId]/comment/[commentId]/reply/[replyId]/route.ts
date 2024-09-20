@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 export const DELETE = async (
@@ -15,9 +15,9 @@ export const DELETE = async (
   }
 ) => {
   const { slug, feedbackId, commentId, replyId } = params;
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -57,7 +57,7 @@ export const DELETE = async (
     deletedReply = await db.reply.delete({
       where: {
         id: replyId,
-        userId,
+        userId: session.user.id,
       },
     });
   } catch (error) {

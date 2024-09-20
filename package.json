@@ -13,7 +13,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@clerk/nextjs": "^5.1.6",
+    "@auth/prisma-adapter": "^2.5.0",
     "@hookform/resolvers": "^3.6.0",
     "@prisma/client": "5.15.0",
     "@radix-ui/react-avatar": "^1.1.0",
@@ -31,6 +31,7 @@
     "date-fns": "^3.6.0",
     "lucide-react": "^0.394.0",
     "next": "14.2.3",
+    "next-auth": "5.0.0-beta.21",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",

@@ -6,10 +6,10 @@ import { ReplyIcon, Trash2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { formatDistance } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import PostReply from './post-reply';
 import Reply from './reply';
+import { useSession } from 'next-auth/react';
 
 const Comment = ({
   comment,
@@ -25,7 +25,7 @@ const Comment = ({
     feedbackId: string;
   };
 
-  const { user } = useUser();
+  const { data: session } = useSession();
 
   const queryClient = useQueryClient();
 
@@ -37,8 +37,8 @@ const Comment = ({
   });
 
   useEffect(() => {
-    setIsCommentor(comment.userId === user?.id);
-  }, [user, comment]);
+    setIsCommentor(comment.userId === session?.user?.id);
+  }, [session?.user, comment]);
 
   return (
     <li className="pt-8 space-y-3">

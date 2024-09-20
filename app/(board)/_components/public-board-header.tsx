@@ -4,15 +4,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 import UserProfileDropdown from '@/components/user-profile-dropdown';
 import { getBoardDetailsBySlug } from '@/data-access/board';
 import { cn } from '@/lib/utils';
-import { useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 const PublicBoardHeader = () => {
   const { slug } = useParams() as { slug?: string };
 
-  const { user, isLoaded: userLoaded } = useUser();
+  const { data: session } = useSession();
 
   const { data: boardName, isPending } = useQuery({
     queryKey: ['board-details', slug],
@@ -37,7 +37,7 @@ const PublicBoardHeader = () => {
               </div>
             )
           )}
-          {userLoaded && user ? (
+          {session?.user ? (
             <UserProfileDropdown />
           ) : (
             <div className="space-x-2">

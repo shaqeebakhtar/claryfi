@@ -1,13 +1,13 @@
 import { boardSchema } from '@/validations/board';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/lib/auth';
 
 export const POST = async (req: Request) => {
   const body = await req.json();
 
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -26,7 +26,7 @@ export const POST = async (req: Request) => {
       data: {
         name,
         slug,
-        userId,
+        userId: session?.user.id,
       },
     });
   } catch (error) {
@@ -42,15 +42,15 @@ export const POST = async (req: Request) => {
 };
 
 export const GET = async (req: Request) => {
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session) {
     return new Response('Unauthorized', { status: 401 });
   }
 
   const boards = await db.board.findMany({
     where: {
-      userId,
+      userId: session?.user.id,
     },
     include: {
       _count: {

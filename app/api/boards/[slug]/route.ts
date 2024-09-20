@@ -1,6 +1,6 @@
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { boardSchema } from '@/validations/board';
-import { auth } from '@clerk/nextjs/server';
 
 export const GET = async (
   req: Request,
@@ -8,16 +8,16 @@ export const GET = async (
 ) => {
   const slug = params.slug;
 
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user?.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
   const board = await db.board.findUnique({
     where: {
       slug,
-      userId,
+      userId: session?.user?.id,
     },
   });
 
@@ -73,9 +73,9 @@ export const DELETE = async (
 ) => {
   const slug = params.slug;
 
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user?.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -86,7 +86,7 @@ export const DELETE = async (
       where: {
         slug_userId: {
           slug,
-          userId,
+          userId: session?.user.id,
         },
       },
     });

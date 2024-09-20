@@ -1,13 +1,13 @@
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
 
 export const POST = async (
   req: Request,
   { params }: { params: { slug: string; feedbackId: string } }
 ) => {
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -23,7 +23,7 @@ export const POST = async (
 
   const upvoted = await db.upvote.create({
     data: {
-      upvoterId: userId,
+      upvoterId: session.user.id,
       upvotedFeedbackId: params.feedbackId,
     },
     include: {
@@ -38,9 +38,9 @@ export const DELETE = async (
   req: Request,
   { params }: { params: { slug: string; feedbackId: string } }
 ) => {
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -57,7 +57,7 @@ export const DELETE = async (
   const unvoted = await db.upvote.delete({
     where: {
       upvoterId_upvotedFeedbackId: {
-        upvoterId: userId,
+        upvoterId: session.user.id,
         upvotedFeedbackId: params.feedbackId,
       },
     },

@@ -2,7 +2,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { undovoteFeedback, upvoteFeedback } from '@/data-access/feedback';
 import { cn } from '@/lib/utils';
-import { useUser } from '@clerk/nextjs';
 import { Feedback, Upvote } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChevronUp, MessageCircle } from 'lucide-react';
@@ -11,6 +10,7 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import FeedbackStatus from './feedback-status';
+import { useSession } from 'next-auth/react';
 
 type AdminFeedbackCardProps = {
   feedback: Feedback & {
@@ -26,7 +26,7 @@ const AdminFeedbackCard = ({ feedback }: AdminFeedbackCardProps) => {
   const [upvoted, setUpvoted] = useState<boolean>(false);
   const [upvotes, setUpvotes] = useState<number>(feedback._count.upvotes);
 
-  const { user } = useUser();
+  const { data: session } = useSession();
 
   const queryClient = useQueryClient();
 
@@ -52,10 +52,10 @@ const AdminFeedbackCard = ({ feedback }: AdminFeedbackCardProps) => {
 
   useEffect(() => {
     const hasUpvoted = feedback.upvotes.some(
-      (upvote) => upvote.upvoterId === user?.id
+      (upvote) => upvote.upvoterId === session?.user?.id
     );
     setUpvoted(hasUpvoted);
-  }, [feedback.upvotes, user?.id]);
+  }, [feedback.upvotes, session?.user?.id]);
 
   const handleUpvoteAndUndovote = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>

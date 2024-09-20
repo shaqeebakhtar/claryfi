@@ -1,12 +1,12 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/lib/auth';
 import BoardDisplayGrid from './_components/board-display-grid';
 import CreateBoardDialog from './_components/create-board-dialog';
 import { redirect } from 'next/navigation';
 
-const Dashboard = () => {
-  const { userId } = auth();
+const Dashboard = async () => {
+  const session = await auth();
 
-  if (!userId) {
+  if (!session?.user) {
     redirect('/login');
   }
 

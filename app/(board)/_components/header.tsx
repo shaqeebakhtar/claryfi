@@ -5,9 +5,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import UserProfileDropdown from '@/components/user-profile-dropdown';
 import { getBoardDetailsBySlug } from '@/data-access/board';
 import { cn } from '@/lib/utils';
-import { useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
 import { Eye } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { notFound, redirect, useParams, usePathname } from 'next/navigation';
 
@@ -15,9 +15,9 @@ const AdminDashboardHeader = () => {
   const pathname = usePathname();
   const { slug } = useParams() as { slug?: string };
 
-  const { user, isLoaded: userLoaded } = useUser();
+  const { data: session } = useSession();
 
-  if (!user && userLoaded) {
+  if (!session?.user) {
     redirect(`/login?next=/b/${slug}/admin`);
   }
 

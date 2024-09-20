@@ -13,8 +13,8 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getBoardBySlug } from '@/data-access/board';
-import { useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { notFound, redirect } from 'next/navigation';
 
 type BoardAdminDashboardProps = {
@@ -22,9 +22,9 @@ type BoardAdminDashboardProps = {
 };
 
 const BoardAdminDashboard = ({ params }: BoardAdminDashboardProps) => {
-  const { user, isLoaded } = useUser();
+  const { data: session } = useSession();
 
-  if (!user && isLoaded) {
+  if (!session?.user) {
     redirect(`/login?next=/b/${params.slug}/admin`);
   }
 

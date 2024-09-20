@@ -1,6 +1,6 @@
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { feedbackSchema } from '@/validations/feedback';
-import { auth } from '@clerk/nextjs/server';
 
 export const GET = async (
   req: Request,
@@ -52,9 +52,9 @@ export const PATCH = async (
   const body = await req.json();
   const { slug, feedbackId } = params;
 
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -81,7 +81,7 @@ export const PATCH = async (
     return Response.json('Board not found', { status: 404 });
   }
 
-  const isAdmin = board.userId === userId;
+  const isAdmin = board.userId === session.user.id;
 
   try {
     if (status && isAdmin) {
@@ -97,7 +97,7 @@ export const PATCH = async (
       updatedFeedback = await db.feedback.update({
         where: {
           id: feedbackId,
-          submittedBy: userId,
+          submittedBy: session.user.id,
         },
         data: {
           title,
@@ -123,9 +123,9 @@ export const DELETE = async (
 ) => {
   const { slug, feedbackId } = params;
 
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) {
+  if (!session) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
@@ -133,7 +133,7 @@ export const DELETE = async (
     where: {
       slug_userId: {
         slug,
-        userId,
+        userId: session.user.id,
       },
     },
   });
@@ -153,7 +153,7 @@ export const DELETE = async (
       deletedFeedback = await db.feedback.delete({
         where: {
           id: feedbackId,
-          submittedBy: userId,
+          submittedBy: session.user.id,
         },
       });
     }

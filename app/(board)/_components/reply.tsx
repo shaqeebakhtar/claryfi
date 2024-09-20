@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import PostReply from './post-reply';
 import { Reply as TReply } from '@prisma/client';
 import { formatDistance } from 'date-fns';
-import { useUser } from '@clerk/nextjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteReply } from '@/data-access/reply';
 import { useParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 type ReplyProps = {
   reply: TReply;
@@ -22,7 +22,7 @@ const Reply = ({ reply, commentId }: ReplyProps) => {
   const [isCommentor, setIsCommentor] = useState(false);
   const [showPostReply, setShowPostReply] = useState(false);
 
-  const { user } = useUser();
+  const { data: session } = useSession();
 
   const queryClient = useQueryClient();
 
@@ -34,8 +34,8 @@ const Reply = ({ reply, commentId }: ReplyProps) => {
   });
 
   useEffect(() => {
-    setIsCommentor(reply.userId === user?.id);
-  }, [user, reply]);
+    setIsCommentor(reply.userId === session?.user?.id);
+  }, [session?.user, reply]);
 
   return (
     <li className="list-none space-y-3 pl-6 sm:pl-14 pt-6">

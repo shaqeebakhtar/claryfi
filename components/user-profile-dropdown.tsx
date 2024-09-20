@@ -12,31 +12,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useClerk, useUser } from '@clerk/nextjs';
 import { CircleHelp, LogOut, MessageCircleReply, Settings } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ReactNode, useEffect, useState } from 'react';
 
 const UserProfileDropdown = () => {
   const [avatar, setAvatar] = useState<ReactNode>('');
-  const { signOut } = useClerk();
-  const { user } = useUser();
+  const { data: session } = useSession();
 
   useEffect(() => {
-    if (user?.emailAddresses[0].emailAddress) {
-      const generatedAvatar = generateAvatar(
-        user?.emailAddresses[0].emailAddress as string
-      );
+    if (session?.user?.email) {
+      const generatedAvatar = generateAvatar(session?.user?.email as string);
       setAvatar(generatedAvatar);
     }
-  }, [user]);
+  }, [session?.user]);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar>
-            <AvatarImage src={user?.imageUrl as string} />
+            <AvatarImage src={session?.user?.image as string} />
             <AvatarFallback>{avatar}</AvatarFallback>
           </Avatar>
         </Button>
@@ -48,10 +45,7 @@ const UserProfileDropdown = () => {
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1 overflow-hidden">
             <p className="text-xs text-gray-700 font-normal">Logged in as</p>
-
-            <p className="font-medium truncate">
-              {user?.emailAddresses[0].emailAddress}
-            </p>
+            <p className="font-medium truncate">{session?.user?.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -78,7 +72,7 @@ const UserProfileDropdown = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-destructive focus:text-destructive focus:bg-destructive/10"
-          onClick={() => signOut({ redirectUrl: '/login' })}
+          onClick={() => signOut({ redirectTo: '/login' })}
         >
           <LogOut className="w-4 h-4 mr-2" />
           <span className="font-normal">Log out</span>
