@@ -31,8 +31,14 @@ export const addFeedback = async ({
   return await res.json();
 };
 
-export const getFeedbacksByBoardSlug = async (slug: string) => {
-  const res = await fetch(`/api/boards/${slug}/feedback`, {
+export const getFeedbacksByBoardSlug = async ({
+  slug,
+  sortBy,
+}: {
+  slug: string;
+  sortBy: string;
+}) => {
+  const res = await fetch(`/api/boards/${slug}/feedback?sortBy=${sortBy}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

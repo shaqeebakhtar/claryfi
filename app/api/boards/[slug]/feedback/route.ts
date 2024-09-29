@@ -1,6 +1,7 @@
 import { feedbackSchema } from '@/validations/feedback';
 import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
 
 export const POST = async (
   req: Request,
@@ -56,9 +57,10 @@ export const POST = async (
 };
 
 export const GET = async (
-  req: Request,
+  req: NextRequest,
   { params }: { params: { slug: string } }
 ) => {
+  const sortBy = req.nextUrl.searchParams.get('sortBy') as string;
   const slug = params.slug;
 
   const board = await db.board.findUnique({
@@ -70,6 +72,32 @@ export const GET = async (
   if (!board) {
     return new Response('Board not found', { status: 404 });
   }
+
+  const sortOptions: Record<string, any> = {
+    'most-upvotes': {
+      upvotes: {
+        _count: 'desc',
+      },
+    },
+    'least-upvotes': {
+      upvotes: {
+        _count: 'asc',
+      },
+    },
+    'most-comments': {
+      comments: {
+        _count: 'desc',
+      },
+    },
+    'least-comments': {
+      comments: {
+        _count: 'asc',
+      },
+    },
+    latest: {
+      createdAt: 'desc',
+    },
+  };
 
   const feedbacks = await db.feedback.findMany({
     where: {
@@ -89,13 +117,7 @@ export const GET = async (
         },
       },
     },
-    orderBy: [
-      {
-        upvotes: {
-          _count: 'asc',
-        },
-      },
-    ],
+    orderBy: [sortOptions[sortBy]],
   });
 
   return Response.json({ feedbacks }, { status: 200 });

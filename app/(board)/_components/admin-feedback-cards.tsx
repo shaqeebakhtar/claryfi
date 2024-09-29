@@ -8,12 +8,12 @@ import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
 import FeedbackCard, { FeedbackCardSkeleton } from './feedback';
 
-const AdminFeedbackCards = () => {
+const AdminFeedbackCards = ({ sortBy }: { sortBy: string }) => {
   const { slug } = useParams() as { slug: string };
 
   const { data: feedbacks, isPending } = useQuery({
-    queryKey: ['feedbacks', slug],
-    queryFn: () => getFeedbacksByBoardSlug(slug),
+    queryKey: ['feedbacks', slug, sortBy],
+    queryFn: () => getFeedbacksByBoardSlug({ slug, sortBy }),
   });
 
   if (isPending) {

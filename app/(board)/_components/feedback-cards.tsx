@@ -9,12 +9,12 @@ import { notFound, useParams } from 'next/navigation';
 import AddFeedbackDialog from './add-feedback-dialog';
 import FeedbackCard, { FeedbackCardSkeleton } from './feedback';
 
-const FeedbackCards = () => {
+const FeedbackCards = ({ sortBy }: { sortBy: string }) => {
   const { slug } = useParams() as { slug: string };
 
   const { data: feedbacks, isPending } = useQuery({
-    queryKey: ['feedbacks', slug],
-    queryFn: () => getFeedbacksByBoardSlug(slug),
+    queryKey: ['feedbacks', slug, sortBy],
+    queryFn: () => getFeedbacksByBoardSlug({ slug, sortBy }),
   });
 
   if (isPending) {
