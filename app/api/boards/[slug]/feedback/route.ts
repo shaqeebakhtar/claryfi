@@ -89,6 +89,13 @@ export const GET = async (
         },
       },
     },
+    orderBy: [
+      {
+        upvotes: {
+          _count: 'asc',
+        },
+      },
+    ],
   });
 
   return Response.json({ feedbacks }, { status: 200 });

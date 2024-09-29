@@ -3,20 +3,19 @@ import Link from 'next/link';
 import OAuthLogins from '../_components/oauth-logins';
 
 export const metadata: Metadata = {
-  title: 'Create an account | Acme Inc',
+  title: 'Create an account | Claryfi',
 };
 
 const Register = () => {
   return (
     <div className="w-full max-w-sm mx-auto flex flex-col items-center">
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div className="space-y-1.5 text-center">
           <h3 className="text-2xl font-semibold font-title">
             Create your account
           </h3>
           <p className="text-sm text-muted-foreground max-w-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Reprehenderit sapiente.
+            Welcome! Get started with Claryfi in just one click
           </p>
         </div>
         <OAuthLogins />

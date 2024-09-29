@@ -20,6 +20,10 @@ export const addFeedback = async ({
     }),
   });
 
+  if (res.status === 401) {
+    throw new Error('You must need to be logged in to add feedbacks.');
+  }
+
   if (!res.ok) {
     throw new Error('Failed to create feedback');
   }
@@ -53,6 +57,14 @@ export const upvoteFeedback = async ({
       'Content-Type': 'application/json',
     },
   });
+
+  if (res.status === 401) {
+    throw new Error('You must need to be logged in to upvote.');
+  }
+
+  if (!res.ok) {
+    throw new Error('Failed to upvote the feedback');
+  }
 
   const { upvoted } = await res.json();
 

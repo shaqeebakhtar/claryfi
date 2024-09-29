@@ -13,9 +13,11 @@ import MaxWidthContainer from '@/components/max-width-container';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getFeedbackById } from '@/data-access/feedback';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { notFound, useParams } from 'next/navigation';
 
 const IndividualFeedbackPage = () => {
+  const { data: session } = useSession();
   const { slug, feedbackId } = useParams() as {
     slug: string;
     feedbackId: string;
@@ -59,7 +61,9 @@ const IndividualFeedbackPage = () => {
         <div className="space-y-5">
           <div className="flex items-center justify-between">
             <BackButton />
-            <EditFeedbackDialog feedback={feedback} />
+            {(session?.user || session?.user.id === feedback.submittedBy) && (
+              <EditFeedbackDialog feedback={feedback} />
+            )}
           </div>
           <FeedbackCard feedback={feedback} />
           <PostComment />

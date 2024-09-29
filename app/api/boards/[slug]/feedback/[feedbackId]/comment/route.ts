@@ -86,7 +86,15 @@ export const GET = async (
       createdAt: 'desc',
     },
     include: {
-      replies: true,
+      replies: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+        include: {
+          user: true,
+        },
+      },
+      user: true,
     },
   });
 

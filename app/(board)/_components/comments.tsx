@@ -1,12 +1,19 @@
 'use client';
 
-import React from 'react';
-import Comment, { CommentSkeleton } from './comment';
-import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { getCommentsByFeedbackId } from '@/data-access/comment';
-import { Comment as TComment } from '@prisma/client';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getCommentsByFeedbackId } from '@/data-access/comment';
+import {
+  Comment as TComment,
+  Reply as TReply,
+  User as TUser,
+} from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import Comment, { CommentSkeleton } from './comment';
+
+type TReplyUser = TReply & {
+  user: TUser;
+};
 
 const Comments = () => {
   const { slug, feedbackId } = useParams() as {
@@ -46,9 +53,16 @@ const Comments = () => {
         {comments.length} Comment{comments.length !== 1 && 's'}
       </h3>
       <ul className="divide-y-2 divide-muted space-y-8">
-        {comments.map((comment: TComment) => (
-          <Comment key={comment.id} comment={comment} />
-        ))}
+        {comments.map(
+          (
+            comment: TComment & {
+              replies: TReplyUser[];
+              user: TUser;
+            }
+          ) => (
+            <Comment key={comment.id} comment={comment} />
+          )
+        )}
       </ul>
     </div>
   );

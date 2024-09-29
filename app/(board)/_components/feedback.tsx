@@ -42,6 +42,8 @@ const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
     },
     onError: (error) => {
       toast.error(error.message);
+      setUpvoted(!upvoted);
+      setUpvotes((prev) => prev - 1);
     },
   });
 

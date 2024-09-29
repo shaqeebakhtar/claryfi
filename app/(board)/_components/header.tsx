@@ -12,12 +12,12 @@ import Link from 'next/link';
 import { notFound, redirect, useParams, usePathname } from 'next/navigation';
 
 const AdminDashboardHeader = () => {
+  const { data: session, status } = useSession();
+
   const pathname = usePathname();
   const { slug } = useParams() as { slug?: string };
 
-  const { data: session } = useSession();
-
-  if (!session?.user) {
+  if ((!session || !session?.user) && status !== 'loading') {
     redirect(`/login?next=/b/${slug}/admin`);
   }
 
@@ -76,17 +76,7 @@ const AdminDashboardHeader = () => {
               )
             )}
           </div>
-
-          <div className="flex items-center space-x-6">
-            <Link
-              href="#"
-              className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:block"
-              target="_blank"
-            >
-              Share feedback
-            </Link>
-            <UserProfileDropdown />
-          </div>
+          <UserProfileDropdown />
         </div>
         <nav className="flex h-11 items-center space-x-2">
           {tabs.map((tab) => {

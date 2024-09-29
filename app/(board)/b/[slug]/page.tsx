@@ -20,7 +20,7 @@ const PublicFeedbackBoard = () => {
             <SelectTrigger className="w-full sm:w-56 bg-background h-10">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent defaultValue="most-upvotes">
               <SelectItem value="most-upvotes">Most Upvotes</SelectItem>
               <SelectItem value="least-upvotes">Least Upvotes</SelectItem>
               <SelectItem value="most-comments">Most Comments</SelectItem>

@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
-import FeedbackCard, { FeedbackCardSkeleton } from './feedback';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
 import { getFeedbacksByBoardSlug } from '@/data-access/feedback';
 import { Feedback, Upvote } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
 import { FileX2 } from 'lucide-react';
 import Image from 'next/image';
+import { notFound, useParams } from 'next/navigation';
+import AddFeedbackDialog from './add-feedback-dialog';
+import FeedbackCard, { FeedbackCardSkeleton } from './feedback';
 
 const FeedbackCards = () => {
   const { slug } = useParams() as { slug: string };
@@ -27,7 +27,11 @@ const FeedbackCards = () => {
     );
   }
 
-  if (feedbacks.length === 0) {
+  if (!feedbacks) {
+    return notFound();
+  }
+
+  if (feedbacks?.length === 0) {
     return <NoFeedbacks />;
   }
 
@@ -62,13 +66,16 @@ const NoFeedbacks = () => {
         There&apos;s No Feedbacks Yet
       </h1>
       <p className="max-w-sm text-center text-sm text-muted-foreground mb-8">
-        Share this board to your users and start collecting feedbacks.
+        Be the first one to add a feedback. You can add one using &quot;Add
+        feedback&quot; button.
       </p>
+      <AddFeedbackDialog />
       <Image
         src="/people-finder.png"
         alt="No links yet"
         width={400}
         height={400}
+        className="mt-8"
       />
     </div>
   );

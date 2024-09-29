@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 type PostReplyProps = {
   commentId: string;
@@ -18,6 +19,7 @@ const PostReply = ({ commentId, replyTo, hidePostReply }: PostReplyProps) => {
     feedbackId: string;
   };
   const [reply, setReply] = useState('');
+  const [replyError, setReplyError] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -28,11 +30,15 @@ const PostReply = ({ commentId, replyTo, hidePostReply }: PostReplyProps) => {
       setReply('');
       queryClient.invalidateQueries({ queryKey: ['comments', feedbackId] });
     },
+    onError: (err) => {
+      toast.error(err.message);
+    },
   });
 
   const onSubmit = (e: any) => {
     e.preventDefault();
     if (!reply) {
+      setReplyError("Reply can't be empty.");
       return;
     } else {
       postReplyMutation.mutate({
@@ -51,13 +57,18 @@ const PostReply = ({ commentId, replyTo, hidePostReply }: PostReplyProps) => {
         onSubmit={onSubmit}
         className="flex flex-col items-end sm:flex-row sm:items-start gap-4"
       >
-        <Textarea
-          className="shadow-none bg-muted/70 font-medium resize-none min-h-24 p-3"
-          placeholder="Add your reply"
-          maxLength={255}
-          value={reply}
-          onChange={(e) => setReply(e.currentTarget.value)}
-        />
+        <div className="space-y-1 w-full">
+          <Textarea
+            className="shadow-none bg-muted/70 font-medium resize-none min-h-24 p-3"
+            placeholder="Add your reply"
+            maxLength={255}
+            value={reply}
+            onChange={(e) => setReply(e.currentTarget.value)}
+          />
+          {replyError && !reply && (
+            <p className="text-sm font-medium text-destructive">{replyError}</p>
+          )}
+        </div>
         <Button
           size={'lg'}
           type="submit"

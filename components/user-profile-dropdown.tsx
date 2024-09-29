@@ -50,7 +50,7 @@ const UserProfileDropdown = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href={`#`}>
+          <Link href={`/b/claryfi`} target="_blank">
             <DropdownMenuItem>
               <MessageCircleReply className="w-4 h-4 mr-2 text-gray-700" />
               <span className="font-normal">Share feedback</span>

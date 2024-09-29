@@ -30,7 +30,7 @@ export default function RootLayout({
           )}
         >
           {children}
-          <Toaster closeButton richColors />
+          <Toaster closeButton />
         </body>
       </Providers>
     </html>

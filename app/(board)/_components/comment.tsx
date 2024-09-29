@@ -1,21 +1,31 @@
 import { Button } from '@/components/ui/button';
-import { deleteComment } from '@/data-access/comment';
-import { Reply as TReply, Comment as TComment } from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ReplyIcon, Trash2 } from 'lucide-react';
-import { useParams } from 'next/navigation';
-import { formatDistance } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { deleteComment } from '@/data-access/comment';
+import { generateBgColors } from '@/lib/utils';
+import {
+  Comment as TComment,
+  Reply as TReply,
+  User as TUser,
+} from '@prisma/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { formatDistance } from 'date-fns';
+import { ReplyIcon, Trash2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PostReply from './post-reply';
 import Reply from './reply';
-import { useSession } from 'next-auth/react';
+
+type TReplyUser = TReply & {
+  user: TUser;
+};
 
 const Comment = ({
   comment,
 }: {
   comment: TComment & {
-    replies: TReply[];
+    replies: TReplyUser[];
+    user: TUser;
   };
 }) => {
   const [isCommentor, setIsCommentor] = useState(false);
@@ -40,15 +50,22 @@ const Comment = ({
     setIsCommentor(comment.userId === session?.user?.id);
   }, [session?.user, comment]);
 
+  const bgColor = generateBgColors(comment.user.email);
+
   return (
     <li className="pt-8 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-10 h-10 rounded-full bg-muted grid place-items-center font-semibold text-muted-foreground text-sm select-none">
-            HO
+          <div
+            className="w-10 h-10 rounded-full grid place-items-center font-semibold text-white text-sm select-none"
+            style={{ background: bgColor }}
+          >
+            {comment.user.username && comment.user.username[0].toUpperCase()}
           </div>
           <div className="space-y-0.5">
-            <h4 className="font-semibold max-w-24 truncate">John Doe</h4>
+            <h4 className="font-semibold max-w-24 lg:max-w-full truncate">
+              {comment.user.username}
+            </h4>
             <p className="text-xs text-muted-foreground font-semibold">
               {formatDistance(new Date(comment.createdAt), new Date(), {
                 addSuffix: true,
@@ -91,7 +108,7 @@ const Comment = ({
       {showPostReply && (
         <PostReply
           commentId={comment.id}
-          replyTo={comment.userId}
+          replyTo={comment.user.username as string}
           hidePostReply={() => setShowPostReply(false)}
         />
       )}

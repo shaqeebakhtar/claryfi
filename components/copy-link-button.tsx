@@ -1,5 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
+import { absoluteUrl } from '@/lib/utils';
 import { Check, Copy, Share2 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -15,7 +16,7 @@ const CopyLinkButton = ({ value }: CopyLinkButtonProps) => {
         e.preventDefault();
         e.stopPropagation();
         setCopied(true);
-        navigator.clipboard.writeText(value);
+        navigator.clipboard.writeText(absoluteUrl(value));
         setTimeout(() => setCopied(false), 3000);
       }}
       variant={'secondary'}

@@ -16,16 +16,7 @@ const NotFound = () => {
                 <span className="font-bold">Claryfi</span>
               </Link>
             </div>
-            <div className="flex items-center space-x-6">
-              <Link
-                href="#"
-                className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:block"
-                target="_blank"
-              >
-                Share feedback
-              </Link>
-              <UserProfileDropdown />
-            </div>
+            <UserProfileDropdown />
           </div>
         </div>
       </header>

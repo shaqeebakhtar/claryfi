@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const PostComment = () => {
   const { slug, feedbackId } = useParams() as {
@@ -23,6 +24,9 @@ const PostComment = () => {
       setCommentError(null);
       setComment('');
       queryClient.invalidateQueries({ queryKey: ['comments', feedbackId] });
+    },
+    onError: (err) => {
+      toast.error(err.message);
     },
   });
 
@@ -61,7 +65,7 @@ const PostComment = () => {
           <Button
             size={'lg'}
             type="submit"
-            disabled={postCommentMutation.isPending}
+            disabled={postCommentMutation.isPending || !comment}
           >
             {postCommentMutation.isPending && (
               <Loader className="w-4 h-4 mr-1.5 animate-spin" />

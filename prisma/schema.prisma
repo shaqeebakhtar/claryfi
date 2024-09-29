@@ -16,6 +16,8 @@ model User {
   image         String?
   accounts      Account[]
   boards        Board[]
+  comments      Comment[]
+  replies       Reply[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,6 +105,7 @@ model Comment {
 
   content String @db.Text
   userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   replies Reply[]
 
@@ -118,6 +121,8 @@ model Reply {
 
   content String @db.Text
   userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   replyTo String
 
   commentId String

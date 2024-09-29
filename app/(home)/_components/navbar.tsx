@@ -55,10 +55,10 @@ const Navbar = async () => {
           ) : (
             <>
               <Link
-                href="/register"
+                href="/dashboard"
                 className={cn(
                   buttonVariants({ variant: 'outline' }),
-                  'rounded-full px-6 h-9'
+                  'rounded-full px-6 h-9 hover:bg-secondary mr-2'
                 )}
               >
                 Dashboard

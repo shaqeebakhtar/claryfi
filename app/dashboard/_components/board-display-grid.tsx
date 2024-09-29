@@ -59,7 +59,13 @@ const NoBoards = () => {
         using &quot;Create Board&quot; button.
       </p>
       <CreateBoardDialog />
-      <Image src="/laziness.png" alt="No links yet" width={400} height={400} />
+      <Image
+        src="/laziness.png"
+        alt="No links yet"
+        width={400}
+        height={400}
+        className="mt-8"
+      />
     </div>
   );
 };
