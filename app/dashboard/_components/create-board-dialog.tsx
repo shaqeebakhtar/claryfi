@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,9 +8,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import CreateBoardForm from './create-board-form';
-import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import CreateBoardForm from './create-board-form';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 
 const CreateBoardDialog = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -19,10 +19,17 @@ const CreateBoardDialog = () => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button size={'lg'}>
-          <Plus className="w-3.5 h-3.5 mr-1.5" strokeWidth={3} />
-          Create Board
-        </Button>
+        <DropdownMenuItem
+          className="gap-2 p-2"
+          onSelect={(e) => e.preventDefault()}
+        >
+          <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+            <Plus className="size-4" />
+          </div>
+          <div className="text-sm font-medium text-muted-foreground">
+            Create board
+          </div>
+        </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="mb-2">

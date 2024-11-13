@@ -12,7 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { CircleHelp, LogOut, MessageCircleReply, Settings } from 'lucide-react';
+import {
+  CircleHelp,
+  CircleUserRound,
+  LogOut,
+  MessageCircleReply,
+} from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ReactNode, useEffect, useState } from 'react';
@@ -64,8 +69,8 @@ const UserProfileDropdown = () => {
           </Link>
           <Link href={`#`}>
             <DropdownMenuItem>
-              <Settings className="w-4 h-4 mr-2 text-gray-700" />
-              <span className="font-normal">Settings</span>
+              <CircleUserRound className="w-4 h-4 mr-2 text-gray-700" />
+              <span className="font-normal">Account</span>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>

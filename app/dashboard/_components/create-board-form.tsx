@@ -125,15 +125,15 @@ const CreateBoardForm = ({ closeDialog }: CreateBoardFormProps) => {
                     }}
                   />
                   <div className="absolute right-3">
-                    {/* {checkSlugExistsMutation.isPending &&
+                    {checkSlugExistsMutation.isPending &&
                       debouncedSlug.length > 1 && (
                         <Loader className="w-4 h-4 animate-spin" />
                       )}
                     {!checkSlugExistsMutation.isPending &&
                       slugExists &&
                       debouncedSlug.length > 1 && (
-                        <CircleCheck className="w-4 h-4 text-primary" />
-                      )} */}
+                        <CircleCheck className="w-4 h-4 text-green-600" />
+                      )}
                     {!checkSlugExistsMutation.isPending &&
                       !slugExists &&
                       debouncedSlug.length > 1 && (
