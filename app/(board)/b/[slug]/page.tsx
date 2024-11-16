@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import AddFeedbackDialog from '../../_components/add-feedback-dialog';
+import AddFeedbackDialog from '../../../(dashboard)/_components/add-dashboard-feedback';
 import FeedbackCards from '../../_components/feedback-cards';
 import PublicBoardHeader from '../../_components/public-board-header';
 import { useState } from 'react';

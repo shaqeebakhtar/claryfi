@@ -3,7 +3,7 @@ import Comments, { CommentsSkeleton } from '@/app/(board)/_components/comments';
 import EditFeedbackDialog from '@/app/(board)/_components/edit-feedback-dialog';
 import FeedbackCard, {
   FeedbackCardSkeleton,
-} from '@/app/(board)/_components/feedback';
+} from '@/app/(dashboard)/_components/dashboard-feedback-card';
 import PostComment, {
   PostCommentSkeleton,
 } from '@/app/(board)/_components/post-comment';

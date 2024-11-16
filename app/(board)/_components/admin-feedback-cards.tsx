@@ -6,7 +6,9 @@ import { useQuery } from '@tanstack/react-query';
 import { FileX2 } from 'lucide-react';
 import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
-import FeedbackCard, { FeedbackCardSkeleton } from './feedback';
+import FeedbackCard, {
+  FeedbackCardSkeleton,
+} from '../../(dashboard)/_components/dashboard-feedback-card';
 
 const AdminFeedbackCards = ({ sortBy }: { sortBy: string }) => {
   const { slug } = useParams() as { slug: string };

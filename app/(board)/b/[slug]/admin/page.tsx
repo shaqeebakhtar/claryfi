@@ -1,6 +1,6 @@
 'use client';
 import AdminFeedbackCards from '@/app/(board)/_components/admin-feedback-cards';
-import { FeedbackCardSkeleton } from '@/app/(board)/_components/feedback';
+import { FeedbackCardSkeleton } from '@/app/(dashboard)/_components/dashboard-feedback-card';
 import MaxWidthContainer from '@/components/max-width-container';
 import {
   Select,

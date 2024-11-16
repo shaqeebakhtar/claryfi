@@ -23,12 +23,15 @@ import { toast } from 'sonner';
 import { addFeedback } from '@/data-access/feedback';
 import { useParams } from 'next/navigation';
 import { Loader } from 'lucide-react';
+import { TextEditor } from '@/components/text-editor';
 
 type FeedbackDialogFormProps = {
   closeDialog: () => void;
 };
 
-const AddFeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
+export const AddDashboardFeedbackForm = ({
+  closeDialog,
+}: FeedbackDialogFormProps) => {
   const { slug } = useParams() as {
     slug: string;
   };
@@ -90,10 +93,11 @@ const AddFeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
               <div className="space-y-1">
                 <FormLabel>Feedback Description</FormLabel>
                 <FormControl>
-                  <Textarea
+                  {/* <Textarea
                     placeholder="Needed dark mode for better readability and reduce eye strain"
                     {...field}
-                  />
+                  /> */}
+                  <TextEditor />
                 </FormControl>
               </div>
               <FormDescription>
@@ -120,5 +124,3 @@ const AddFeedbackDialogForm = ({ closeDialog }: FeedbackDialogFormProps) => {
     </Form>
   );
 };
-
-export default AddFeedbackDialogForm;

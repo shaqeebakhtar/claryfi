@@ -31,6 +31,7 @@ const CopyLinkButton = ({ value }: CopyLinkButtonProps) => {
           <Copy className="w-4 h-4 hidden group-hover/copy:block" />
         </>
       )}
+      <span className="sr-only">Copy share link</span>
     </Button>
   );
 };

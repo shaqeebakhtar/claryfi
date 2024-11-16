@@ -61,5 +61,12 @@ export const GET = async (req: Request) => {
     },
   });
 
-  return Response.json({ boards }, { status: 200 });
+  const boardsDTO = boards.map((board) => ({
+    id: board.id,
+    name: board.name,
+    slug: board.slug,
+    _count: board._count,
+  }));
+
+  return Response.json({ boards: boardsDTO }, { status: 200 });
 };

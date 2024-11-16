@@ -6,8 +6,10 @@ import { useQuery } from '@tanstack/react-query';
 import { FileX2 } from 'lucide-react';
 import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
-import AddFeedbackDialog from './add-feedback-dialog';
-import FeedbackCard, { FeedbackCardSkeleton } from './feedback';
+import { AddDashboardFeedback } from '../../(dashboard)/_components/add-dashboard-feedback';
+import FeedbackCard, {
+  FeedbackCardSkeleton,
+} from '../../(dashboard)/_components/dashboard-feedback-card';
 
 const FeedbackCards = ({ sortBy }: { sortBy: string }) => {
   const { slug } = useParams() as { slug: string };
@@ -69,7 +71,7 @@ const NoFeedbacks = () => {
         Be the first one to add a feedback. You can add one using &quot;Add
         feedback&quot; button.
       </p>
-      <AddFeedbackDialog />
+      <AddDashboardFeedback />
       <Image
         src="/people-finder.png"
         alt="No links yet"

@@ -1,41 +1,23 @@
-import { auth } from '@/lib/auth';
-import BoardDisplayGrid from './_components/board-display-grid';
-import CreateBoardDialog from './_components/create-board-dialog';
+'use client';
+import { getBoards } from '@/data-access/board';
+import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/app-sidebar';
-import { Separator } from '@/components/ui/separator';
 
-const Dashboard = async () => {
-  const session = await auth();
+const Dashboard = () => {
+  const { data: session, status } = useSession();
+  const { data: boards, isPending } = useQuery({
+    queryKey: ['boards'],
+    queryFn: getBoards,
+  });
 
-  if (!session?.user) {
+  if (!session?.user && status !== 'loading') {
     redirect('/login');
   }
 
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="w-full flex h-16 shrink-0 items-center gap-2">
-          <div className="w-full flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1 text-muted-foreground" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <div className="w-full flex items-center justify-between">
-              <h1 className="text-2xl font-medium">My Boards</h1>
-            </div>
-          </div>
-        </header>
-        <div className="mx-auto w-full px-3 lg:px-20 flex flex-col space-y-4 py-4 pb-20">
-          <BoardDisplayGrid />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+  if (boards && !isPending) {
+    redirect(`/${boards[0].slug}`);
+  }
 };
 
 export default Dashboard;

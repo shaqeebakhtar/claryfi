@@ -9,10 +9,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
-import AddFeedbackDialogForm from './add-feedback-dialog-form';
+import { AddDashboardFeedbackForm } from './add-dashboard-feedback-form';
 import { useState } from 'react';
 
-const AddFeedbackDialog = () => {
+export const AddDashboardFeedback = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
@@ -25,15 +25,13 @@ const AddFeedbackDialog = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="mb-2">
-          <DialogTitle>Create New Feedback</DialogTitle>
+          <DialogTitle>Add New Feedback</DialogTitle>
           <DialogDescription>
             Submit a new feature request/suggestion to improve our product.
           </DialogDescription>
         </DialogHeader>
-        <AddFeedbackDialogForm closeDialog={() => setIsDialogOpen(false)} />
+        <AddDashboardFeedbackForm closeDialog={() => setIsDialogOpen(false)} />
       </DialogContent>
     </Dialog>
   );
 };
-
-export default AddFeedbackDialog;

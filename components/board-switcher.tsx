@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronsUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import CreateBoardDialog from '@/app/dashboard/_components/create-board-dialog';
 import {
@@ -19,12 +19,17 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Board } from '@prisma/client';
-import { Skeleton } from './ui/skeleton';
 import Link from 'next/link';
+import { Skeleton } from './ui/skeleton';
+import { useParams } from 'next/navigation';
 
 export function BoardSwitcher({ boards }: { boards: Board[] }) {
   const { isMobile } = useSidebar();
-  const [activeBoard, setActiveBoard] = useState(boards[0]);
+  const { slug } = useParams<{ slug: string }>();
+
+  const activeBoard = useMemo(() => {
+    return boards.find((board) => board.slug === slug);
+  }, [slug, boards]);
 
   return (
     <>
@@ -37,13 +42,13 @@ export function BoardSwitcher({ boards }: { boards: Board[] }) {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground text-sm leading-none text-center font-medium uppercase select-none">
-                  {activeBoard.name.slice(0, 2)}
+                  {activeBoard?.name.slice(0, 2)}
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {activeBoard.name}
+                    {activeBoard?.name}
                   </span>
-                  <span className="truncate text-xs">{activeBoard.slug}</span>
+                  <span className="truncate text-xs">{activeBoard?.slug}</span>
                 </div>
                 <ChevronsUpDown className="ml-auto" />
               </SidebarMenuButton>
@@ -58,13 +63,8 @@ export function BoardSwitcher({ boards }: { boards: Board[] }) {
                 Boards
               </DropdownMenuLabel>
               {boards.map((board) => (
-                <DropdownMenuItem
-                  key={board.id}
-                  onClick={() => setActiveBoard(board)}
-                  className="gap-2 p-2"
-                  asChild
-                >
-                  <Link href={'#'}>
+                <DropdownMenuItem key={board.id} className="gap-2 p-2" asChild>
+                  <Link href={`${board.slug}`}>
                     <div className="flex aspect-square size-6 items-center justify-center rounded-sm border text-xs leading-none text-center font-medium uppercase select-none">
                       {board.name.slice(0, 2)}
                     </div>
