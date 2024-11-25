@@ -12,7 +12,13 @@ import { Text } from '@tiptap/extension-text';
 import { Underline } from '@tiptap/extension-underline';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Document } from '@tiptap/extension-document';
-import { Editor, EditorContent, useEditor } from '@tiptap/react';
+import {
+  Editor,
+  EditorContent,
+  useEditor,
+  BubbleMenu,
+  isMarkActive,
+} from '@tiptap/react';
 import { useCallback } from 'react';
 import {
   BoldIcon,
@@ -27,6 +33,14 @@ import {
   UnderlineIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
 
 export const TextEditor = () => {
   const editor = useEditor({
@@ -40,8 +54,6 @@ export const TextEditor = () => {
       Italic,
       Underline,
       Link.configure({
-        openOnClick: true,
-        autolink: true,
         defaultProtocol: 'https',
       }),
       Code,
@@ -61,140 +73,196 @@ export const TextEditor = () => {
   return (
     <>
       <TextEditorMenu editor={editor} />
-      <EditorContent
-        editor={editor}
-        className="flex min-h-[80px] w-full rounded-sm border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-      />
+      <EditorContent editor={editor} />
     </>
   );
 };
 
 interface ToggleProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isActive?: boolean;
+  tooltipLabel: string;
 }
 
 export const Toggle = ({
   className,
   isActive = false,
+  tooltipLabel,
   ...props
 }: ToggleProps) => {
   const Comp = 'button';
   return (
-    <Comp
-      type="button"
-      className={cn(
-        'p-1.5 inline-flex items-center justify-center gap-2 rounded-sm text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
-        isActive &&
-          'bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary',
-        className
-      )}
-      {...props}
-    />
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Comp
+            type="button"
+            className={cn(
+              'p-1.5 inline-flex items-center justify-center gap-2 rounded-sm text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
+              isActive &&
+                'bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary',
+              className
+            )}
+            {...props}
+          />
+        </TooltipTrigger>
+        <TooltipContent className="bg-gray-400 text-white rounded-sm">
+          {tooltipLabel}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
 export const TextEditorMenu = ({ editor }: { editor: Editor }) => {
-  const setLink = useCallback(() => {
-    const previousUrl = editor?.getAttributes('link').href;
-    const url = window.prompt('URL', previousUrl);
+  const [url, setUrl] = React.useState('');
+  const [showUrlPopup, setShowUrlPopup] = React.useState(false);
 
-    // cancelled
+  const setLink = useCallback(() => {
     if (url === null) {
       return;
     }
 
-    // empty
     if (url === '') {
       editor?.chain().focus().extendMarkRange('link').unsetLink().run();
 
       return;
     }
 
-    // update link
     editor
       ?.chain()
       .focus()
       .extendMarkRange('link')
       .setLink({ href: url })
       .run();
-  }, [editor]);
+
+    setUrl('');
+    setShowUrlPopup(false);
+  }, [editor, url]);
+
+  const linkToggle = () => {
+    if (!editor.isActive('link')) {
+      editor.chain().focus().run();
+      setShowUrlPopup(true);
+    } else {
+      editor.chain().focus().unsetLink().run();
+      setShowUrlPopup(false);
+    }
+  };
 
   return (
-    <div className="flex gap-0.5 bg-accent rounded-sm rounded-b-none p-1.5">
-      <Toggle
-        aria-label="Toggle heading 1"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        isActive={editor.isActive('heading', { level: 1 })}
+    <>
+      <BubbleMenu
+        editor={editor}
+        className={cn(showUrlPopup ? 'block' : 'hidden')}
       >
-        <Heading1Icon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle heading 2"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        isActive={editor.isActive('heading', { level: 2 })}
-      >
-        <Heading2Icon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle heading 3"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        isActive={editor.isActive('heading', { level: 3 })}
-      >
-        <Heading3Icon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle bold"
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        isActive={editor.isActive('bold')}
-      >
-        <BoldIcon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle italics"
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        isActive={editor.isActive('italic')}
-      >
-        <ItalicIcon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle underline"
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-        isActive={editor.isActive('underline')}
-      >
-        <UnderlineIcon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle code"
-        onClick={() => editor.chain().focus().toggleCode().run()}
-        isActive={editor.isActive('code')}
-      >
-        <CodeIcon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle link"
-        onClick={() =>
-          !editor.isActive('link')
-            ? setLink()
-            : editor.chain().focus().unsetLink().run()
-        }
-        isActive={editor.isActive('link')}
-      >
-        <Link2Icon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle ordered list"
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        isActive={editor.isActive('orderedList')}
-      >
-        <ListOrderedIcon className="size-4" />
-      </Toggle>
-      <Toggle
-        aria-label="Toggle bullet list"
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        isActive={editor.isActive('bulletList')}
-      >
-        <ListIcon className="size-4" />
-      </Toggle>
-    </div>
+        <div className="flex items-center gap-2 bg-background px-2.5 py-2 shadow rounded">
+          <Input
+            type="url"
+            className="text-xs h-6 px-2 rounded-sm shadow-none"
+            value={url}
+            onChange={(e) => setUrl(e.currentTarget.value)}
+            autoFocus
+          />
+          <Button
+            size={'sm'}
+            className="rounded-sm h-6"
+            type="button"
+            onClick={setLink}
+            disabled={url === ''}
+          >
+            Save
+          </Button>
+        </div>
+      </BubbleMenu>
+
+      <div className="flex items-center gap-0.5 bg-accent rounded-sm p-1.5">
+        <Toggle
+          tooltipLabel="Heading 1"
+          aria-label="Toggle heading 1"
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
+          isActive={editor.isActive('heading', { level: 1 })}
+        >
+          <Heading1Icon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Heading 2"
+          aria-label="Toggle heading 2"
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          isActive={editor.isActive('heading', { level: 2 })}
+        >
+          <Heading2Icon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Heading 3"
+          aria-label="Toggle heading 3"
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          isActive={editor.isActive('heading', { level: 3 })}
+        >
+          <Heading3Icon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Bold"
+          aria-label="Toggle bold"
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          isActive={editor.isActive('bold')}
+        >
+          <BoldIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Italics"
+          aria-label="Toggle italics"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          isActive={editor.isActive('italic')}
+        >
+          <ItalicIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Underline"
+          aria-label="Toggle underline"
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          isActive={editor.isActive('underline')}
+        >
+          <UnderlineIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Code"
+          aria-label="Toggle code"
+          onClick={() => editor.chain().focus().toggleCode().run()}
+          isActive={editor.isActive('code')}
+        >
+          <CodeIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Link"
+          aria-label="Toggle link"
+          onClick={linkToggle}
+          isActive={editor.isActive('link')}
+        >
+          <Link2Icon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Ordered List"
+          aria-label="Toggle ordered list"
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          isActive={editor.isActive('orderedList')}
+        >
+          <ListOrderedIcon className="size-4" />
+        </Toggle>
+        <Toggle
+          tooltipLabel="Bullet List"
+          aria-label="Toggle bullet list"
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          isActive={editor.isActive('bulletList')}
+        >
+          <ListIcon className="size-4" />
+        </Toggle>
+      </div>
+    </>
   );
 };

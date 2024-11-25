@@ -88,18 +88,18 @@ export function NavUser({ user }: { user: { id: string } & User }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="font-medium">
                 <CircleUserRound className="w-4 h-4 mr-2 text-muted-foreground" />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="font-medium">
                 <CreditCard className="w-4 h-4 mr-2 text-muted-foreground" />
                 Billing
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-destructive focus:text-destructive focus:bg-destructive/10"
+              className="font-medium text-destructive focus:text-destructive focus:bg-destructive/10"
               onClick={() => signOut({ redirectTo: '/login' })}
             >
               <LogOut className="w-4 h-4 mr-2" />

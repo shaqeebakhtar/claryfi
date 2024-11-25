@@ -64,7 +64,7 @@ export function BoardSwitcher({ boards }: { boards: Board[] }) {
               </DropdownMenuLabel>
               {boards.map((board) => (
                 <DropdownMenuItem key={board.id} className="gap-2 p-2" asChild>
-                  <Link href={`${board.slug}`}>
+                  <Link href={`/${board.slug}`}>
                     <div className="flex aspect-square size-6 items-center justify-center rounded-sm border text-xs leading-none text-center font-medium uppercase select-none">
                       {board.name.slice(0, 2)}
                     </div>

@@ -33,3 +33,10 @@ export function generateBgColors(string: string): string {
 
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
+
+export function snakeCaseToString(snakeCase: string): string {
+  return snakeCase
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}

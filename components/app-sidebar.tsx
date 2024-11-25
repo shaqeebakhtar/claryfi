@@ -4,8 +4,11 @@ import {
   Box,
   Code,
   LifeBuoy,
+  MousePointerClick,
+  Palette,
   Send,
   Settings2,
+  Tag,
   UsersRound,
   ZapIcon,
 } from 'lucide-react';
@@ -50,19 +53,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Box,
       },
       {
+        title: 'Events',
+        url: `/${slug}/events`,
+        icon: MousePointerClick,
+      },
+      {
         title: 'Share & Embed',
         url: `/${slug}/share`,
         icon: Code,
       },
       {
-        title: 'Team',
-        url: `/${slug}/team`,
-        icon: UsersRound,
-      },
-      {
         title: 'Settings',
         url: `/${slug}/settings`,
         icon: Settings2,
+      },
+      {
+        title: 'Appearance',
+        url: `/${slug}/appearance`,
+        icon: Palette,
+      },
+      {
+        title: 'Tags',
+        url: `/${slug}/tags`,
+        icon: Tag,
+      },
+      {
+        title: 'People',
+        url: `/${slug}/people`,
+        icon: UsersRound,
       },
     ],
     navSecondary: [

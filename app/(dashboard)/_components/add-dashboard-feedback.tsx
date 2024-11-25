@@ -25,7 +25,7 @@ export const AddDashboardFeedback = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="mb-2">
-          <DialogTitle>Add New Feedback</DialogTitle>
+          <DialogTitle>Add Feedback</DialogTitle>
           <DialogDescription>
             Submit a new feature request/suggestion to improve our product.
           </DialogDescription>
