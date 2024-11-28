@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import FeedbackStatus from './feedback-status';
+import FeedbackStatus from './feedback-card-status';
 import { useSession } from 'next-auth/react';
 
 type AdminFeedbackCardProps = {
