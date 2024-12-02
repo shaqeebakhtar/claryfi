@@ -114,7 +114,7 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   // };
 
   return (
-    <div className="mt-2 p-4 sm:p-5 bg-background border rounded-md shadow-sm flex flex-col gap-4 relative">
+    <div className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative border">
       <div className="space-y-3">
         <div className="flex items-center gap-1.5">
           <div className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-600 rounded-sm">

@@ -24,7 +24,7 @@ const FeedbackCard = ({ feedback }: { feedback: Feedback }) => {
   const [upvoted, setUpvoted] = useState<boolean>(false);
 
   return (
-    <div className="p-4 sm:p-5 bg-background border rounded-md shadow-sm flex items-start gap-5 relative">
+    <div className="p-4 sm:p-5 bg-background rounded-md flex items-start gap-5 relative cursor-pointer">
       <button
         className={cn(
           'flex flex-col gap-1 items-center text-xs font-bold rounded-lg py-2 px-2.5 bg-primary/10 hover:bg-primary/20 transition-all',

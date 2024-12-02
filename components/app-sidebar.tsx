@@ -44,8 +44,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Send,
       },
       {
-        title: 'Analytics',
-        url: `/${slug}/analytics`,
+        title: 'Activity',
+        url: `/${slug}/activity`,
         icon: MousePointerClick,
       },
       {

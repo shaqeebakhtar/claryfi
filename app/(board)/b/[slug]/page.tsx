@@ -1,3 +1,4 @@
+import { AddDashboardFeedback } from '@/app/(dashboard)/_components/add-dashboard-feedback';
 import FeedbackCard from '../../_components/feedback-card';
 import RoadmapCard from '../../_components/roadmap-card';
 
@@ -109,13 +110,18 @@ const Page = () => {
   return (
     <div className="mx-auto w-full max-w-screen-lg px-2.5 lg:px-20 flex flex-col py-12">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          <div className="flex flex-col items-end mb-4">
+            <AddDashboardFeedback />
+          </div>
+          <div className="flex flex-col gap-4 lg:col-span-2">
+            {feedbacks.map((feedback, index) => (
+              <FeedbackCard feedback={feedback} key={index} />
+            ))}
+          </div>
+        </div>
         <div className="h-max flex flex-col sm:flex-row lg:flex-col gap-4 lg:sticky top-20">
           <RoadmapCard />
-        </div>
-        <div className="flex flex-col gap-4 lg:col-span-2">
-          {feedbacks.map((feedback, index) => (
-            <FeedbackCard feedback={feedback} key={index} />
-          ))}
         </div>
       </div>
     </div>

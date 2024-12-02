@@ -36,8 +36,8 @@ const UserProfileDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-lg">
+          <Avatar className="h-8 w-8 rounded-lg">
             <AvatarImage src={session?.user?.image as string} />
             <AvatarFallback>{avatar}</AvatarFallback>
           </Avatar>

@@ -11,18 +11,18 @@ const Layout = ({
 
   return (
     <>
-      <header className="sticky left-0 right-0 top-0 z-20 border-b border-gray-200 bg-white">
+      <header className="sticky left-0 right-0 top-0 z-20 border-gray-200 bg-white shadow-sm">
         <div className="flex h-16 items-center justify-between py-3 mx-auto w-full max-w-screen-lg px-3 lg:px-20">
           <div className="flex items-center gap-8">
             <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 bg-primary/10 text-primary rounded-full text-center text-sm font-medium uppercase grid items-center select-none">
+              <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg text-center text-sm font-medium uppercase grid items-center select-none">
                 {boardName.slice(0, 2)}
               </div>
               <h2 className="max-w-48 truncate font-semibold leading-5">
                 {boardName}
               </h2>
             </div>
-            <ul className="flex items-center">
+            <ul className="flex items-center gap-2">
               <li>
                 <Link
                   href={'/feedbacks'}

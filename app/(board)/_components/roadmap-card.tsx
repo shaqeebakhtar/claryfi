@@ -3,7 +3,7 @@ import React from 'react';
 
 const RoadmapCard = () => {
   return (
-    <div className="sm:flex-1 lg:flex-grow-0 p-4 sm:p-5 bg-background border rounded-md shadow-sm">
+    <div className="sm:flex-1 lg:flex-grow-0 p-4 sm:p-5 bg-background rounded-md">
       <div className="flex items-start justify-between">
         <div className="space-y-0.5">
           <h3 className="text-lg font-semibold">Roadmap</h3>

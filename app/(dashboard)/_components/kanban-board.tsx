@@ -78,7 +78,7 @@ export const KanbanBoard = ({ feedbacks }: { feedbacks: Feedback[] }) => {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="relative flex-1 h-full border rounded bg-gray-50 min-w-[320px] p-3 pt-0 overflow-y-auto"
+                  className="relative flex-1 h-full rounded-md bg-gray-50 min-w-[320px] p-3 pt-0 overflow-y-auto"
                 >
                   <div className="flex items-center space-x-2 sticky bg-gray-50 top-0 z-10 pt-3 pb-2">
                     {statusIconMap[column]}
