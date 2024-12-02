@@ -27,7 +27,7 @@ export const AddDashboardFeedback = () => {
         <DialogHeader className="mb-2">
           <DialogTitle>Add Feedback</DialogTitle>
           <DialogDescription>
-            Submit a new feature request/suggestion to improve our product.
+            Submit a new feature request/suggestion.
           </DialogDescription>
         </DialogHeader>
         <AddDashboardFeedbackForm closeDialog={() => setIsDialogOpen(false)} />

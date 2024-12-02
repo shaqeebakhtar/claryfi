@@ -24,7 +24,7 @@ const RoadmapCard = () => {
             <div className="relative inline-flex rounded-full h-2.5 w-2.5 aspect-square bg-emerald-400"></div>
             <span className="mt-0.5">Approved</span>
           </div>
-          <span className="bg-muted px-2.5 py-0.5 border rounded-full text-xs font-semibold">
+          <span className="px-2.5 py-0.5 border rounded-full text-xs font-semibold">
             2
           </span>
         </div>
@@ -33,7 +33,7 @@ const RoadmapCard = () => {
             <div className="relative inline-flex rounded-full h-2.5 w-2.5 aspect-square bg-violet-400"></div>
             <span className="mt-0.5">In Progress</span>
           </div>
-          <span className="bg-muted px-2.5 py-0.5 border rounded-full text-xs font-semibold">
+          <span className="px-2.5 py-0.5 border rounded-full text-xs font-semibold">
             5
           </span>
         </div>
@@ -42,7 +42,7 @@ const RoadmapCard = () => {
             <div className="relative inline-flex rounded-full h-2.5 w-2.5 aspect-square bg-blue-400"></div>
             <span className="mt-0.5">Done</span>
           </div>
-          <span className="bg-muted px-2.5 py-0.5 border rounded-full text-xs font-semibold">
+          <span className="px-2.5 py-0.5 border rounded-full text-xs font-semibold">
             3
           </span>
         </div>
