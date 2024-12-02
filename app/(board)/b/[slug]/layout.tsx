@@ -25,18 +25,18 @@ const Layout = ({
             <ul className="flex items-center">
               <li>
                 <Link
-                  href={'/roadmap'}
+                  href={'/feedbacks'}
                   className="cursor-pointer text-sm font-medium text-muted-foreground px-3 py-2 rounded-md hover:text-black hover:bg-muted"
                 >
-                  Roadmap
+                  Feedbacks
                 </Link>
               </li>
               <li>
                 <Link
-                  href={'/changelog'}
+                  href={'/roadmap'}
                   className="cursor-pointer text-sm font-medium text-muted-foreground px-3 py-2 rounded-md hover:text-black hover:bg-muted"
                 >
-                  Changelog
+                  Roadmap
                 </Link>
               </li>
             </ul>

@@ -1,15 +1,11 @@
 'use client';
 
 import {
-  Box,
-  Code,
   LifeBuoy,
   MousePointerClick,
-  Palette,
   Send,
   Settings2,
-  Tag,
-  UsersRound,
+  Share2,
   ZapIcon,
 } from 'lucide-react';
 import * as React from 'react';
@@ -26,10 +22,10 @@ import {
 import { getBoards } from '@/data-access/board';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
 import { BoardSwitcher, BoardSwitcherLoader } from './board-switcher';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
-import { useParams } from 'next/navigation';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: boards, isPending } = useQuery({
@@ -48,39 +44,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Send,
       },
       {
-        title: 'Changelog',
-        url: `/${slug}/changelog`,
-        icon: Box,
-      },
-      {
-        title: 'Events',
-        url: `/${slug}/events`,
+        title: 'Analytics',
+        url: `/${slug}/analytics`,
         icon: MousePointerClick,
       },
       {
-        title: 'Share & Embed',
+        title: 'Share',
         url: `/${slug}/share`,
-        icon: Code,
+        icon: Share2,
       },
       {
         title: 'Settings',
         url: `/${slug}/settings`,
         icon: Settings2,
-      },
-      {
-        title: 'Appearance',
-        url: `/${slug}/appearance`,
-        icon: Palette,
-      },
-      {
-        title: 'Tags',
-        url: `/${slug}/tags`,
-        icon: Tag,
-      },
-      {
-        title: 'People',
-        url: `/${slug}/people`,
-        icon: UsersRound,
+        items: [
+          {
+            title: 'General',
+            url: '#',
+          },
+          {
+            title: 'Appearance',
+            url: `/${slug}/appearance`,
+          },
+
+          {
+            title: 'Tags',
+            url: `/${slug}/tags`,
+          },
+        ],
       },
     ],
     navSecondary: [
