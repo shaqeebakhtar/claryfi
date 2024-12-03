@@ -18,6 +18,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenuButton,
 } from '@/components/ui/sidebar';
 import { getBoards } from '@/data-access/board';
 import { useQuery } from '@tanstack/react-query';
@@ -89,7 +90,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         {isPending ? (
           <BoardSwitcherLoader />
@@ -102,10 +103,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={navLinks.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <Button className="bg-orange-600 hover:bg-orange-600/90 mb-3">
-          <ZapIcon className="w-4 h-4 mr-2" />
-          Upgrade
-        </Button>
+        <SidebarMenuButton
+          className="bg-orange-600 hover:bg-orange-600/90 mb-3 text-white hover:text-white group-data-[state=expanded]:justify-center"
+          tooltip="Upgrade"
+        >
+          <ZapIcon />
+          <span>Upgrade</span>
+        </SidebarMenuButton>
         <Separator />
         {status === 'authenticated' ? (
           <NavUser user={session.user} />

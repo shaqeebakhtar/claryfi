@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { type LucideIcon } from 'lucide-react';
+import * as React from 'react';
 
 import {
   SidebarGroup,
@@ -25,7 +25,7 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild tooltip={item.title}>
                 <a href={item.url}>
                   <item.icon className="text-muted-foreground" />
                   <span className="font-medium">{item.title}</span>
