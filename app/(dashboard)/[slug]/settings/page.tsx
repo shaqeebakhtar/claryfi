@@ -1,3 +1,6 @@
+import BoardName from '@/app/(dashboard)/_components/board-name';
+import BoardSlug from '@/app/(dashboard)/_components/board-slug';
+import UploadLogo from '@/app/(dashboard)/_components/upload-logo';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -7,28 +10,24 @@ import {
 } from '@/components/ui/sidebar';
 import React from 'react';
 
-type Props = {};
-
-const Page = (props: Props) => {
+const Page = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="overflow-hidden h-[calc(100vh-16px)]">
         <header className="w-full flex h-16 shrink-0 items-center gap-2">
-          <div className="w-full flex items-center gap-2 px-8">
+          <div className="w-full flex items-center gap-2 px-3 lg:px-8">
             <SidebarTrigger className="-ml-1 text-muted-foreground" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-          </div>
-        </header>
-        <div className="w-full max-w-screen-xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-3 lg:px-8">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-medium">General</h1>
-              <p className="text-sm text-muted-foreground">
-                Manage your feedbacks with customizable tags
-              </p>
+            <div className="w-full flex items-center justify-between gap-4">
+              <h1 className="text-xl lg:text-2xl font-medium">General</h1>
             </div>
           </div>
+        </header>
+        <div className="w-full px-3 lg:px-8 lg:mt-4 divide-y divide-gray-100 space-y-8">
+          <UploadLogo />
+          <BoardName />
+          <BoardSlug />
         </div>
       </SidebarInset>
     </SidebarProvider>

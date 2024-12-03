@@ -76,46 +76,43 @@ const BoardName = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="rounded-lg border border-gray-200 bg-background"
+        className="xl:space-x-3 pt-8"
       >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="space-y-6 p-5 sm:p-10">
-              <div className="space-y-2">
-                <FormLabel className="text-xl font-medium">
+            <FormItem className="grid xl:grid-cols-4 space-y-0 gap-6 xl:gap-3 items-start">
+              <div className="space-y-1">
+                <FormLabel className="text-base font-medium">
                   Board Name
                 </FormLabel>
                 <FormDescription>
-                  This is the name of your board on Claryfi
+                  This is the name of your board.
                 </FormDescription>
+                <FormMessage />
               </div>
-              <FormControl>
-                <Input placeholder="My board" {...field} />
-              </FormControl>
-              <FormMessage />
+              <div className="col-span-2 flex flex-col gap-3 items-end">
+                <FormControl>
+                  <Input placeholder="My board" {...field} />
+                </FormControl>
+                <Button
+                  type="submit"
+                  className={cn(
+                    form.watch('name').trim() === currBoardName &&
+                      'bg-gray-200 shadow-none border border-gray-300 text-gray-900 cursor-not-allowed'
+                  )}
+                  disabled={form.watch('name').trim() === currBoardName}
+                >
+                  {updateBoardNameMutation.isPending && (
+                    <Loader className="w-4 h-4 mr-1.5 animate-spin" />
+                  )}
+                  Save changes
+                </Button>
+              </div>
             </FormItem>
           )}
         />
-        <div className="flex items-center justify-between space-x-4 rounded-b-lg border-t border-gray-200 bg-gray-50 p-3 sm:px-10">
-          <p className="text-sm text-muted-foreground">Max 32 characters</p>
-          <div className="shrink-0">
-            <Button
-              type="submit"
-              className={cn(
-                form.watch('name').trim() === currBoardName &&
-                  'bg-gray-200 shadow-none border border-gray-300 text-gray-900 cursor-not-allowed'
-              )}
-              disabled={form.watch('name').trim() === currBoardName}
-            >
-              {updateBoardNameMutation.isPending && (
-                <Loader className="w-4 h-4 mr-1.5 animate-spin" />
-              )}
-              Save changes
-            </Button>
-          </div>
-        </div>
       </form>
     </Form>
   );

@@ -23,11 +23,11 @@ const Page = () => {
       <AppSidebar />
       <SidebarInset className="overflow-hidden h-[calc(100vh-16px)]">
         <header className="w-full flex h-16 shrink-0 items-center gap-2">
-          <div className="w-full flex items-center gap-2 px-8">
+          <div className="w-full flex items-center gap-2 px-3 lg:px-8">
             <SidebarTrigger className="-ml-1 text-muted-foreground" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <div className="w-full flex items-center justify-between gap-4">
-              <h1 className="text-2xl font-medium">Tags</h1>
+              <h1 className="text-xl lg:text-2xl font-medium">Tags</h1>
               <CreateTag />
             </div>
           </div>
