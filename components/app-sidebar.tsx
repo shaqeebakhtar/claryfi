@@ -61,16 +61,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: 'General',
-            url: '#',
+            url: `/${slug}/settings`,
           },
           {
             title: 'Appearance',
-            url: `/${slug}/appearance`,
+            url: `/${slug}/settings/appearance`,
           },
 
           {
             title: 'Tags',
-            url: `/${slug}/tags`,
+            url: `/${slug}/settings/tags`,
           },
         ],
       },

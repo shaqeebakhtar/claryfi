@@ -143,23 +143,23 @@ const Page = () => {
           <div className="w-full flex items-center gap-2 px-8">
             <SidebarTrigger className="-ml-1 text-muted-foreground" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <div className="space-x-4">
-              <Link
-                target="_blank"
-                href={`/b/${slug}`}
-                className={cn(buttonVariants({ variant: 'secondary' }))}
-              >
-                <EyeIcon className="w-4 h-4 mr-2" />
-                Preview
-              </Link>
-              <CopyLinkButton value={`/b/${slug}`} />
+            <div className="w-full flex items-center justify-between">
+              <h1 className="text-2xl font-medium">Feedbacks</h1>
+              <div className="space-x-3">
+                <Link
+                  target="_blank"
+                  href={`/b/${slug}`}
+                  className={cn(buttonVariants({ variant: 'secondary' }))}
+                >
+                  <EyeIcon className="w-4 h-4 mr-2" />
+                  Preview
+                </Link>
+                <CopyLinkButton value={`/b/${slug}`} />
+                <AddDashboardFeedback />
+              </div>
             </div>
           </div>
         </header>
-        <div className="flex items-center justify-between px-3 lg:px-8 mt-2">
-          <h1 className="text-2xl font-medium">Feedbacks</h1>
-          <AddDashboardFeedback />
-        </div>
         <KanbanBoard feedbacks={feedbacks} />
       </SidebarInset>
     </SidebarProvider>

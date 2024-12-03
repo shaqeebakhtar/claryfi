@@ -1,4 +1,5 @@
 'use client';
+import { CreateTag } from '@/app/(dashboard)/_components/create-tag';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -8,7 +9,6 @@ import {
 } from '@/components/ui/sidebar';
 import { useSession } from 'next-auth/react';
 import { redirect, useParams } from 'next/navigation';
-import { CreateTag } from '../../_components/create-tag';
 
 const Page = () => {
   const { data: session, status } = useSession();
@@ -26,19 +26,13 @@ const Page = () => {
           <div className="w-full flex items-center gap-2 px-8">
             <SidebarTrigger className="-ml-1 text-muted-foreground" />
             <Separator orientation="vertical" className="mr-2 h-4" />
+            <div className="w-full flex items-center justify-between gap-4">
+              <h1 className="text-2xl font-medium">Tags</h1>
+              <CreateTag />
+            </div>
           </div>
         </header>
-        <div className="w-full max-w-screen-xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-3 lg:px-8">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-medium">Tags</h1>
-              <p className="text-sm text-muted-foreground">
-                Manage your feedbacks with customizable tags
-              </p>
-            </div>
-            <CreateTag />
-          </div>
-        </div>
+        <div className="w-full max-w-screen-xl mx-auto"></div>
       </SidebarInset>
     </SidebarProvider>
   );
