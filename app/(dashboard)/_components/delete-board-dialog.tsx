@@ -42,12 +42,13 @@ const DeleteBoardDialog = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="mb-2">
-          <DialogTitle>
+          <DialogTitle className="font-medium">
             Are you sure, you want to delete this board?
           </DialogTitle>
           <DialogDescription>
             Deleting your board will permanently delete all the feedbacks and
-            others things associated with it.
+            others things associated with it. This action cannot be undone -
+            please proceed with caution.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-end gap-2">

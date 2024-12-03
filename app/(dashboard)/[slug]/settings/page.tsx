@@ -1,3 +1,4 @@
+import DeleteBoard from '@/app/(dashboard)/_components/delete-board';
 import BoardName from '@/app/(dashboard)/_components/board-name';
 import BoardSlug from '@/app/(dashboard)/_components/board-slug';
 import UploadLogo from '@/app/(dashboard)/_components/upload-logo';
@@ -28,6 +29,7 @@ const Page = () => {
           <UploadLogo />
           <BoardName />
           <BoardSlug />
+          <DeleteBoard />
         </div>
       </SidebarInset>
     </SidebarProvider>
