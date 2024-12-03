@@ -18,18 +18,12 @@ const Page = (props: Props) => {
           <div className="w-full flex items-center gap-2 px-8">
             <SidebarTrigger className="-ml-1 text-muted-foreground" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-          </div>
-        </header>
-        <div className="w-full max-w-screen-xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-3 lg:px-8">
-            <div className="space-y-1">
+            <div className="w-full flex items-center justify-between gap-4">
               <h1 className="text-2xl font-medium">Appearance</h1>
-              <p className="text-sm text-muted-foreground">
-                Manage your feedbacks with customizable tags
-              </p>
             </div>
           </div>
-        </div>
+        </header>
+        <div className="w-full max-w-screen-xl mx-auto"></div>
       </SidebarInset>
     </SidebarProvider>
   );
