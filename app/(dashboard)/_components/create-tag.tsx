@@ -90,8 +90,6 @@ const CreateTagForm = () => {
     e.preventDefault();
 
     if (tagName === '') return;
-
-    console.log(selectedColor.tagClass, tagName);
   };
 
   return (
@@ -120,7 +118,7 @@ const CreateTagForm = () => {
               variant="outline"
               type="button"
               className={cn(
-                'justify-between font-normal',
+                'justify-between font-normal shadow-none',
                 selectedColor.name === color.name && 'ring-1 ring-ring'
               )}
               onClick={() => setSelectedColor(color)}
