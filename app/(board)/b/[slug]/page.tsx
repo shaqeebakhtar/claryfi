@@ -1,23 +1,10 @@
 'use client';
 import { AddDashboardFeedback } from '@/app/(dashboard)/_components/add-dashboard-feedback';
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import FeedbackCard from '../../_components/feedback-card';
-import RoadmapCard from '../../_components/roadmap-card';
 import { useIsClient } from '@uidotdev/usehooks';
-import { ChevronUp, PencilLineIcon, Share2Icon, XIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import FeedbackCardStatus from '../../_components/feedback-card-status';
-import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
+import { useSearchParams } from 'next/navigation';
+import FeedbackCard from '../../_components/feedback-card';
 import FeedbackDisplaySheet from '../../_components/feedback-display-sheet';
+import RoadmapCard from '../../_components/roadmap-card';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -133,7 +120,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-screen-lg px-2.5 lg:px-20 flex flex-col py-12">
+      <div className="mx-auto w-full max-w-screen-lg px-2.5 lg:px-10 flex flex-col py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
             <div className="flex flex-col items-end mb-4">
