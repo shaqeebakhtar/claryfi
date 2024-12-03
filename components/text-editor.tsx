@@ -12,6 +12,7 @@ import { Text } from '@tiptap/extension-text';
 import { Underline } from '@tiptap/extension-underline';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Document } from '@tiptap/extension-document';
+import Placeholder from '@tiptap/extension-placeholder';
 import {
   Editor,
   EditorContent,
@@ -42,7 +43,13 @@ import {
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 
-export const TextEditor = () => {
+export const TextEditor = ({
+  placeholder,
+  className,
+}: {
+  placeholder?: string;
+  className?: string;
+}) => {
   const editor = useEditor({
     extensions: [
       Heading.configure({
@@ -61,6 +68,9 @@ export const TextEditor = () => {
       OrderedList,
       ListItem,
       Document,
+      Placeholder.configure({
+        placeholder,
+      }),
     ],
     content: '',
     editable: true,
@@ -71,10 +81,10 @@ export const TextEditor = () => {
   }
 
   return (
-    <>
+    <div className="space-y-1">
       <TextEditorMenu editor={editor} />
-      <EditorContent editor={editor} />
-    </>
+      <EditorContent editor={editor} className={className} />
+    </div>
   );
 };
 

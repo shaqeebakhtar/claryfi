@@ -106,7 +106,7 @@
 /* tiptap text editor customization */
 
 .tiptap {
-  width: 100%;
+  /* width: 100%;
   min-height: 80px;
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -117,7 +117,15 @@
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.5rem; */
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
 }
 
 .tiptap:focus-visible {

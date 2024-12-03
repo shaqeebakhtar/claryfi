@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { ChevronUp, MessageCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import FeedbackCardStatus from './feedback-card-status';
+import { usePathname, useRouter } from 'next/navigation';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -22,9 +23,16 @@ type Feedback = {
 
 const FeedbackCard = ({ feedback }: { feedback: Feedback }) => {
   const [upvoted, setUpvoted] = useState<boolean>(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   return (
-    <div className="p-4 sm:p-5 bg-background rounded-md flex items-start gap-5 relative cursor-pointer">
+    <div
+      className="p-4 sm:p-5 bg-background rounded-md flex items-start gap-5 relative cursor-pointer"
+      onClick={() =>
+        router.push(`${pathname}?f=${feedback.title}`, { scroll: false })
+      }
+    >
       <button
         className={cn(
           'flex flex-col gap-1 items-center text-xs font-bold rounded-lg py-2 px-2.5 bg-primary/10 hover:bg-primary/20 transition-all',

@@ -1,6 +1,23 @@
+'use client';
 import { AddDashboardFeedback } from '@/app/(dashboard)/_components/add-dashboard-feedback';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import FeedbackCard from '../../_components/feedback-card';
 import RoadmapCard from '../../_components/roadmap-card';
+import { useIsClient } from '@uidotdev/usehooks';
+import { ChevronUp, PencilLineIcon, Share2Icon, XIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import FeedbackCardStatus from '../../_components/feedback-card-status';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
+import FeedbackDisplaySheet from '../../_components/feedback-display-sheet';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -107,24 +124,34 @@ const feedbacks: Feedback[] = [
 ];
 
 const Page = () => {
+  const searchParams = useSearchParams();
+  const feedbackId = searchParams.get('f');
+
+  const isClient = useIsClient();
+
+  if (!isClient) return null;
+
   return (
-    <div className="mx-auto w-full max-w-screen-lg px-2.5 lg:px-20 flex flex-col py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <div className="flex flex-col items-end mb-4">
-            <AddDashboardFeedback />
+    <>
+      <div className="mx-auto w-full max-w-screen-lg px-2.5 lg:px-20 flex flex-col py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
+            <div className="flex flex-col items-end mb-4">
+              <AddDashboardFeedback />
+            </div>
+            <div className="flex flex-col gap-4 lg:col-span-2">
+              {feedbacks.map((feedback, index) => (
+                <FeedbackCard feedback={feedback} key={index} />
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-4 lg:col-span-2">
-            {feedbacks.map((feedback, index) => (
-              <FeedbackCard feedback={feedback} key={index} />
-            ))}
+          <div className="h-max flex flex-col sm:flex-row lg:flex-col gap-4 lg:sticky top-20">
+            <RoadmapCard />
           </div>
-        </div>
-        <div className="h-max flex flex-col sm:flex-row lg:flex-col gap-4 lg:sticky top-20">
-          <RoadmapCard />
         </div>
       </div>
-    </div>
+      {feedbackId && <FeedbackDisplaySheet feedbackId={feedbackId} />}
+    </>
   );
 };
 

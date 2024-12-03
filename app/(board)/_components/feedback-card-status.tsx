@@ -1,4 +1,11 @@
 import { cn, snakeCaseToString } from '@/lib/utils';
+import {
+  CircleCheck,
+  CircleDashed,
+  CircleDot,
+  CircleDotDashed,
+  CircleMinus,
+} from 'lucide-react';
 import React from 'react';
 
 enum FeedbackStatus {
@@ -9,24 +16,34 @@ enum FeedbackStatus {
   CANCELLED = 'CANCELLED',
 }
 
-const FeedbackCardStatus = ({ status }: { status: string }) => {
+const statusIconMap = {
+  [FeedbackStatus.PENDING]: <CircleDashed className="size-4 text-gray-400" />,
+  [FeedbackStatus.APPROVED]: (
+    <CircleDotDashed className="size-4 text-emerald-400" />
+  ),
+  [FeedbackStatus.IN_PROGRESS]: (
+    <CircleDot className="size-4 text-violet-400" />
+  ),
+  [FeedbackStatus.DONE]: <CircleCheck className="size-4 text-blue-400" />,
+  [FeedbackStatus.CANCELLED]: <CircleMinus className="size-4 text-red-400" />,
+};
+
+const FeedbackCardStatus = ({
+  status,
+  className,
+}: {
+  status: string;
+  className?: string;
+}) => {
   return (
     <div
-      className={
-        'flex items-center gap-2.5 text-xs font-medium w-max text-muted-foreground'
-      }
+      className={cn(
+        'flex items-center gap-1.5 text-xs font-medium w-max text-muted-foreground',
+        className
+      )}
     >
-      <div
-        className={cn(
-          'relative inline-flex rounded-full h-2.5 w-2.5 aspect-square',
-          status === FeedbackStatus.PENDING && 'bg-gray-400',
-          status === FeedbackStatus.APPROVED && 'bg-emerald-400',
-          status === FeedbackStatus.IN_PROGRESS && 'bg-violet-400',
-          status === FeedbackStatus.DONE && 'bg-blue-400',
-          status === FeedbackStatus.CANCELLED && 'bg-red-400'
-        )}
-      ></div>
-      <span className="mt-0.5">{snakeCaseToString(status)}</span>
+      {statusIconMap[status as FeedbackStatus]}
+      <span>{snakeCaseToString(status)}</span>
     </div>
   );
 };

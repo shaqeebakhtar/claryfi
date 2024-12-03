@@ -161,7 +161,12 @@ export const AddDashboardFeedbackForm = ({
               <div className="space-y-1">
                 <FormLabel>Feedback Description</FormLabel>
                 <FormControl>
-                  <TextEditor />
+                  <TextEditor
+                    placeholder="Explain in detail..."
+                    className={
+                      '[&>.tiptap]:bg-gray-50 [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
+                    }
+                  />
                 </FormControl>
               </div>
               <FormDescription>
