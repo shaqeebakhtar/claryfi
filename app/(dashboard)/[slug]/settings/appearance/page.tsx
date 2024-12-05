@@ -24,7 +24,7 @@ const Page = (props: Props) => {
             </div>
           </div>
         </header>
-        <div className="w-full px-3 lg:px-8 mt-4 lg:mt-12 divide-y divide-gray-100 space-y-8">
+        <div className="w-full px-3 lg:px-8 mt-4 lg:mt-12">
           <AppearanceForm />
         </div>
       </SidebarInset>

@@ -1,7 +1,3 @@
-import DeleteBoard from '@/app/(dashboard)/_components/delete-board';
-import BoardName from '@/app/(dashboard)/_components/board-name';
-import BoardSlug from '@/app/(dashboard)/_components/board-slug';
-import UploadLogo from '@/app/(dashboard)/_components/upload-logo';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -9,7 +5,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import React from 'react';
+import GeneralSettingsForm from '../../_components/general-settings-form';
 
 const Page = () => {
   return (
@@ -25,11 +21,8 @@ const Page = () => {
             </div>
           </div>
         </header>
-        <div className="w-full px-3 lg:px-8 lg:mt-4 divide-y divide-gray-100 space-y-8">
-          <UploadLogo />
-          <BoardName />
-          <BoardSlug />
-          <DeleteBoard />
+        <div className="w-full px-3 lg:px-8 mt-4 lg:mt-12">
+          <GeneralSettingsForm />
         </div>
       </SidebarInset>
     </SidebarProvider>
