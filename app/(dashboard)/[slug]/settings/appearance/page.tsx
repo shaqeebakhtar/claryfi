@@ -1,3 +1,4 @@
+import { AppearanceForm } from '@/app/(dashboard)/_components/appearance-form';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -23,7 +24,9 @@ const Page = (props: Props) => {
             </div>
           </div>
         </header>
-        <div className="w-full max-w-screen-xl mx-auto"></div>
+        <div className="w-full px-3 lg:px-8 mt-4 lg:mt-12 divide-y divide-gray-100 space-y-8">
+          <AppearanceForm />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
