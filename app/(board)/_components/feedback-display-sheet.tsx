@@ -28,7 +28,7 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
       open={!!feedbackId}
       onOpenChange={() => router.replace(pathname, { scroll: false })}
     >
-      <SheetContent className="sm:max-w-[450px] h-auto m-3 rounded-md p-0 overflow-hidden [&>button]:hidden">
+      <SheetContent className="sm:max-w-[450px] h-auto rounded-md p-0 overflow-hidden [&>button]:hidden">
         <div className="h-full overflow-y-auto">
           <div className="sticky top-0 z-10 bg-background">
             <SheetClose asChild className="absolute right-4 top-4 rounded-full">
