@@ -27,7 +27,7 @@ export const CreateTag = () => {
           Create Tag
         </Button>
       </ModalTrigger>
-      <ModalContent className="sm:max-w-lg">
+      <ModalContent className="sm:max-w-md">
         <ModalHeader className="mb-2">
           <ModalTitle>Create tag</ModalTitle>
           <ModalDescription>
@@ -93,7 +93,7 @@ const CreateTagForm = () => {
   };
 
   return (
-    <form className="space-y-4 p-4 lg:p-0" onSubmit={handleSubmit}>
+    <form className="p-4 lg:p-0" onSubmit={handleSubmit}>
       <div className="space-y-1">
         <Label>Tag Name</Label>
         <Input
@@ -109,31 +109,27 @@ const CreateTagForm = () => {
           {tagName === '' ? 'New Tag' : tagName}
         </div>
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1 mt-2">
         <Label>Color</Label>
-        <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
+        <div className="flex flex-wrap gap-2">
           {colors.map((color) => (
-            <Button
+            <button
               key={color.name}
-              variant="outline"
               type="button"
               className={cn(
-                'justify-between font-normal shadow-none',
-                selectedColor.name === color.name && 'ring-1 ring-ring'
+                'size-10 rounded-full transition-all shadow-none hover:scale-110',
+                color.buttonClass,
+                selectedColor.name === color.name &&
+                  'ring-2 ring-offset-2 ring-offset-background ring-ring'
               )}
               onClick={() => setSelectedColor(color)}
             >
-              <span className="flex items-center space-x-2">
-                <span
-                  className={cn('w-5 h-5 rounded-full', color.buttonClass)}
-                />
-                <span>{color.name}</span>
-              </span>
-            </Button>
+              <span className="sr-only">{color.name}</span>
+            </button>
           ))}
         </div>
       </div>
-      <ModalFooter className="sm:justify-end gap-2">
+      <ModalFooter className="sm:justify-end gap-2 mt-8">
         <ModalClose asChild>
           <Button type="button" variant="secondary">
             Cancel
