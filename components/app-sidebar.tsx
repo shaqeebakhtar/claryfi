@@ -4,7 +4,7 @@ import {
   LifeBuoy,
   MousePointerClick,
   Send,
-  Settings2,
+  Settings,
   Share2,
   ZapIcon,
 } from 'lucide-react';
@@ -25,7 +25,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { BoardSwitcher, BoardSwitcherLoader } from './board-switcher';
-import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -57,22 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: 'Settings',
         url: `/${slug}/settings`,
-        icon: Settings2,
-        items: [
-          {
-            title: 'General',
-            url: `/${slug}/settings`,
-          },
-          {
-            title: 'Appearance',
-            url: `/${slug}/settings/appearance`,
-          },
-
-          {
-            title: 'Tags',
-            url: `/${slug}/settings/tags`,
-          },
-        ],
+        icon: Settings,
       },
     ],
     navSecondary: [

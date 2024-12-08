@@ -42,6 +42,9 @@ export function AppearanceForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-base font-medium">Font</FormLabel>
+              <FormDescription>
+                Set the font you want to use in your board.
+              </FormDescription>
               <div className="relative w-max">
                 <FormControl>
                   <select
@@ -58,9 +61,7 @@ export function AppearanceForm() {
                 </FormControl>
                 <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 opacity-50" />
               </div>
-              <FormDescription>
-                Set the font you want to use in your board.
-              </FormDescription>
+
               <FormMessage />
             </FormItem>
           )}
@@ -73,6 +74,9 @@ export function AppearanceForm() {
               <FormLabel className="text-base font-medium">
                 Brand Color
               </FormLabel>
+              <FormDescription>
+                Set the color you want to use in your board.
+              </FormDescription>
               <div className="relative w-max">
                 <FormControl>
                   <div className="w-[120px] flex items-center gap-2 p-1 pr-3 border border-input rounded-lg h-9">
@@ -85,9 +89,6 @@ export function AppearanceForm() {
                   </div>
                 </FormControl>
               </div>
-              <FormDescription>
-                Set the color you want to use in your board.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
