@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  LifeBuoy,
-  MousePointerClick,
-  Send,
-  Settings,
-  Share2,
-  ZapIcon,
-} from 'lucide-react';
+import { LifeBuoy, Send, Settings, ZapIcon } from 'lucide-react';
 import * as React from 'react';
 
 import { NavMain } from '@/components/nav-main';
@@ -42,16 +35,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: 'Feedbacks',
         url: `/${slug}`,
         icon: Send,
-      },
-      {
-        title: 'Activity',
-        url: `/${slug}/activity`,
-        icon: MousePointerClick,
-      },
-      {
-        title: 'Share',
-        url: `/${slug}/share`,
-        icon: Share2,
       },
       {
         title: 'Settings',
