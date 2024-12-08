@@ -5,9 +5,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import GeneralSettingsForm from '../../_components/general-settings-form';
-import { AppearanceForm } from '../../_components/appearance-form';
 import DeleteBoardDialog from '../../_components/delete-board-dialog';
+import GeneralSettingsForm from '../../_components/general-settings-form';
+import ManageTags from '../../_components/manage-tags';
 
 const Page = () => {
   return (
@@ -23,8 +23,10 @@ const Page = () => {
             </div>
           </div>
         </header>
-        <div className="max-w-xl space-y-12 px-3 lg:px-8 py-10">
+        <div className="max-w-xl space-y-12 px-3 lg:px-8 py-8">
           <GeneralSettingsForm />
+          <Separator orientation="horizontal" className="bg-gray-100" />
+          <ManageTags />
           <Separator orientation="horizontal" className="bg-gray-100" />
           <div className="space-y-4 p-4 border border-destructive rounded-lg bg-destructive/5">
             <div className="space-y-1">
