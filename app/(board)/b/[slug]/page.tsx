@@ -1,7 +1,7 @@
 'use client';
-import { AddDashboardFeedback } from '@/app/(dashboard)/_components/add-dashboard-feedback';
 import { useIsClient } from '@uidotdev/usehooks';
 import { useSearchParams } from 'next/navigation';
+import AddPublicFeedback from '../../_components/add-public-feedback';
 import FeedbackCard from '../../_components/feedback-card';
 import FeedbackDisplaySheet from '../../_components/feedback-display-sheet';
 import RoadmapCard from '../../_components/roadmap-card';
@@ -124,7 +124,7 @@ const Page = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
             <div className="flex flex-col items-end mb-4">
-              <AddDashboardFeedback />
+              <AddPublicFeedback />
             </div>
             <div className="flex flex-col gap-4 lg:col-span-2">
               {feedbacks.map((feedback, index) => (
