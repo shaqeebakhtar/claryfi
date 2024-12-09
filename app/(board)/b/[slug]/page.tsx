@@ -1,10 +1,17 @@
 'use client';
 import { useIsClient } from '@uidotdev/usehooks';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import AddPublicFeedback from '../../_components/add-public-feedback';
-import FeedbackCard from '../../_components/feedback-card';
+import FeedbackCard, {
+  FeedbackCardSkeleton,
+} from '../../_components/feedback-card';
 import FeedbackDisplaySheet from '../../_components/feedback-display-sheet';
-import RoadmapCard from '../../_components/roadmap-card';
+import RoadmapCard, {
+  RoadmapCardSkeleton,
+} from '../../_components/roadmap-card';
+import { useIsFetching, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Skeleton } from '@/components/ui/skeleton';
+import { getPublicBoardBySlug } from '@/services/open/board';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -111,12 +118,18 @@ const feedbacks: Feedback[] = [
 ];
 
 const Page = () => {
+  const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
   const feedbackId = searchParams.get('f');
 
-  const isClient = useIsClient();
+  // const isFetchingBoard = useIsFetching({
+  //   queryKey: ['board', 'open', slug],
+  // });
 
-  if (!isClient) return null;
+  const { data: board, isLoading } = useQuery({
+    queryKey: ['board', 'open', slug],
+    queryFn: () => getPublicBoardBySlug({ slug }),
+  });
 
   return (
     <>
@@ -124,16 +137,24 @@ const Page = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
             <div className="flex flex-col items-end mb-4">
-              <AddPublicFeedback />
+              {isLoading ? (
+                <Skeleton className="w-36 h-9 rounded-lg" />
+              ) : (
+                <AddPublicFeedback />
+              )}
             </div>
             <div className="flex flex-col gap-4 lg:col-span-2">
-              {feedbacks.map((feedback, index) => (
-                <FeedbackCard feedback={feedback} key={index} />
-              ))}
+              {isLoading
+                ? [...Array(6)].map((_, index) => (
+                    <FeedbackCardSkeleton key={index} />
+                  ))
+                : feedbacks.map((feedback, index) => (
+                    <FeedbackCard feedback={feedback} key={index} />
+                  ))}
             </div>
           </div>
-          <div className="h-max flex flex-col sm:flex-row lg:flex-col gap-4 lg:sticky top-20">
-            <RoadmapCard />
+          <div className="hidden h-max lg:flex flex-col sm:flex-row lg:flex-col gap-4 lg:sticky top-20">
+            {isLoading ? <RoadmapCardSkeleton /> : <RoadmapCard />}
           </div>
         </div>
       </div>

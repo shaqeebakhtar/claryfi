@@ -4,6 +4,7 @@ import { ChevronUp, MessageCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import FeedbackCardStatus from './feedback-card-status';
 import { usePathname, useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -73,3 +74,26 @@ const FeedbackCard = ({ feedback }: { feedback: Feedback }) => {
 };
 
 export default FeedbackCard;
+
+export const FeedbackCardSkeleton = () => {
+  return (
+    <div className="p-4 sm:p-5 bg-background rounded-md flex gap-6 relative cursor-pointer">
+      <div className="flex flex-col items-center justify-between">
+        <Skeleton className="w-full h-14 rounded-lg" />
+        <Skeleton className="w-8 h-6 rounded-lg" />
+      </div>
+      <div className="space-y-3">
+        <Skeleton className="w-12 h-4" />
+        <div className="space-y-0.5">
+          <Skeleton className="w-48 h-6" />
+          <Skeleton className="w-64 h-4" />
+          <Skeleton className="w-56 h-4" />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="max-w-48 h-6" />
+          <Skeleton className="max-w-48 h-6" />
+        </div>
+      </div>
+    </div>
+  );
+};

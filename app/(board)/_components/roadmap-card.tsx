@@ -1,3 +1,4 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import React from 'react';
 
@@ -52,3 +53,40 @@ const RoadmapCard = () => {
 };
 
 export default RoadmapCard;
+
+export const RoadmapCardSkeleton = () => {
+  return (
+    <div className="sm:flex-1 lg:flex-grow-0 p-4 sm:p-5 bg-background rounded-md">
+      <div className="flex items-start justify-between">
+        <div className="space-y-2.5">
+          <Skeleton className="w-24 h-4" />
+          <Skeleton className="w-36 h-4" />
+        </div>
+        <Skeleton className="w-12 h-4" />
+      </div>
+      <div className="mt-6 space-y-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5 text-sm leading-none font-medium w-max text-muted-foreground">
+            <Skeleton className="size-2.5 rounded-full" />
+            <Skeleton className="w-24 h-4" />
+          </div>
+          <Skeleton className="w-8 h-5 rounded-xl" />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5 text-sm leading-none font-medium w-max text-muted-foreground">
+            <Skeleton className="size-2.5 rounded-full" />
+            <Skeleton className="w-24 h-4" />
+          </div>
+          <Skeleton className="w-8 h-5 rounded-xl" />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5 text-sm leading-none font-medium w-max text-muted-foreground">
+            <Skeleton className="size-2.5 rounded-full" />
+            <Skeleton className="w-24 h-4" />
+          </div>
+          <Skeleton className="w-8 h-5 rounded-xl" />
+        </div>
+      </div>
+    </div>
+  );
+};
