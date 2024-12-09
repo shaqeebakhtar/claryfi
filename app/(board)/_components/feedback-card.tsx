@@ -28,23 +28,29 @@ const FeedbackCard = ({ feedback }: { feedback: Feedback }) => {
 
   return (
     <div
-      className="p-4 sm:p-5 bg-background rounded-md flex items-start gap-5 relative cursor-pointer"
+      className="group p-4 sm:p-5 bg-background rounded-md flex gap-6 relative cursor-pointer hover:shadow-sm"
       onClick={() =>
         router.push(`${pathname}?f=${feedback.title}`, { scroll: false })
       }
     >
-      <button
-        className={cn(
-          'flex flex-col gap-1 items-center text-xs font-bold rounded-lg py-2 px-2.5 bg-primary/10 hover:bg-primary/20 transition-all',
-          upvoted && 'bg-primary text-white hover:bg-primary/80'
-        )}
-      >
-        <ChevronUp
-          className={cn('size-4 text-primary', upvoted && 'text-white')}
-          strokeWidth={3}
-        />
-        <span>{feedback.upvotes}</span>
-      </button>
+      <div className="flex flex-col items-center justify-between">
+        <button
+          className={cn(
+            'flex flex-col gap-1 items-center text-xs font-bold rounded-lg py-2 px-2.5 bg-primary/10 hover:bg-primary/20 transition-all',
+            upvoted && 'bg-primary text-white hover:bg-primary/80'
+          )}
+        >
+          <ChevronUp
+            className={cn('size-4 text-primary', upvoted && 'text-white')}
+            strokeWidth={3}
+          />
+          <span>{feedback.upvotes}</span>
+        </button>
+        <div className="flex items-center gap-1">
+          <MessageCircle className="size-4 text-muted-foreground" />
+          <span className="font-semibold text-xs">{feedback.comments}</span>
+        </div>
+      </div>
       <div className="space-y-3">
         <FeedbackCardStatus status={feedback.status} />
         <div className="space-y-0.5">
