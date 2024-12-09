@@ -1,26 +1,19 @@
 'use client';
-import * as React from 'react';
+import { cn } from '@/lib/utils';
 import { Bold } from '@tiptap/extension-bold';
+import { BulletList } from '@tiptap/extension-bullet-list';
 import { Code } from '@tiptap/extension-code';
+import { Document } from '@tiptap/extension-document';
 import { Heading } from '@tiptap/extension-heading';
 import { Italic } from '@tiptap/extension-italic';
 import { Link } from '@tiptap/extension-link';
-import { BulletList } from '@tiptap/extension-bullet-list';
 import { ListItem } from '@tiptap/extension-list-item';
 import { OrderedList } from '@tiptap/extension-ordered-list';
+import { Paragraph } from '@tiptap/extension-paragraph';
+import Placeholder from '@tiptap/extension-placeholder';
 import { Text } from '@tiptap/extension-text';
 import { Underline } from '@tiptap/extension-underline';
-import { Paragraph } from '@tiptap/extension-paragraph';
-import { Document } from '@tiptap/extension-document';
-import Placeholder from '@tiptap/extension-placeholder';
-import {
-  Editor,
-  EditorContent,
-  useEditor,
-  BubbleMenu,
-  isMarkActive,
-} from '@tiptap/react';
-import { useCallback } from 'react';
+import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import {
   BoldIcon,
   CodeIcon,
@@ -29,19 +22,21 @@ import {
   Heading3Icon,
   ItalicIcon,
   Link2Icon,
+  Link2OffIcon,
   ListIcon,
   ListOrderedIcon,
   UnderlineIcon,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import * as React from 'react';
+import { useCallback } from 'react';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
 
 export const TextEditor = ({
   placeholder,
@@ -62,6 +57,9 @@ export const TextEditor = ({
       Underline,
       Link.configure({
         defaultProtocol: 'https',
+      }),
+      Link.extend({
+        inclusive: false,
       }),
       Code,
       BulletList,
@@ -161,30 +159,6 @@ export const TextEditorMenu = ({ editor }: { editor: Editor }) => {
 
   return (
     <>
-      <BubbleMenu
-        editor={editor}
-        className={cn(showUrlPopup ? 'block' : 'hidden')}
-      >
-        <div className="flex items-center gap-2 bg-background px-2.5 py-2 shadow rounded">
-          <Input
-            type="url"
-            className="text-xs h-6 px-2 rounded-sm shadow-none"
-            value={url}
-            onChange={(e) => setUrl(e.currentTarget.value)}
-            autoFocus
-          />
-          <Button
-            size={'sm'}
-            className="rounded-sm h-6"
-            type="button"
-            onClick={setLink}
-            disabled={url === ''}
-          >
-            Save
-          </Button>
-        </div>
-      </BubbleMenu>
-
       <div className="flex items-center gap-0.5 bg-accent rounded-sm p-1.5">
         <Toggle
           tooltipLabel="Heading 1"
@@ -248,14 +222,43 @@ export const TextEditorMenu = ({ editor }: { editor: Editor }) => {
         >
           <CodeIcon className="size-4" />
         </Toggle>
-        <Toggle
-          tooltipLabel="Link"
-          aria-label="Toggle link"
-          onClick={linkToggle}
-          isActive={editor.isActive('link')}
-        >
-          <Link2Icon className="size-4" />
-        </Toggle>
+        <div className="relative">
+          <div
+            className={cn(
+              'hidden items-center gap-2 bg-background px-2.5 py-2 shadow-xl rounded w-[250px] absolute bottom-full left-1/2 -translate-x-1/2 z-20',
+              showUrlPopup && 'flex'
+            )}
+          >
+            <Input
+              type="url"
+              className="text-xs h-6 px-2 rounded-sm shadow-none"
+              value={url}
+              onChange={(e) => setUrl(e.currentTarget.value)}
+              autoFocus={showUrlPopup}
+            />
+            <Button
+              size={'sm'}
+              className="rounded-sm h-6"
+              type="submit"
+              onClick={setLink}
+              disabled={url === ''}
+            >
+              Save
+            </Button>
+          </div>
+          <Toggle
+            tooltipLabel="Link"
+            aria-label="Toggle link"
+            onClick={linkToggle}
+            isActive={editor.isActive('link')}
+          >
+            {editor.isActive('link') ? (
+              <Link2OffIcon className="size-4" />
+            ) : (
+              <Link2Icon className="size-4" />
+            )}
+          </Toggle>
+        </div>
         <Toggle
           tooltipLabel="Ordered List"
           aria-label="Toggle ordered list"
