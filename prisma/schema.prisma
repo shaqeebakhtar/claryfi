@@ -61,11 +61,12 @@ model Board {
 }
 
 model Feedback {
-  id          String @id @default(cuid())
-  title       String
-  description String
-  status      Status @default(NEW)
-  submittedBy String
+  id             String @id @default(cuid())
+  title          String
+  description    String @db.Text
+  status         Status @default(PENDING)
+  submitterName  String
+  submitterEmail String
 
   boardId String
   board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
@@ -78,10 +79,11 @@ model Feedback {
 }
 
 enum Status {
-  NEW
-  CANCELLED
+  PENDING
+  APPROVED
   IN_PROGRESS
-  LIVE
+  DONE
+  CANCELLED
 }
 
 model Upvote {
