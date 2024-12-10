@@ -131,25 +131,29 @@ const Page = () => {
     queryFn: () => getPublicBoardBySlug({ slug }),
   });
 
+  console.log(board?.feedbacks);
+
   return (
     <>
       <div className="mx-auto w-full max-w-screen-lg px-2.5 lg:px-10 flex flex-col py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-semibold text-2xl">Feedbacks</h3>
+              <h3 className="font-semibold text-xl lg:text-2xl">Feedbacks</h3>
             </div>
             <div className="flex flex-col gap-4 lg:col-span-2">
               {isLoading
                 ? [...Array(6)].map((_, index) => (
                     <FeedbackCardSkeleton key={index} />
                   ))
-                : feedbacks.map((feedback, index) => (
-                    <FeedbackCard feedback={feedback} key={index} />
+                : board?.feedbacks.map((feedback, index) => (
+                    <>
+                      <FeedbackCard feedback={feedback} key={index} />
+                    </>
                   ))}
             </div>
           </div>
-          <div className="hidden h-max lg:flex flex-col sm:flex-row lg:flex-col gap-4 lg:sticky top-20">
+          <div className="h-max flex flex-col sm:flex-row lg:flex-col gap-4 lg:sticky top-20 -order-1 lg:order-1">
             {isLoading ? (
               <>
                 <Skeleton className="w-36 h-9 rounded-lg" />

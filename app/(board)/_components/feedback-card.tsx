@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import FeedbackCardStatus from './feedback-card-status';
 import { usePathname, useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Comment, Feedback, Upvote } from '@prisma/client';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -14,15 +15,14 @@ enum FeedbackStatus {
   CANCELLED = 'CANCELLED',
 }
 
-type Feedback = {
-  title: string;
-  description: string;
-  status: FeedbackStatus;
-  upvotes: number;
-  comments: number;
-};
+interface IFeedback extends Feedback {
+  _count: {
+    upvotes: number;
+    comments: number;
+  };
+}
 
-const FeedbackCard = ({ feedback }: { feedback: Feedback }) => {
+const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
   const [upvoted, setUpvoted] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -45,20 +45,23 @@ const FeedbackCard = ({ feedback }: { feedback: Feedback }) => {
             className={cn('size-4 text-primary', upvoted && 'text-white')}
             strokeWidth={3}
           />
-          <span>{feedback.upvotes}</span>
+          <span>{feedback._count.upvotes}</span>
         </button>
         <div className="flex items-center gap-1">
           <MessageCircle className="size-4 text-muted-foreground" />
-          <span className="font-semibold text-xs">{feedback.comments}</span>
+          <span className="font-semibold text-xs">
+            {feedback._count.comments}
+          </span>
         </div>
       </div>
       <div className="space-y-3">
         <FeedbackCardStatus status={feedback.status} />
         <div className="space-y-0.5">
           <h3 className="font-medium">{feedback.title}</h3>
-          <p className="text-muted-foreground text-sm line-clamp-2">
-            {feedback.description}
-          </p>
+          <div
+            className="text-muted-foreground text-sm line-clamp-2"
+            dangerouslySetInnerHTML={{ __html: feedback.description }}
+          ></div>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-600 rounded-sm">

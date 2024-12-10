@@ -159,7 +159,7 @@ const Page = () => {
   return (
     <div className="px-3 lg:px-9 overflow-x-auto max-w-screen-lg mx-auto py-12 h-[calc(100vh-64px)]">
       <div className="flex items-center justify-between mb-8">
-        <h3 className="font-semibold text-2xl">Roadmap</h3>
+        <h3 className="font-semibold text-xl lg:text-2xl">Roadmap</h3>
         <AddPublicFeedback />
       </div>
       <div className="flex gap-3">

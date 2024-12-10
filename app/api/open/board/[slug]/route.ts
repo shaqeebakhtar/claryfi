@@ -14,7 +14,16 @@ export const GET = async (
         slug,
       },
       include: {
-        feedbacks: true,
+        feedbacks: {
+          include: {
+            _count: {
+              select: {
+                upvotes: true,
+                comments: true,
+              },
+            },
+          },
+        },
       },
     });
   } catch (error) {

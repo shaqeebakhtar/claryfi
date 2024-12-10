@@ -1,12 +1,19 @@
 import { Board, Feedback } from '@prisma/client';
 
+interface IFeedback extends Feedback {
+  _count: {
+    upvotes: number;
+    comments: number;
+  };
+}
+
 export const getPublicBoardBySlug = async ({
   slug,
 }: {
   slug: string;
 }): Promise<
   Board & {
-    feedbacks: Feedback[];
+    feedbacks: IFeedback[];
   }
 > => {
   const res = await fetch(`/api/open/board/${slug}`, {
