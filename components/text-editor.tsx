@@ -37,13 +37,26 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
+import { UseFormReturn } from 'react-hook-form';
 
 export const TextEditor = ({
   placeholder,
   className,
+  form,
+  ...props
 }: {
   placeholder?: string;
   className?: string;
+  form: UseFormReturn<
+    {
+      title: string;
+      description: string;
+      name: string;
+      email: string;
+    },
+    any,
+    undefined
+  >;
 }) => {
   const editor = useEditor({
     extensions: [
@@ -70,8 +83,12 @@ export const TextEditor = ({
         placeholder,
       }),
     ],
-    content: '',
     editable: true,
+    content: '',
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      form.setValue('description', html);
+    },
   });
 
   if (!editor) {
@@ -81,7 +98,7 @@ export const TextEditor = ({
   return (
     <div className="space-y-1">
       <TextEditorMenu editor={editor} />
-      <EditorContent editor={editor} className={className} />
+      <EditorContent editor={editor} className={className} {...props} />
     </div>
   );
 };

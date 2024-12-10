@@ -9,7 +9,7 @@ export const getPublicBoardBySlug = async ({
     feedbacks: Feedback[];
   }
 > => {
-  const res = await fetch(`/api/open/boards/${slug}`, {
+  const res = await fetch(`/api/open/board/${slug}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
