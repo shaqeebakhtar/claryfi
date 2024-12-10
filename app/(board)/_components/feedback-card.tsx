@@ -54,12 +54,12 @@ const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
           </span>
         </div>
       </div>
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         <FeedbackCardStatus status={feedback.status} />
-        <div className="space-y-0.5">
+        <div className="space-y-1 mb-2">
           <h3 className="font-medium">{feedback.title}</h3>
           <div
-            className="text-muted-foreground text-sm line-clamp-2"
+            className="feedback--desc text-muted-foreground text-sm line-clamp-2"
             dangerouslySetInnerHTML={{ __html: feedback.description }}
           ></div>
         </div>

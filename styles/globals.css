@@ -105,21 +105,6 @@
 
 /* tiptap text editor customization */
 
-.tiptap {
-  /* width: 100%;
-  min-height: 80px;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  border-radius: calc(var(--radius) - 4px);
-  border-width: 1px;
-  border-color: hsl(var(--input));
-  background-color: transparent;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem; */
-}
-
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
@@ -149,43 +134,50 @@
   cursor: not-allowed;
 }
 
-.tiptap h1 {
+.tiptap h1,
+.feedback--desc h1 {
   font-weight: 700;
   font-size: 1.5rem;
   line-height: 2rem;
 }
 
-.tiptap h2 {
+.tiptap h2,
+.feedback--desc h2 {
   font-weight: 700;
   font-size: 1.25rem;
   line-height: 1.75rem;
 }
 
-.tiptap h3 {
+.tiptap h3,
+.feedback--desc h3 {
   font-weight: 700;
   font-size: 1.125rem;
   line-height: 1.75rem;
 }
 
-.tiptap a {
+.tiptap a,
+.feedback--desc a {
   color: hsl(var(--primary));
   text-underline-offset: 2px;
   text-decoration-line: underline;
   cursor: pointer;
 }
 
-.tiptap u {
+.tiptap u,
+.feedback--desc u {
   text-underline-offset: 2px;
 }
 
-.tiptap code {
+.tiptap code,
+.feedback--desc code {
   background-color: hsl(var(--primary) / 0.1);
   border-radius: calc(var(--radius) - 4px);
   font-size: 0.875rem;
   padding: 0.125rem 0.375rem;
 }
 
-.tiptap ol {
+.tiptap ol,
+.feedback--desc ol {
   display: block;
   list-style-type: decimal;
   unicode-bidi: isolate;
@@ -193,7 +185,8 @@
   margin: 0.5rem;
 }
 
-.tiptap ul {
+.tiptap ul,
+.feedback--desc ul {
   display: block;
   list-style-type: disc;
   unicode-bidi: isolate;
