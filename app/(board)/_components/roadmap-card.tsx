@@ -1,8 +1,10 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import React from 'react';
 
 const RoadmapCard = () => {
+  const { slug } = useParams<{ slug: string }>();
   return (
     <div className="sm:flex-1 lg:flex-grow-0 p-4 sm:p-5 bg-background rounded-md">
       <div className="flex items-start justify-between">
@@ -13,7 +15,7 @@ const RoadmapCard = () => {
           </p>
         </div>
         <Link
-          href={'/roadmap'}
+          href={`/b/${slug}/roadmap`}
           className="text-xs text-primary underline underline-offset-2 py-1"
         >
           View

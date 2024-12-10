@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { cn, snakeCaseToString } from '@/lib/utils';
 import { FeedbackCard } from '@/app/(dashboard)/_components/dashboard-feedback-card';
+import AddPublicFeedback from '@/app/(board)/_components/add-public-feedback';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -156,67 +157,73 @@ const Page = () => {
   });
 
   return (
-    <div className="flex gap-3 px-3 lg:px-9 overflow-x-auto max-w-screen-lg mx-auto py-12 h-[calc(100vh-64px)]">
-      {columns.map((column, index) => (
-        <div
-          className="h-full px-1 flex-1 space-y-4 overflow-y-auto"
-          key={column}
-        >
-          <div className="flex items-center space-x-2 rounded-md bg-gray-100 p-2.5 sticky top-0 z-10">
-            {statusIconMap[column]}
-            <span className="font-medium text-sm">
-              {snakeCaseToString(column)}
-            </span>
-            <span className="bg-white px-2.5 py-0.5 border rounded-full text-xs font-semibold">
-              {sortedFeedbacks[column].length}
-            </span>
-          </div>
-          <div className="space-y-2.5">
-            {sortedFeedbacks[column].map((feedback, index) => (
-              <div
-                className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative"
-                key={feedback.title}
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center gap-1.5">
-                    <div className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-600 rounded-sm">
-                      Feature
+    <div className="px-3 lg:px-9 overflow-x-auto max-w-screen-lg mx-auto py-12 h-[calc(100vh-64px)]">
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="font-semibold text-2xl">Roadmap</h3>
+        <AddPublicFeedback />
+      </div>
+      <div className="flex gap-3">
+        {columns.map((column, index) => (
+          <div
+            className="h-full px-1 flex-1 space-y-4 overflow-y-auto"
+            key={column}
+          >
+            <div className="flex items-center space-x-2 rounded-md bg-gray-100 p-2.5 sticky top-0 z-10">
+              {statusIconMap[column]}
+              <span className="font-medium text-sm">
+                {snakeCaseToString(column)}
+              </span>
+              <span className="bg-white px-2.5 py-0.5 border rounded-full text-xs font-semibold">
+                {sortedFeedbacks[column].length}
+              </span>
+            </div>
+            <div className="space-y-2.5">
+              {sortedFeedbacks[column].map((feedback, index) => (
+                <div
+                  className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative"
+                  key={feedback.title}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-1.5">
+                      <div className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-600 rounded-sm">
+                        Feature
+                      </div>
+                      <div className="text-xs font-medium px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded-sm">
+                        UI/UX
+                      </div>
                     </div>
-                    <div className="text-xs font-medium px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded-sm">
-                      UI/UX
+                    <div className="space-y-0.5">
+                      <h3 className="font-medium">{feedback.title}</h3>
+                      <p className="text-muted-foreground text-sm line-clamp-2">
+                        {feedback.description}
+                      </p>
                     </div>
                   </div>
-                  <div className="space-y-0.5">
-                    <h3 className="font-medium">{feedback.title}</h3>
-                    <p className="text-muted-foreground text-sm line-clamp-2">
-                      {feedback.description}
-                    </p>
+                  <div className="flex items-center justify-between">
+                    <button
+                      className={cn(
+                        'flex gap-1.5 items-center text-xs font-bold rounded-lg py-1.5 px-3 bg-primary/10 hover:bg-primary/20 transition-all'
+                      )}
+                    >
+                      <ChevronUp
+                        className={cn('size-4 text-primary')}
+                        strokeWidth={3}
+                      />
+                      <span>{feedback.upvotes}</span>
+                    </button>
+                    <div className="flex items-center gap-1">
+                      <MessageCircle className="size-4 text-muted-foreground" />
+                      <span className="font-semibold text-xs">
+                        {feedback.comments}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <button
-                    className={cn(
-                      'flex gap-1.5 items-center text-xs font-bold rounded-lg py-1.5 px-3 bg-primary/10 hover:bg-primary/20 transition-all'
-                    )}
-                  >
-                    <ChevronUp
-                      className={cn('size-4 text-primary')}
-                      strokeWidth={3}
-                    />
-                    <span>{feedback.upvotes}</span>
-                  </button>
-                  <div className="flex items-center gap-1">
-                    <MessageCircle className="size-4 text-muted-foreground" />
-                    <span className="font-semibold text-xs">
-                      {feedback.comments}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
