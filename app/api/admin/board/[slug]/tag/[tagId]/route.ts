@@ -2,12 +2,12 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { tagSchema } from '@/validations/tag';
 
-export const POST = async (
+export const PATCH = async (
   req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: { slug: string; tagId: string } }
 ) => {
   const body = await req.json();
-  const slug = params.slug;
+  const { tagId } = params;
   const session = await auth();
 
   if (!session?.user.id) {
@@ -20,31 +20,22 @@ export const POST = async (
     return Response.json('Invalid fields', { status: 400 });
   }
 
-  const board = await db.board.findUnique({
-    where: {
-      slug,
-      userId: session.user.id,
-    },
-  });
-
-  if (!board) {
-    return new Response('Board not found', { status: 404 });
-  }
-
   const { name, color } = validateFields.data;
 
   let tag = null;
 
   try {
-    tag = await db.tag.create({
+    tag = await db.tag.update({
+      where: {
+        id: tagId,
+      },
       data: {
-        boardId: board.id,
         name,
         color,
       },
     });
   } catch (error) {
-    return new Response('Failed to create tag', { status: 500 });
+    return new Response('Failed to update the tag', { status: 500 });
   }
 
   return Response.json(
@@ -55,41 +46,27 @@ export const POST = async (
   );
 };
 
-export const GET = async (
+export const DELETE = async (
   req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: { slug: string; tagId: string } }
 ) => {
-  const slug = params.slug;
+  const { tagId } = params;
   const session = await auth();
 
   if (!session?.user.id) {
     return Response.json('Unauthorized', { status: 401 });
   }
 
-  const board = await db.board.findUnique({
-    where: {
-      slug,
-      userId: session.user.id,
-    },
-  });
-
-  if (!board) {
-    return new Response('Board not found', { status: 404 });
-  }
-
   let tags = null;
 
   try {
-    tags = await db.tag.findMany({
+    tags = await db.tag.delete({
       where: {
-        boardId: board.id,
-      },
-      orderBy: {
-        createdAt: 'desc',
+        id: tagId,
       },
     });
   } catch (error) {
-    return new Response('Failed to get tags', { status: 500 });
+    return new Response('Failed to delete tags', { status: 500 });
   }
 
   return Response.json(

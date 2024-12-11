@@ -1,5 +1,5 @@
 'use client';
-import { CreateTag } from '@/app/(dashboard)/_components/create-tag';
+import { CreateTag } from '@/app/(dashboard)/_components/create-edit-tag';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {

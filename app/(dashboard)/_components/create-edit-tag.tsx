@@ -19,12 +19,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { cn, tagColors } from '@/lib/utils';
-import { createTag } from '@/services/admin/tag';
+import { createTag, updateTag } from '@/services/admin/tag';
 import { tagSchema } from '@/validations/tag';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader, Plus } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -56,26 +55,74 @@ export const CreateTag = () => {
   );
 };
 
-const CreateTagForm = ({
+export const EditTag = ({
+  tagId,
+  name,
+  color,
+  isDialogOpen,
   setIsDialogOpen,
 }: {
+  tagId: string;
+  name: string;
+  color: string;
+  isDialogOpen: boolean;
   setIsDialogOpen: () => void;
 }) => {
+  return (
+    <Modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <ModalContent className="sm:max-w-md">
+        <ModalHeader className="mb-2">
+          <ModalTitle>Edit tag</ModalTitle>
+          <ModalDescription>
+            Tags can be use to manage and categorize your feedbacks
+          </ModalDescription>
+        </ModalHeader>
+        <CreateTagForm
+          setIsDialogOpen={setIsDialogOpen}
+          tagId={tagId}
+          name={name}
+          color={color}
+        />
+      </ModalContent>
+    </Modal>
+  );
+};
+
+const CreateTagForm = ({
+  setIsDialogOpen,
+  tagId,
+  name,
+  color,
+}: {
+  setIsDialogOpen: () => void;
+  tagId?: string;
+  name?: string;
+  color?: string;
+}) => {
   const { slug } = useParams<{ slug: string }>();
-  const [selectedColor, setSelectedColor] = useState(tagColors[0]);
+  const [selectedColor, setSelectedColor] = useState(
+    tagColors.find(
+      (tagColor) => tagColor.name.toLowerCase() === color?.toLowerCase()
+    ) || tagColors[0]
+  );
 
   const form = useForm<z.infer<typeof tagSchema>>({
     resolver: zodResolver(tagSchema),
     defaultValues: {
-      name: '',
-      color: 'Gray',
+      name,
+      color: selectedColor.name,
     },
   });
 
+  const queryClient = useQueryClient();
+
   const { mutate, isPending } = useMutation({
-    mutationFn: createTag,
+    mutationFn: tagId ? updateTag : createTag,
     onSuccess: () => {
-      toast.success('Your tag has been created');
+      queryClient.invalidateQueries({ queryKey: [slug, 'tags'] });
+      toast.success(
+        tagId ? 'Your tag has been updated' : 'Your tag has been created'
+      );
       setIsDialogOpen();
     },
     onError: () => {
@@ -88,6 +135,7 @@ const CreateTagForm = ({
       slug,
       name: data.name,
       color: data.color,
+      tagId: tagId as string,
     });
   };
 
@@ -165,7 +213,7 @@ const CreateTagForm = ({
           </ModalClose>
           <Button disabled={isPending || form.getValues('name') === ''}>
             {isPending && <Loader className="size-4 mr-2 animate-spin" />}
-            Create
+            {tagId ? 'Update' : 'Create'}
           </Button>
         </ModalFooter>
       </form>
