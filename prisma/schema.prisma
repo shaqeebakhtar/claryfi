@@ -73,6 +73,19 @@ model Feedback {
 
   upvotes  Upvote[]
   comments Comment[]
+  tags     Tag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String
+  color String
+
+  feedback   Feedback @relation(fields: [feedbackId], references: [id])
+  feedbackId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
