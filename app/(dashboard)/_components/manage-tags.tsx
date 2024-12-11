@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, PencilLine, Trash2 } from 'lucide-react';
-import { CreateTag, EditTag } from './create-edit-tag';
+import { CreateTag, DeleteTag, EditTag } from './create-edit-tag';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { getTagsByBoardSlug } from '@/services/admin/tag';
@@ -49,6 +49,7 @@ export default ManageTags;
 
 const Tag = ({ tag }: { tag: TTag }) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [tagClass, setTagClass] = useState(
     tagColors.find(
       (color) => color.name.toLowerCase() === tag.color.toLowerCase()
@@ -87,7 +88,13 @@ const Tag = ({ tag }: { tag: TTag }) => {
               Edit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="font-medium text-destructive focus:text-destructive focus:bg-destructive/10">
+            <DropdownMenuItem
+              className="font-medium text-destructive focus:text-destructive focus:bg-destructive/10"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsDeleteDialogOpen(true);
+              }}
+            >
               <Trash2 className="size-4 mr-2" />
               Delete
             </DropdownMenuItem>
@@ -100,6 +107,11 @@ const Tag = ({ tag }: { tag: TTag }) => {
         color={tag.color}
         isDialogOpen={isEditDialogOpen}
         setIsDialogOpen={() => setIsEditDialogOpen(false)}
+      />
+      <DeleteTag
+        tagId={tag.id}
+        isDialogOpen={isDeleteDialogOpen}
+        setIsDialogOpen={() => setIsDeleteDialogOpen(false)}
       />
     </div>
   );

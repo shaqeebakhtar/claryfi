@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { cn, tagColors } from '@/lib/utils';
-import { createTag, updateTag } from '@/services/admin/tag';
+import { createTag, deleteTagById, updateTag } from '@/services/admin/tag';
 import { tagSchema } from '@/validations/tag';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -121,12 +121,12 @@ const CreateTagForm = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [slug, 'tags'] });
       toast.success(
-        tagId ? 'Your tag has been updated' : 'Your tag has been created'
+        tagId ? 'Tag updated successfully' : 'Your tag has been created'
       );
       setIsDialogOpen();
     },
     onError: () => {
-      toast.error('Failed to create tag');
+      toast.error(tagId ? 'Failed to update tag' : 'Failed to create tag');
     },
   });
 
@@ -218,5 +218,59 @@ const CreateTagForm = ({
         </ModalFooter>
       </form>
     </Form>
+  );
+};
+
+export const DeleteTag = ({
+  tagId,
+  isDialogOpen,
+  setIsDialogOpen,
+}: {
+  tagId: string;
+  isDialogOpen: boolean;
+  setIsDialogOpen: () => void;
+}) => {
+  const { slug } = useParams<{ slug: string }>();
+
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: deleteTagById,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [slug, 'tags'] });
+      toast.success('Tag deleted successfully');
+      setIsDialogOpen();
+    },
+    onError: () => {
+      toast.error('Failed to delete tag');
+    },
+  });
+
+  return (
+    <Modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <ModalContent className="sm:max-w-md">
+        <ModalHeader className="mb-2">
+          <ModalTitle>Are you sure, you want to delete this tag?</ModalTitle>
+          <ModalDescription>
+            Deleting this tag will not affect your feedbacks. This action cannot
+            be undone - please proceed with caution.
+          </ModalDescription>
+        </ModalHeader>
+        <ModalFooter className="sm:justify-end gap-2 mt-8">
+          <ModalClose asChild>
+            <Button type="button" variant="secondary">
+              No, Cancel
+            </Button>
+          </ModalClose>
+          <Button
+            disabled={isPending}
+            onClick={() => mutate({ slug, tagId })}
+            variant="destructive"
+          >
+            {isPending && <Loader className="size-4 mr-2 animate-spin" />}
+            Yes, Delete
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
