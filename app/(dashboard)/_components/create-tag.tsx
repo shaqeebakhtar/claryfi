@@ -10,11 +10,27 @@ import {
   ModalTrigger,
 } from '@/components/responsive-dialog';
 import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { Plus } from 'lucide-react';
-import { FormEvent, useState } from 'react';
+import { cn, tagColors } from '@/lib/utils';
+import { createTag } from '@/services/admin/tag';
+import { tagSchema } from '@/validations/tag';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { Loader, Plus } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 export const CreateTag = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -34,109 +50,125 @@ export const CreateTag = () => {
             Tags can be use to manage and categorize your feedbacks
           </ModalDescription>
         </ModalHeader>
-        <CreateTagForm />
+        <CreateTagForm setIsDialogOpen={() => setIsDialogOpen(false)} />
       </ModalContent>
     </Modal>
   );
 };
 
-const CreateTagForm = () => {
-  const colors = [
-    {
-      name: 'Gray',
-      tagClass: 'bg-gray-100 text-gray-600',
-      buttonClass: 'bg-gray-500',
-    },
-    {
-      name: 'Red',
-      tagClass: 'bg-red-100 text-red-600',
-      buttonClass: 'bg-red-500',
-    },
-    {
-      name: 'Orange',
-      tagClass: 'bg-orange-100 text-orange-600',
-      buttonClass: 'bg-orange-500',
-    },
-    {
-      name: 'Cyan',
-      tagClass: 'bg-cyan-100 text-cyan-600',
-      buttonClass: 'bg-cyan-500',
-    },
-    {
-      name: 'Green',
-      tagClass: 'bg-green-100 text-green-600',
-      buttonClass: 'bg-green-500',
-    },
-    {
-      name: 'Blue',
-      tagClass: 'bg-blue-100 text-blue-600',
-      buttonClass: 'bg-blue-500',
-    },
-    {
-      name: 'Yellow',
-      tagClass: 'bg-yellow-100 text-yellow-600',
-      buttonClass: 'bg-yellow-500',
-    },
-    {
-      name: 'Purple',
-      tagClass: 'bg-purple-100 text-purple-600',
-      buttonClass: 'bg-purple-500',
-    },
-  ];
-  const [tagName, setTagName] = useState('');
-  const [selectedColor, setSelectedColor] = useState(colors[0]);
+const CreateTagForm = ({
+  setIsDialogOpen,
+}: {
+  setIsDialogOpen: () => void;
+}) => {
+  const { slug } = useParams<{ slug: string }>();
+  const [selectedColor, setSelectedColor] = useState(tagColors[0]);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const form = useForm<z.infer<typeof tagSchema>>({
+    resolver: zodResolver(tagSchema),
+    defaultValues: {
+      name: '',
+      color: 'Gray',
+    },
+  });
 
-    if (tagName === '') return;
+  const { mutate, isPending } = useMutation({
+    mutationFn: createTag,
+    onSuccess: () => {
+      toast.success('Your tag has been created');
+      setIsDialogOpen();
+    },
+    onError: () => {
+      toast.error('Failed to create tag');
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof tagSchema>) => {
+    mutate({
+      slug,
+      name: data.name,
+      color: data.color,
+    });
   };
 
+  useEffect(() => {
+    setSelectedColor(
+      tagColors.find((color) => color.name === form.watch('color')) as {
+        name: string;
+        tagClass: string;
+        buttonClass: string;
+      }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch('color')]);
+
   return (
-    <form className="p-4 lg:p-0" onSubmit={handleSubmit}>
-      <div className="space-y-1">
-        <Label>Tag Name</Label>
-        <Input
-          placeholder="New tag"
-          onChange={(e) => setTagName(e.currentTarget.value)}
-        />
-        <div
-          className={cn(
-            'ml-auto text-center px-2 py-1 text-xs font-medium rounded-sm w-max select-none',
-            selectedColor.tagClass
+    <Form {...form}>
+      <form className="p-4 lg:p-0" onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tag Name</FormLabel>
+              <FormControl>
+                <Input placeholder="New tag" {...field} />
+              </FormControl>
+              <FormMessage />
+              <div
+                className={cn(
+                  'ml-auto text-center px-2 py-1 text-xs font-medium rounded-sm w-max select-none',
+                  selectedColor.tagClass
+                )}
+              >
+                {form.getValues('name') === ''
+                  ? 'New Tag'
+                  : form.getValues('name')}
+              </div>
+            </FormItem>
           )}
-        >
-          {tagName === '' ? 'New Tag' : tagName}
-        </div>
-      </div>
-      <div className="space-y-1 mt-2">
-        <Label>Color</Label>
-        <div className="flex flex-wrap gap-2">
-          {colors.map((color) => (
-            <button
-              key={color.name}
-              type="button"
-              className={cn(
-                'size-10 rounded-full transition-all shadow-none hover:scale-110',
-                color.buttonClass,
-                selectedColor.name === color.name &&
-                  'ring-2 ring-offset-2 ring-offset-background ring-ring'
-              )}
-              onClick={() => setSelectedColor(color)}
-            >
-              <span className="sr-only">{color.name}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-      <ModalFooter className="sm:justify-end gap-2 mt-8">
-        <ModalClose asChild>
-          <Button type="button" variant="secondary">
-            Cancel
+        />
+        <FormField
+          control={form.control}
+          name="color"
+          render={() => (
+            <FormItem>
+              <FormLabel>Color</FormLabel>
+              <FormControl>
+                <div className="flex flex-wrap gap-2">
+                  {tagColors.map((color) => (
+                    <button
+                      key={color.name}
+                      type="button"
+                      className={cn(
+                        'size-10 rounded-full transition-all shadow-none hover:scale-110',
+                        color.buttonClass,
+                        selectedColor.name === color.name &&
+                          'ring-2 ring-offset-2 ring-offset-background ring-ring'
+                      )}
+                      onClick={() => form.setValue('color', color.name)}
+                    >
+                      <span className="sr-only">{color.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <ModalFooter className="sm:justify-end gap-2 mt-8">
+          <ModalClose asChild>
+            <Button type="button" variant="secondary">
+              Cancel
+            </Button>
+          </ModalClose>
+          <Button disabled={isPending || form.getValues('name') === ''}>
+            {isPending && <Loader className="size-4 mr-2 animate-spin" />}
+            Create
           </Button>
-        </ModalClose>
-        <Button disabled={tagName === ''}>Create</Button>
-      </ModalFooter>
-    </form>
+        </ModalFooter>
+      </form>
+    </Form>
   );
 };

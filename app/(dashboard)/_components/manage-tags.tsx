@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,8 +9,20 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, PencilLine, Trash2 } from 'lucide-react';
 import { CreateTag } from './create-tag';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import { getTagsByBoardSlug } from '@/services/admin/tag';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tag as TTag } from '@prisma/client';
+import { cn, tagColors } from '@/lib/utils';
 
 const ManageTags = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const { data: tags, isLoading } = useQuery({
+    queryFn: () => getTagsByBoardSlug(slug),
+    queryKey: [slug, 'tags'],
+  });
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -23,10 +36,9 @@ const ManageTags = () => {
         <CreateTag />
       </div>
       <div className="space-y-3 divide-y divide-gray-100">
-        <TempTag />
-        <TempTag />
-        <TempTag />
-        <TempTag />
+        {isLoading
+          ? [...Array(5)].map((_, index) => <TagSkeleton key={index} />)
+          : tags?.map((tag) => <Tag key={tag.id} tag={tag} />)}
       </div>
     </div>
   );
@@ -34,20 +46,29 @@ const ManageTags = () => {
 
 export default ManageTags;
 
-const TempTag = () => {
+const Tag = ({ tag }: { tag: TTag }) => {
+  const tagClass = tagColors.find(
+    (color) => color.name.toLowerCase() === tag.color.toLowerCase()
+  )?.tagClass;
+
   return (
     <div className="flex items-center justify-between pt-3">
-      <div className="flex items-center gap-1.5 text-sm font-medium px-2 py-1 bg-blue-100 text-blue-600 rounded-sm">
-        Feature
+      <div
+        className={cn(
+          'flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-sm',
+          tagClass
+        )}
+      >
+        {tag.name}
       </div>
       <div className="flex items-center gap-3">
-        <div className="border rounded-sm text-sm px-2 py-1 text-muted-foreground">
+        <div className="border rounded-sm text-xs px-2 py-1 text-muted-foreground">
           4 feedbacks
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" aria-label="More options">
-              <MoreHorizontal className="size-4" />
+              <MoreHorizontal className="size-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -62,6 +83,18 @@ const TempTag = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+    </div>
+  );
+};
+
+const TagSkeleton = () => {
+  return (
+    <div className="flex items-center justify-between pt-3">
+      <Skeleton className="w-20 h-8" />
+      <div className="flex items-center gap-3">
+        <Skeleton className="w-24 h-8" />
+        <Skeleton className="size-8" />
       </div>
     </div>
   );
