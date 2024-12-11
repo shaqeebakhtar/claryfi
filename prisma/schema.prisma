@@ -53,6 +53,7 @@ model Board {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   feedbacks Feedback[]
+  tags      Tag[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,8 +85,10 @@ model Tag {
   name  String
   color String
 
-  feedback   Feedback @relation(fields: [feedbackId], references: [id])
-  feedbackId String
+  board      Board     @relation(fields: [boardId], references: [id])
+  boardId    String
+  feedback   Feedback? @relation(fields: [feedbackId], references: [id])
+  feedbackId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
