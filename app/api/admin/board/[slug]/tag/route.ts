@@ -87,6 +87,13 @@ export const GET = async (
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        _count: {
+          select: {
+            feedbacks: true,
+          },
+        },
+      },
     });
   } catch (error) {
     return new Response('Failed to get tags', { status: 500 });

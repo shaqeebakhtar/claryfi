@@ -52,7 +52,13 @@ export const updateTag = async ({
   return id;
 };
 
-export const getTagsByBoardSlug = async (slug: string): Promise<Tag[]> => {
+type TTag = Tag & {
+  _count: {
+    feedbacks: number;
+  };
+};
+
+export const getTagsByBoardSlug = async (slug: string): Promise<TTag[]> => {
   const res = await fetch(`/api/admin/board/${slug}/tag`, {
     method: 'GET',
     headers: {
