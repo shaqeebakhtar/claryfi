@@ -122,16 +122,10 @@ const Page = () => {
   const searchParams = useSearchParams();
   const feedbackId = searchParams.get('f');
 
-  // const isFetchingBoard = useIsFetching({
-  //   queryKey: ['board', 'open', slug],
-  // });
-
   const { data: board, isLoading } = useQuery({
     queryKey: ['board', 'open', slug],
     queryFn: () => getPublicBoardBySlug({ slug }),
   });
-
-  console.log(board?.feedbacks);
 
   return (
     <>
@@ -139,16 +133,20 @@ const Page = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-semibold text-xl lg:text-2xl">Feedbacks</h3>
+              {isLoading ? (
+                <Skeleton className="h-7 w-28" />
+              ) : (
+                <h3 className="font-semibold text-xl lg:text-2xl">Feedbacks</h3>
+              )}
             </div>
             <div className="flex flex-col gap-4 lg:col-span-2">
               {isLoading
                 ? [...Array(6)].map((_, index) => (
                     <FeedbackCardSkeleton key={index} />
                   ))
-                : board?.feedbacks.map((feedback, index) => (
+                : board?.feedbacks.map((feedback) => (
                     <>
-                      <FeedbackCard feedback={feedback} key={index} />
+                      <FeedbackCard feedback={feedback} key={feedback.id} />
                     </>
                   ))}
             </div>

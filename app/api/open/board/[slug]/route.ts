@@ -22,6 +22,16 @@ export const GET = async (
                 comments: true,
               },
             },
+            tags: {
+              include: {
+                tag: {
+                  select: {
+                    name: true,
+                    color: true,
+                  },
+                },
+              },
+            },
           },
         },
       },

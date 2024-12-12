@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import FeedbackCardStatus from './feedback-card-status';
 import { usePathname, useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Comment, Feedback, Upvote } from '@prisma/client';
+import { Comment, Feedback, TagOnPosts, Upvote } from '@prisma/client';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -15,17 +15,68 @@ enum FeedbackStatus {
   CANCELLED = 'CANCELLED',
 }
 
+interface ITagOnPosts extends TagOnPosts {
+  tag: {
+    name: string;
+    color: string;
+  };
+}
+
 interface IFeedback extends Feedback {
   _count: {
     upvotes: number;
     comments: number;
   };
+  tags: ITagOnPosts[];
 }
 
 const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
   const [upvoted, setUpvoted] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  const tagColors = [
+    {
+      name: 'Gray',
+      tagClass: 'bg-gray-100 text-gray-600',
+      buttonClass: 'bg-gray-500',
+    },
+    {
+      name: 'Red',
+      tagClass: 'bg-red-100 text-red-600',
+      buttonClass: 'bg-red-500',
+    },
+    {
+      name: 'Orange',
+      tagClass: 'bg-orange-100 text-orange-600',
+      buttonClass: 'bg-orange-500',
+    },
+    {
+      name: 'Cyan',
+      tagClass: 'bg-cyan-100 text-cyan-600',
+      buttonClass: 'bg-cyan-500',
+    },
+    {
+      name: 'Green',
+      tagClass: 'bg-green-100 text-green-600',
+      buttonClass: 'bg-green-500',
+    },
+    {
+      name: 'Blue',
+      tagClass: 'bg-blue-100 text-blue-600',
+      buttonClass: 'bg-blue-500',
+    },
+    {
+      name: 'Yellow',
+      tagClass: 'bg-yellow-100 text-yellow-600',
+      buttonClass: 'bg-yellow-500',
+    },
+    {
+      name: 'Purple',
+      tagClass: 'bg-purple-100 text-purple-600',
+      buttonClass: 'bg-purple-500',
+    },
+  ];
 
   return (
     <div
@@ -64,12 +115,20 @@ const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
           ></div>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-600 rounded-sm">
-            Feature
-          </div>
-          <div className="text-xs font-medium px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded-sm">
-            UI/UX
-          </div>
+          {feedback.tags.map((tag) => (
+            <div
+              key={tag.tag.name}
+              className={cn(
+                'text-xs font-medium px-2 py-0.5 rounded-sm',
+                tagColors.find(
+                  (color) =>
+                    color.name.toLowerCase() === tag.tag.color.toLowerCase()
+                )?.tagClass
+              )}
+            >
+              {tag.tag.name}
+            </div>
+          ))}
         </div>
       </div>
     </div>
