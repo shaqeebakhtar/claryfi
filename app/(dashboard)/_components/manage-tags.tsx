@@ -25,7 +25,7 @@ const ManageTags = () => {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" id="manage-tags">
       <div className="flex items-center justify-between">
         <div className="space-y-1 max-w-xs">
           <h3 className="text-xl font-medium">Manage Tags</h3>
@@ -47,7 +47,15 @@ const ManageTags = () => {
 
 export default ManageTags;
 
-const Tag = ({ tag }: { tag: TTag }) => {
+const Tag = ({
+  tag,
+}: {
+  tag: TTag & {
+    _count: {
+      feedbacks: number;
+    };
+  };
+}) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -112,7 +120,7 @@ const Tag = ({ tag }: { tag: TTag }) => {
       </div>
       <div className="flex items-center gap-3">
         <div className="border rounded-sm text-xs px-2 py-1 text-muted-foreground">
-          4 feedbacks
+          {tag._count.feedbacks} feedback{tag._count.feedbacks > 1 && 's'}
         </div>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>

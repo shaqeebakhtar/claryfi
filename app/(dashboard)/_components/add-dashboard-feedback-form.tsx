@@ -271,7 +271,7 @@ export const AddDashboardFeedbackForm = ({
                 </span>
               </label>
               <Link
-                href={`${slug}/settings`}
+                href={`${slug}/settings#manage-tags`}
                 className="text-xs underline text-muted-foreground hover:text-foreground"
               >
                 Manage
