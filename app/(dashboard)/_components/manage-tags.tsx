@@ -7,15 +7,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PencilLine, Trash2 } from 'lucide-react';
-import { CreateTag, DeleteTag, EditTag } from './create-edit-tag';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
-import { getTagsByBoardSlug } from '@/services/admin/tag';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+import { getTagsByBoardSlug } from '@/services/admin/tag';
 import { Tag as TTag } from '@prisma/client';
-import { cn, tagColors } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { MoreHorizontal, PencilLine, Trash2 } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { CreateTag, DeleteTag, EditTag } from './create-edit-tag';
 
 const ManageTags = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -50,6 +50,50 @@ export default ManageTags;
 const Tag = ({ tag }: { tag: TTag }) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const tagColors = [
+    {
+      name: 'Gray',
+      tagClass: 'bg-gray-100 text-gray-600',
+      buttonClass: 'bg-gray-500',
+    },
+    {
+      name: 'Red',
+      tagClass: 'bg-red-100 text-red-600',
+      buttonClass: 'bg-red-500',
+    },
+    {
+      name: 'Orange',
+      tagClass: 'bg-orange-100 text-orange-600',
+      buttonClass: 'bg-orange-500',
+    },
+    {
+      name: 'Cyan',
+      tagClass: 'bg-cyan-100 text-cyan-600',
+      buttonClass: 'bg-cyan-500',
+    },
+    {
+      name: 'Green',
+      tagClass: 'bg-green-100 text-green-600',
+      buttonClass: 'bg-green-500',
+    },
+    {
+      name: 'Blue',
+      tagClass: 'bg-blue-100 text-blue-600',
+      buttonClass: 'bg-blue-500',
+    },
+    {
+      name: 'Yellow',
+      tagClass: 'bg-yellow-100 text-yellow-600',
+      buttonClass: 'bg-yellow-500',
+    },
+    {
+      name: 'Purple',
+      tagClass: 'bg-purple-100 text-purple-600',
+      buttonClass: 'bg-purple-500',
+    },
+  ];
+
   const [tagClass, setTagClass] = useState(
     tagColors.find(
       (color) => color.name.toLowerCase() === tag.color.toLowerCase()

@@ -3,7 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
+import { MultiSelect } from '@/components/multi-select';
+import { ModalClose, ModalFooter } from '@/components/responsive-dialog';
 import { TextEditor } from '@/components/text-editor';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,11 +15,9 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { DialogClose, DialogFooter } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,9 +30,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { addFeedback } from '@/data-access/feedback';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { getTagsByBoardSlug } from '@/services/admin/tag';
 import { feedbackSchema } from '@/validations/feedback';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Tag as TTag } from '@prisma/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Check,
   ChevronsUpDown,
@@ -44,6 +46,7 @@ import {
   CircleMinus,
   Loader,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -97,13 +100,19 @@ const statuses: Status[] = [
 export const AddDashboardFeedbackForm = ({
   closeDialog,
 }: FeedbackDialogFormProps) => {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const { slug } = useParams() as {
     slug: string;
   };
   const [selectedStatus, setSelectedStatus] = useState<Status>();
+  const [selectedTags, setSelectedTags] = useState<TTag[]>([]);
+  const isMobile = useIsMobile();
 
-  const queryClient = useQueryClient();
+  const { data: tags } = useQuery({
+    queryFn: () => getTagsByBoardSlug(slug),
+    queryKey: [slug, 'tags'],
+  });
 
   const form = useForm<z.infer<typeof feedbackSchema>>({
     resolver: zodResolver(feedbackSchema),
@@ -143,128 +152,150 @@ export const AddDashboardFeedbackForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <div className="space-y-1">
-                <FormLabel>Feedback Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Dark mode for blogs" {...field} />
-                </FormControl>
-              </div>
-              <FormDescription>Add a short, descriptive title</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <div className="space-y-1">
-                <FormLabel>Feedback Description</FormLabel>
-                <FormControl>
-                  <TextEditor
-                    placeholder="Explain in detail..."
-                    className={
-                      '[&>.tiptap]:bg-transparent [&>.tiptap]:border [&>.tiptap]:border-input [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
-                    }
-                    form={form}
-                    {...field}
-                  />
-                </FormControl>
-              </div>
-              <FormDescription>
-                Explain in detail what should be improved, added, etc.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <div className="w-full flex flex-col space-y-1">
-                <FormLabel>Status</FormLabel>
-                <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className="justify-between rounded-md font-normal"
-                      >
-                        {field.value ? (
-                          <div className="flex items-center mr-2">
-                            {selectedStatus?.icon}
-                            <span className="ml-2">
-                              {selectedStatus?.label}
-                            </span>
-                          </div>
-                        ) : (
-                          'Select status'
-                        )}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 w-[--radix-popover-trigger-width]">
-                    <Command>
-                      <CommandInput placeholder="Search status..." />
-                      <CommandList>
-                        <CommandEmpty>No status found.</CommandEmpty>
-                        <CommandGroup>
-                          {statuses.map((status) => (
-                            <CommandItem
-                              value={status.label}
-                              key={status.value}
-                              onSelect={() => {
-                                form.setValue('status', status.value);
-                                setOpen(false);
-                              }}
-                            >
-                              {status.icon}
-                              <span>{status.label}</span>
-                              <Check
-                                className={cn(
-                                  'ml-auto',
-                                  status.value === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <FormDescription>Set a initial status</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <DialogFooter className="sm:justify-end gap-2">
-          <DialogClose asChild>
+      <form
+        className="p-4 lg:p-0 space-y-6"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <div className="space-y-1">
+                  <FormLabel>Feedback Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Dark mode for blogs" {...field} />
+                  </FormControl>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <div className="space-y-1">
+                  <FormLabel>Feedback Description</FormLabel>
+                  <FormControl>
+                    <TextEditor
+                      placeholder="Explain in detail..."
+                      className={
+                        '[&>.tiptap]:bg-transparent [&>.tiptap]:border [&>.tiptap]:border-input [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
+                      }
+                      form={form}
+                      {...field}
+                    />
+                  </FormControl>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <div className="w-full flex flex-col space-y-1">
+                  <FormLabel>Status</FormLabel>
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className="justify-between rounded-md font-normal hover:bg-transparent shadow-none"
+                        >
+                          {field.value ? (
+                            <div className="flex items-center mr-2">
+                              {selectedStatus?.icon}
+                              <span className="ml-2">
+                                {selectedStatus?.label}
+                              </span>
+                            </div>
+                          ) : (
+                            'Select status'
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 w-[--radix-popover-trigger-width]">
+                      <Command>
+                        <CommandInput placeholder="Search status..." />
+                        <CommandList>
+                          <CommandEmpty>No status found.</CommandEmpty>
+                          <CommandGroup>
+                            {statuses.map((status) => (
+                              <CommandItem
+                                value={status.label}
+                                key={status.value}
+                                onSelect={() => {
+                                  form.setValue('status', status.value);
+                                  setOpen(false);
+                                }}
+                              >
+                                {status.icon}
+                                <span>{status.label}</span>
+                                <Check
+                                  className={cn(
+                                    'ml-auto size-4',
+                                    status.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="w-full flex flex-col">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Tags
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  (Optional)
+                </span>
+              </label>
+              <Link
+                href={`${slug}/settings`}
+                className="text-xs underline text-muted-foreground hover:text-foreground"
+              >
+                Manage
+              </Link>
+            </div>
+            <MultiSelect
+              options={tags}
+              onValueChange={setSelectedTags}
+              placeholder="Select tags..."
+              maxCount={isMobile ? 1 : 3}
+            />
+          </div>
+        </div>
+        <ModalFooter className="sm:justify-end gap-2">
+          <ModalClose asChild>
             <Button type="button" variant="secondary">
               Cancel
             </Button>
-          </DialogClose>
+          </ModalClose>
           <Button disabled={createFeedbackMutation.isPending}>
             {createFeedbackMutation.isPending && (
               <Loader className="w-4 h-4 mr-1.5 animate-spin" />
             )}
             Submit
           </Button>
-        </DialogFooter>
+        </ModalFooter>
       </form>
     </Form>
   );

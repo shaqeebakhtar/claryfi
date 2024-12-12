@@ -151,8 +151,8 @@ const Page = () => {
                   href={`/b/${slug}`}
                   className={cn(buttonVariants({ variant: 'secondary' }))}
                 >
-                  <EyeIcon className="w-4 h-4 mr-2" />
-                  Preview
+                  <EyeIcon className="w-4 h-4" />
+                  <span className="hidden ml-2 md:block">Preview</span>
                 </Link>
                 <CopyLinkButton value={`/b/${slug}`} />
                 <AddDashboardFeedback />

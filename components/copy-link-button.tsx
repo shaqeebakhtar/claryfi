@@ -23,14 +23,14 @@ const CopyLinkButton = ({ value }: CopyLinkButtonProps) => {
       className="group/copy transition-all"
     >
       {copied ? (
-        <Check className="w-4 h-4 mr-2" />
+        <Check className="w-4 h-4" />
       ) : (
         <>
-          <Share2 className="w-4 h-4 mr-2 group-hover/copy:hidden" />
-          <Copy className="w-4 h-4 mr-2 hidden group-hover/copy:block" />
+          <Share2 className="w-4 h-4 group-hover/copy:hidden" />
+          <Copy className="w-4 h-4 hidden group-hover/copy:block" />
         </>
       )}
-      <span className="">Share</span>
+      <span className="hidden ml-2 md:block">Share</span>
     </Button>
   );
 };
