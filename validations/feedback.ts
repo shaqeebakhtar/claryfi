@@ -1,3 +1,4 @@
+import { Tags } from 'lucide-react';
 import { z } from 'zod';
 
 export const feedbackSchema = z.object({
@@ -9,7 +10,8 @@ export const feedbackSchema = z.object({
   }),
   status: z
     .enum(['PENDING', 'APPROVED', 'CANCELLED', 'IN_PROGRESS', 'DONE'])
-    .optional(),
+    .default('APPROVED'),
+  tagIds: z.string().array().optional(),
 });
 
 export const publicFeedbackSchema = z.object({

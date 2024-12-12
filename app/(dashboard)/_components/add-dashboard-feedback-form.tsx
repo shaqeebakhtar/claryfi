@@ -29,7 +29,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { addFeedback } from '@/data-access/feedback';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { getTagsByBoardSlug } from '@/services/admin/tag';
@@ -50,6 +49,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { addFeedback } from '@/services/admin/feedback';
 
 type FeedbackDialogFormProps = {
   closeDialog: () => void;
@@ -123,7 +123,7 @@ export const AddDashboardFeedbackForm = ({
     },
   });
 
-  const createFeedbackMutation = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: addFeedback,
     onSuccess: () => {
       closeDialog();
@@ -136,10 +136,12 @@ export const AddDashboardFeedbackForm = ({
   });
 
   const onSubmit = (data: z.infer<typeof feedbackSchema>) => {
-    createFeedbackMutation.mutate({
+    mutate({
       slug,
       title: data.title,
       description: data.description,
+      status: data.status,
+      tagIds: selectedTags.map((tag) => tag.id),
     });
   };
 
@@ -289,10 +291,8 @@ export const AddDashboardFeedbackForm = ({
               Cancel
             </Button>
           </ModalClose>
-          <Button disabled={createFeedbackMutation.isPending}>
-            {createFeedbackMutation.isPending && (
-              <Loader className="w-4 h-4 mr-1.5 animate-spin" />
-            )}
+          <Button disabled={isPending}>
+            {isPending && <Loader className="w-4 h-4 mr-1.5 animate-spin" />}
             Submit
           </Button>
         </ModalFooter>

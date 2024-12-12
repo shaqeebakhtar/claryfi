@@ -62,12 +62,12 @@ model Board {
 }
 
 model Feedback {
-  id             String @id @default(cuid())
+  id             String  @id @default(cuid())
   title          String
-  description    String @db.Text
-  status         Status @default(PENDING)
-  submitterName  String
-  submitterEmail String
+  description    String  @db.Text
+  status         Status  @default(PENDING)
+  submitterName  String?
+  submitterEmail String?
 
   boardId String
   board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
@@ -94,9 +94,9 @@ model Tag {
 }
 
 model TagOnPosts {
-  feedback   Feedback @relation(fields: [feedbackId], references: [id])
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
   feedbackId String
-  tag        Tag      @relation(fields: [tagId], references: [id])
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId      String
   createdAt  DateTime @default(now())
 
