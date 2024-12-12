@@ -43,11 +43,10 @@ import {
   CircleDotDashed,
   CircleMinus,
   Loader,
-  LucideIcon,
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { useState } from 'react';
 
 type FeedbackDialogFormProps = {
   closeDialog: () => void;
@@ -64,34 +63,34 @@ enum FeedbackStatus {
 type Status = {
   value: FeedbackStatus;
   label: string;
-  icon: LucideIcon;
+  icon: React.JSX.Element;
 };
 
 const statuses: Status[] = [
   {
     value: FeedbackStatus.PENDING,
     label: 'Pending',
-    icon: CircleDashed,
+    icon: <CircleDashed className="size-4 text-gray-400" />,
   },
   {
     value: FeedbackStatus.APPROVED,
     label: 'Approved',
-    icon: CircleDotDashed,
+    icon: <CircleDotDashed className="size-4 text-emerald-400" />,
   },
   {
     value: FeedbackStatus.IN_PROGRESS,
     label: 'In Progress',
-    icon: CircleDot,
+    icon: <CircleDot className="size-4 text-violet-400" />,
   },
   {
     value: FeedbackStatus.DONE,
     label: 'Done',
-    icon: CircleCheck,
+    icon: <CircleCheck className="size-4 text-blue-400" />,
   },
   {
     value: FeedbackStatus.CANCELLED,
     label: 'Canceled',
-    icon: CircleMinus,
+    icon: <CircleMinus className="size-4 text-red-400" />,
   },
 ];
 
@@ -102,6 +101,7 @@ export const AddDashboardFeedbackForm = ({
   const { slug } = useParams() as {
     slug: string;
   };
+  const [selectedStatus, setSelectedStatus] = useState<Status>();
 
   const queryClient = useQueryClient();
 
@@ -134,6 +134,13 @@ export const AddDashboardFeedbackForm = ({
     });
   };
 
+  useEffect(() => {
+    setSelectedStatus(
+      statuses.find((status) => status.value === form.getValues('status'))
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch('status')]);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -164,8 +171,10 @@ export const AddDashboardFeedbackForm = ({
                   <TextEditor
                     placeholder="Explain in detail..."
                     className={
-                      '[&>.tiptap]:bg-gray-50 [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
+                      '[&>.tiptap]:bg-transparent [&>.tiptap]:border [&>.tiptap]:border-input [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
                     }
+                    form={form}
+                    {...field}
                   />
                 </FormControl>
               </div>
@@ -191,11 +200,16 @@ export const AddDashboardFeedbackForm = ({
                         role="combobox"
                         className="justify-between rounded-md font-normal"
                       >
-                        {field.value
-                          ? statuses.find(
-                              (status) => status.value === field.value
-                            )?.label
-                          : 'Select status'}
+                        {field.value ? (
+                          <div className="flex items-center mr-2">
+                            {selectedStatus?.icon}
+                            <span className="ml-2">
+                              {selectedStatus?.label}
+                            </span>
+                          </div>
+                        ) : (
+                          'Select status'
+                        )}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </FormControl>
@@ -215,7 +229,7 @@ export const AddDashboardFeedbackForm = ({
                                 setOpen(false);
                               }}
                             >
-                              <status.icon className={cn('mr-2 h-4 w-4')} />
+                              {status.icon}
                               <span>{status.label}</span>
                               <Check
                                 className={cn(

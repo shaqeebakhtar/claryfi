@@ -47,16 +47,7 @@ export const TextEditor = ({
 }: {
   placeholder?: string;
   className?: string;
-  form: UseFormReturn<
-    {
-      title: string;
-      description: string;
-      name: string;
-      email: string;
-    },
-    any,
-    undefined
-  >;
+  form: UseFormReturn<any, undefined>;
 }) => {
   const editor = useEditor({
     extensions: [
