@@ -1,15 +1,15 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  Modal,
+  ModalClose,
+  ModalContent,
+  ModalDescription,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+  ModalTrigger,
+} from '@/components/responsive-dialog';
 import { deleteBoard } from '@/data-access/board';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
@@ -36,27 +36,27 @@ const DeleteBoardDialog = () => {
   });
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <Modal>
+      <ModalTrigger asChild>
         <Button variant="destructive">Delete Board</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader className="mb-2">
-          <DialogTitle className="font-medium">
+      </ModalTrigger>
+      <ModalContent className="sm:max-w-lg p-4">
+        <ModalHeader className="mb-2 px-0">
+          <ModalTitle className="font-medium">
             Are you sure, you want to delete this board?
-          </DialogTitle>
-          <DialogDescription>
+          </ModalTitle>
+          <ModalDescription>
             Deleting your board will permanently delete all the feedbacks and
             others things associated with it. This action cannot be undone -
             please proceed with caution.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="sm:justify-end gap-2">
-          <DialogClose asChild>
+          </ModalDescription>
+        </ModalHeader>
+        <ModalFooter className="sm:justify-end gap-2">
+          <ModalClose asChild>
             <Button type="button" variant="secondary">
               No, Cancel
             </Button>
-          </DialogClose>
+          </ModalClose>
           <Button
             variant="destructive"
             onClick={() => deleteBoardMutation.mutate({ slug })}
@@ -66,9 +66,9 @@ const DeleteBoardDialog = () => {
             )}
             Yes, Delete
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

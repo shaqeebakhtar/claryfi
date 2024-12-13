@@ -247,7 +247,7 @@ export const DeleteTag = ({
 
   return (
     <Modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <ModalContent className="sm:max-w-md">
+      <ModalContent className="sm:max-w-md p-4">
         <ModalHeader className="mb-2">
           <ModalTitle>Are you sure, you want to delete this tag?</ModalTitle>
           <ModalDescription>
@@ -255,7 +255,7 @@ export const DeleteTag = ({
             be undone - please proceed with caution.
           </ModalDescription>
         </ModalHeader>
-        <ModalFooter className="sm:justify-end gap-2 mt-8">
+        <ModalFooter className="sm:justify-end gap-2">
           <ModalClose asChild>
             <Button type="button" variant="secondary">
               No, Cancel
