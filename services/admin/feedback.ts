@@ -47,3 +47,36 @@ export const getFeedbacks = async ({
 
   return feedbacks;
 };
+
+export const updateFeedback = async ({
+  slug,
+  feedbackId,
+  title,
+  description,
+  status,
+  tagIds,
+}: {
+  slug: string;
+  feedbackId: string;
+  title?: string;
+  description?: string;
+  status?: string;
+  tagIds?: string[];
+}): Promise<{ id: string }> => {
+  const res = await fetch(`/api/admin/board/${slug}/feedback/${feedbackId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title,
+      description,
+      status,
+      tagIds,
+    }),
+  });
+
+  const { id } = await res.json();
+
+  return id;
+};

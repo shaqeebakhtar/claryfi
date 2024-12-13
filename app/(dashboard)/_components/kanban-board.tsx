@@ -1,8 +1,14 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import { snakeCaseToString } from '@/lib/utils';
-import { getFeedbacks } from '@/services/admin/feedback';
+import { getFeedbacks, updateFeedback } from '@/services/admin/feedback';
 import { FeedbackStatus, IFeedback } from '@/types/feedback';
-import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
-import { useQuery } from '@tanstack/react-query';
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from '@hello-pangea/dnd';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   CircleCheck,
   CircleDashed,
@@ -13,7 +19,7 @@ import {
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FeedbackCard, FeedbackCardSkeleton } from './dashboard-feedback-card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 
 const columns = [
   FeedbackStatus.PENDING,
@@ -40,18 +46,66 @@ const statusIconMap = {
 };
 
 export const KanbanBoard = () => {
+  const queryClient = useQueryClient();
   const { slug } = useParams<{ slug: string }>();
   const { data: feedbacks, isLoading } = useQuery({
     queryKey: [slug, 'feedbacks'],
     queryFn: () => getFeedbacks({ slug }),
   });
-
   const [sortedFeedbacks, setSortedFeedbacks] = useState<FeedbackState>();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: updateFeedback,
+    onSuccess: () => {
+      toast.success('Status of the feedback has been updated');
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
+    },
+    onError: () => {
+      toast.error('Failed to updated the status');
+    },
+  });
+
+  function handleDragEnd(result: DropResult) {
+    if (!result.destination) return;
+    const { source, destination, draggableId } = result;
+    const feedbackId = draggableId.split('-')[1];
+    const sourceColumn = source.droppableId.split('-')[1] as FeedbackStatus;
+    const destinationColumn = destination.droppableId.split(
+      '-'
+    )[1] as FeedbackStatus;
+
+    if (source.droppableId === destination.droppableId) return;
+
+    mutate({
+      slug,
+      feedbackId,
+      status: destinationColumn,
+    });
+
+    setSortedFeedbacks((prevState) => {
+      if (!prevState) return prevState;
+
+      const sourceItems = Array.from(prevState[sourceColumn]);
+      const destinationItems = Array.from(prevState[destinationColumn]);
+
+      const [movedItem] = sourceItems.splice(source.index, 1);
+
+      movedItem.status = destinationColumn as FeedbackStatus;
+
+      destinationItems.splice(destination.index, 0, movedItem);
+
+      return {
+        ...prevState,
+        [sourceColumn]: sourceItems,
+        [destinationColumn]: destinationItems,
+      };
+    });
+  }
 
   useEffect(() => {
     if (!isLoading && feedbacks) {
       setSortedFeedbacks(() => {
-        const tempFeedbacks: FeedbackState = {
+        const groupedFeedbacksByStatus: FeedbackState = {
           [FeedbackStatus.PENDING]: [],
           [FeedbackStatus.APPROVED]: [],
           [FeedbackStatus.IN_PROGRESS]: [],
@@ -60,10 +114,10 @@ export const KanbanBoard = () => {
         };
 
         feedbacks?.forEach((feedback) =>
-          tempFeedbacks[feedback.status].push(feedback)
+          groupedFeedbacksByStatus[feedback.status].push(feedback)
         );
 
-        return tempFeedbacks;
+        return groupedFeedbacksByStatus;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +125,7 @@ export const KanbanBoard = () => {
 
   return (
     <>
-      <DragDropContext onDragEnd={() => {}}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <div className="flex gap-5 h-full px-3 lg:px-8 pb-3 lg:pb-8 mt-6 overflow-x-auto">
           {columns.map((column) => (
             <Droppable key={column} droppableId={`droppable-${column}`}>
@@ -101,7 +155,7 @@ export const KanbanBoard = () => {
                     : sortedFeedbacks &&
                       sortedFeedbacks[column].map((feedback, index) => (
                         <Draggable
-                          draggableId={`draggable-${column}-${feedback.id}`}
+                          draggableId={`draggable-${feedback.id}`}
                           index={index}
                           key={feedback.id}
                         >
@@ -116,6 +170,7 @@ export const KanbanBoard = () => {
                           )}
                         </Draggable>
                       ))}
+                  {provided.placeholder}
                 </div>
               )}
             </Droppable>
