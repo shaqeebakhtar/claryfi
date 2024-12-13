@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { IFeedback } from '@/types/feedback';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -44,7 +45,7 @@ type Feedback = {
 };
 
 type FeedbackCardProps = {
-  feedback: Feedback;
+  feedback: IFeedback;
 };
 
 export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
@@ -126,9 +127,10 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
         </div>
         <div className="space-y-0.5">
           <h3 className="font-medium">{feedback.title}</h3>
-          <p className="text-muted-foreground text-sm line-clamp-2">
-            {feedback.description}
-          </p>
+          <p
+            className="text-muted-foreground text-sm line-clamp-2"
+            dangerouslySetInnerHTML={{ __html: feedback.description }}
+          ></p>
         </div>
       </div>
       <div className="flex items-center justify-between">
@@ -143,11 +145,13 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
               className={cn('size-4 text-primary', upvoted && 'text-white')}
               strokeWidth={3}
             />
-            <span>{feedback.upvotes}</span>
+            <span>{feedback._count.upvotes}</span>
           </button>
           <div className="flex items-center gap-1">
             <MessageCircle className="size-4 text-muted-foreground" />
-            <span className="font-semibold text-xs">{feedback.comments}</span>
+            <span className="font-semibold text-xs">
+              {feedback._count.comments}
+            </span>
           </div>
         </div>
         <DropdownMenu>
@@ -175,23 +179,25 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
 
 export const FeedbackCardSkeleton = () => {
   return (
-    <li className="relative list-none">
-      <div className="p-8 bg-background rounded-xl shadow transition-all flex flex-col md:flex-row md:items-start justify-between gap-5 md:gap-8 relative">
-        <Skeleton className="w-12 h-16 rounded-lg hidden md:block" />
-        <div className="space-y-3 md:space-y-1 w-full">
-          <div className="flex flex-col-reverse md:flex-row items-start md:items-center gap-2.5">
-            <Skeleton className="w-56 h-6" />
-            <Skeleton className="w-20 h-5 rounded-full" />
-          </div>
-          <Skeleton className="w-full h-4" />
-          <Skeleton className="w-full h-4" />
-          <Skeleton className="w-1/2 h-4" />
+    <div className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative border">
+      <div className="space-y-3">
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="w-20 h-6" />
+          <Skeleton className="w-20 h-6" />
         </div>
-        <div className="flex items-center justify-between">
-          <Skeleton className="w-16 h-8 rounded-lg md:hidden" />
-          <Skeleton className="w-12 h-8 rounded-lg" />
+        <div className="space-y-0.5">
+          <Skeleton className="w-48 h-6" />
+          <Skeleton className="w-64 h-4" />
+          <Skeleton className="w-56 h-4" />
         </div>
       </div>
-    </li>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-5">
+          <Skeleton className="w-14 h-7 rounded-lg" />
+          <Skeleton className="size-7 rounded-lg" />
+        </div>
+        <Skeleton className="size-9 rounded-lg" />
+      </div>
+    </div>
   );
 };

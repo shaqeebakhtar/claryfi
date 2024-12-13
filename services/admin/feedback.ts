@@ -1,3 +1,5 @@
+import { IFeedback } from '@/types/feedback';
+
 export const addFeedback = async ({
   slug,
   title,
@@ -27,4 +29,21 @@ export const addFeedback = async ({
   const { id } = await res.json();
 
   return id;
+};
+
+export const getFeedbacks = async ({
+  slug,
+}: {
+  slug: string;
+}): Promise<IFeedback[]> => {
+  const res = await fetch(`/api/admin/board/${slug}/feedback`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { feedbacks } = await res.json();
+
+  return feedbacks;
 };
