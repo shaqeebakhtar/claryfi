@@ -79,12 +79,7 @@ const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
   ];
 
   return (
-    <div
-      className="group p-4 sm:p-5 bg-background rounded-md flex gap-6 relative cursor-pointer hover:shadow-sm"
-      onClick={() =>
-        router.push(`${pathname}?f=${feedback.title}`, { scroll: false })
-      }
-    >
+    <div className="group p-4 sm:p-5 bg-background rounded-md flex gap-6 relative cursor-pointer hover:shadow-sm">
       <div className="flex flex-col items-center justify-between">
         <button
           className={cn(
@@ -105,10 +100,17 @@ const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
           </span>
         </div>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="w-full flex flex-col gap-3">
         <FeedbackCardStatus status={feedback.status} />
-        <div className="space-y-1 mb-2">
-          <h3 className="font-medium">{feedback.title}</h3>
+        <div
+          className="w-full space-y-1 mb-2 group"
+          onClick={() =>
+            router.push(`${pathname}?f=${feedback.id}`, { scroll: false })
+          }
+        >
+          <h3 className="font-medium group-hover:text-primary transition-all">
+            {feedback.title}
+          </h3>
           <div
             className="feedback--desc text-muted-foreground text-sm line-clamp-2"
             dangerouslySetInnerHTML={{ __html: feedback.description }}

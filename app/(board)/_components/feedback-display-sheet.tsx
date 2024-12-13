@@ -9,6 +9,9 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { getFeedbackById } from '@/services/open/feedback';
+import { useQuery } from '@tanstack/react-query';
+import { formatDistance } from 'date-fns';
 import {
   ChevronUp,
   PencilLineIcon,
@@ -16,12 +19,63 @@ import {
   ThumbsUpIcon,
   XIcon,
 } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import FeedbackCardStatus from './feedback-card-status';
 
 const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
+  const { slug } = useParams<{ slug: string }>();
   const pathname = usePathname();
   const router = useRouter();
+
+  const tagColors = [
+    {
+      name: 'Gray',
+      tagClass: 'bg-gray-100 text-gray-600',
+      buttonClass: 'bg-gray-500',
+    },
+    {
+      name: 'Red',
+      tagClass: 'bg-red-100 text-red-600',
+      buttonClass: 'bg-red-500',
+    },
+    {
+      name: 'Orange',
+      tagClass: 'bg-orange-100 text-orange-600',
+      buttonClass: 'bg-orange-500',
+    },
+    {
+      name: 'Cyan',
+      tagClass: 'bg-cyan-100 text-cyan-600',
+      buttonClass: 'bg-cyan-500',
+    },
+    {
+      name: 'Green',
+      tagClass: 'bg-green-100 text-green-600',
+      buttonClass: 'bg-green-500',
+    },
+    {
+      name: 'Blue',
+      tagClass: 'bg-blue-100 text-blue-600',
+      buttonClass: 'bg-blue-500',
+    },
+    {
+      name: 'Yellow',
+      tagClass: 'bg-yellow-100 text-yellow-600',
+      buttonClass: 'bg-yellow-500',
+    },
+    {
+      name: 'Purple',
+      tagClass: 'bg-purple-100 text-purple-600',
+      buttonClass: 'bg-purple-500',
+    },
+  ];
+
+  const { data: feedback, isLoading } = useQuery({
+    queryKey: ['feedback', feedbackId],
+    queryFn: () => getFeedbackById({ slug, feedbackId }),
+  });
+
+  if (isLoading && !feedback) return null;
 
   return (
     <Sheet
@@ -39,32 +93,58 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
             </SheetClose>
             <SheetHeader className="px-6 pt-6">
               <div className="flex items-center gap-3">
-                <FeedbackCardStatus status="APPROVED" className="text-sm" />
-                <Separator orientation="vertical" className="h-4" />
-                <div className="flex items-center gap-1.5">
-                  <div className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-600 rounded-sm">
-                    Feature
-                  </div>
-                  <div className="text-xs font-medium px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded-sm">
-                    UI/UX
-                  </div>
-                </div>
+                <FeedbackCardStatus
+                  status={feedback?.status as string}
+                  className="text-sm"
+                />
+                {feedback && feedback?.tags.length > 0 && (
+                  <>
+                    <Separator orientation="vertical" className="h-4" />
+                    <div className="flex items-center gap-1.5">
+                      {feedback?.tags.map((tag) => (
+                        <div
+                          key={tag.tag.name}
+                          className={cn(
+                            'text-xs font-medium px-2 py-0.5 rounded-sm',
+                            tagColors.find(
+                              (color) =>
+                                color.name.toLowerCase() ===
+                                tag.tag.color.toLowerCase()
+                            )?.tagClass
+                          )}
+                        >
+                          {tag.tag.name}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
               <SheetTitle className="text-xl text-left">
-                {feedbackId}
+                {feedback?.title}
               </SheetTitle>
               <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                 <div className="size-6 rounded-full bg-muted"></div>
                 <span>John Doe</span>
                 <span>•</span>
-                <span>Nov 15, 2024</span>
+                <span>
+                  {formatDistance(
+                    new Date(feedback?.createdAt as Date),
+                    new Date(),
+                    {
+                      addSuffix: true,
+                    }
+                  )}
+                </span>
               </div>
             </SheetHeader>
             <div className="px-6 pt-4 pb-5 space-y-5 border-b border-b-gray-100">
-              <p className="text-muted-foreground">
-                Users are unable to log in using the mobile app when on slower
-                networks.
-              </p>
+              <p
+                className="feedback--desc text-muted-foreground"
+                dangerouslySetInnerHTML={{
+                  __html: feedback?.description as string,
+                }}
+              ></p>
               <div className="flex items-center justify-between">
                 <Button
                   className={cn(
@@ -76,7 +156,7 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
                     className={cn('size-4 text-primary')}
                     strokeWidth={3}
                   />
-                  <span>56</span>
+                  <span>{feedback?._count.upvotes}</span>
                 </Button>
                 <div className="space-x-2.5">
                   <Button size="sm" variant="secondary" className="shadow-none">
@@ -110,15 +190,12 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
               <h3 className="font-semibold">
                 Comments
                 <span className="px-2.5 py-0.5 border rounded-full text-xs font-semibold ml-3">
-                  5
+                  {feedback?._count.comments}
                 </span>
               </h3>
             </div>
           </div>
           <div className="space-y-5 px-6 pb-6">
-            <Comment />
-            <Comment />
-            <Comment />
             <Comment />
             <Comment />
             <Comment />

@@ -1,23 +1,5 @@
 'use client';
-import { Skeleton } from '@/components/ui/skeleton';
-import { undovoteFeedback, upvoteFeedback } from '@/data-access/feedback';
-import { cn } from '@/lib/utils';
-// import { Feedback, Upvote } from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  ChevronUp,
-  MessageCircle,
-  MoreHorizontal,
-  PencilLine,
-  Trash2,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import FeedbackDropdownMenu from '../../(board)/_components/feedback-dropdown-menu';
-// import FeedbackStatus from '../../(board)/_components/feedback-status';
-import { useSession } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,25 +7,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 import { IFeedback } from '@/types/feedback';
+import {
+  ChevronUp,
+  MessageCircle,
+  MoreHorizontal,
+  PencilLine,
+  Trash2,
+} from 'lucide-react';
+import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import DeleteFeedback from './delete-feedback';
-
-enum FeedbackStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE',
-  CANCELLED = 'CANCELLED',
-}
-
-type Feedback = {
-  title: string;
-  description: string;
-  status: FeedbackStatus;
-  upvotes: number;
-  comments: number;
-};
 
 type FeedbackCardProps = {
   feedback: IFeedback;
