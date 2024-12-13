@@ -81,6 +81,16 @@ const SettingsForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board]);
 
+  function isAnyFieldUpdated() {
+    return (
+      form.watch('name') !== board?.name ||
+      form.watch('slug') !== board?.slug ||
+      form.watch('url') !== board?.websiteUrl ||
+      form.watch('color') !== board?.brandColor ||
+      form.watch('hide_branding') !== board?.hideBranding
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="space-y-1">
@@ -242,7 +252,11 @@ const SettingsForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={isLoading || isPending}>
+          <Button
+            type="submit"
+            disabled={isLoading || isPending || !isAnyFieldUpdated()}
+            className="disabled:bg-gray-300 disabled:text-secondary-foreground shadow-none"
+          >
             {isPending && <Loader className="size-4 animate-spin mr-2" />}
             Save changes
           </Button>
