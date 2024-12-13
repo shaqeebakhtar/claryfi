@@ -192,7 +192,7 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
             {feedback.title}
           </h3>
           <p
-            className="text-muted-foreground text-sm line-clamp-3"
+            className="feedback--desc text-muted-foreground text-sm line-clamp-3"
             dangerouslySetInnerHTML={{ __html: feedback.description }}
           ></p>
         </div>
