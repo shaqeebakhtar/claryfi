@@ -6,7 +6,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import DeleteBoardDialog from '../../_components/delete-board-dialog';
-import GeneralSettingsForm from '../../_components/general-settings-form';
+import SettingsForm from '../../_components/settings-form';
 import ManageTags from '../../_components/manage-tags';
 
 const Page = () => {
@@ -24,7 +24,7 @@ const Page = () => {
           </div>
         </header>
         <div className="max-w-xl space-y-12 px-3 lg:px-8 py-8">
-          <GeneralSettingsForm />
+          <SettingsForm />
           <Separator orientation="horizontal" className="bg-gray-100" />
           <ManageTags />
           <Separator orientation="horizontal" className="bg-gray-100" />

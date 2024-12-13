@@ -1,6 +1,7 @@
 'use client';
 
 import { FileUpload } from '@/components/file-upload';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -11,29 +12,74 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { generalSettingsFormSchema } from '@/validations/general';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import DeleteBoardDialog from './delete-board-dialog';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { CrownIcon } from 'lucide-react';
+import {
+  getBoardMetaDataBySlug,
+  updateBoardMetaData,
+} from '@/services/admin/settings';
+import { settingsFormSchema } from '@/validations/settings';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CrownIcon, Loader } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-type AppearanceFormValues = z.infer<typeof generalSettingsFormSchema>;
+type SettingsFormValues = z.infer<typeof settingsFormSchema>;
 
-const GeneralSettingsForm = () => {
-  const form = useForm<AppearanceFormValues>({
-    resolver: zodResolver(generalSettingsFormSchema),
-    defaultValues: {
-      color: '#7c3aed',
+const SettingsForm = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const { data: board, isLoading } = useQuery({
+    queryKey: [slug, 'settings'],
+    queryFn: () => getBoardMetaDataBySlug({ slug }),
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: updateBoardMetaData,
+    onSuccess: (data) => {
+      toast.success('Updated board successfully');
+      form.setValue('slug', data?.slug);
+      queryClient.invalidateQueries({ queryKey: [slug, 'settings'] });
+      router.push(`/${data?.slug}/settings`);
+    },
+    onError: () => {
+      toast.error('Failed to update the board');
     },
   });
 
-  function onSubmit(data: AppearanceFormValues) {
-    console.log(data);
+  const form = useForm<SettingsFormValues>({
+    resolver: zodResolver(settingsFormSchema),
+    defaultValues: {
+      hide_branding: false,
+    },
+  });
+
+  function onSubmit(data: SettingsFormValues) {
+    mutate({
+      name: data.name,
+      slug,
+      newSlug: data.slug,
+      websiteUrl: data.url,
+      brandColor: data.color,
+      hideBranding: data.hide_branding,
+    });
   }
+
+  useEffect(() => {
+    if (!isLoading && board) {
+      form.setValue('name', board?.name);
+      form.setValue('slug', board?.slug);
+      form.setValue('color', board?.brandColor as string);
+      form.setValue('url', board?.websiteUrl as string);
+      form.setValue('hide_branding', board?.hideBranding as boolean);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [board]);
 
   return (
     <div className="space-y-8">
@@ -87,7 +133,11 @@ const GeneralSettingsForm = () => {
                   This is the name of your board.
                 </FormDescription>
                 <FormControl>
-                  <Input placeholder="My board" {...field} />
+                  <Input
+                    placeholder="My board"
+                    {...field}
+                    disabled={isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,12 +150,19 @@ const GeneralSettingsForm = () => {
               <FormItem>
                 <FormLabel className="text-base font-medium">
                   Website URL
+                  <span className="text-muted-foreground text-sm ml-1.5">
+                    (Optional)
+                  </span>
                 </FormLabel>
                 <FormDescription>
                   This will be used to link back to your website.
                 </FormDescription>
                 <FormControl>
-                  <Input placeholder="My board" {...field} />
+                  <Input
+                    placeholder="https://example.com"
+                    {...field}
+                    disabled={isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -123,7 +180,11 @@ const GeneralSettingsForm = () => {
                   This is the unique slug of your board.
                 </FormDescription>
                 <FormControl>
-                  <Input placeholder="my-board" {...field} />
+                  <Input
+                    placeholder="my-board"
+                    {...field}
+                    disabled={isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -147,8 +208,9 @@ const GeneralSettingsForm = () => {
                         type="color"
                         {...field}
                         className="w-7 appearance-none border-0 rounded-sm bg-none cursor-pointer"
+                        disabled={isLoading}
                       />
-                      <span className="text-sm">{form.getValues('color')}</span>
+                      <span className="text-sm">{form.watch('color')}</span>
                     </div>
                   </FormControl>
                 </div>
@@ -174,16 +236,20 @@ const GeneralSettingsForm = () => {
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    disabled={isLoading}
                   />
                 </FormControl>
               </FormItem>
             )}
           />
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" disabled={isLoading || isPending}>
+            {isPending && <Loader className="size-4 animate-spin mr-2" />}
+            Save changes
+          </Button>
         </form>
       </Form>
     </div>
   );
 };
 
-export default GeneralSettingsForm;
+export default SettingsForm;

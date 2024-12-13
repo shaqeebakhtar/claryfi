@@ -45,9 +45,13 @@ model Account {
 }
 
 model Board {
-  id   String @id @default(cuid())
-  name String
-  slug String @unique
+  id           String   @id @default(cuid())
+  logoUrl      String?
+  name         String
+  slug         String   @unique
+  websiteUrl   String?
+  brandColor   String?
+  hideBranding Boolean?
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
