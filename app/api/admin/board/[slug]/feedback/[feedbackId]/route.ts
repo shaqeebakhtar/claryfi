@@ -75,3 +75,46 @@ export const PATCH = async (
     }
   );
 };
+
+export const DELETE = async (
+  req: Request,
+  { params }: { params: { slug: string; feedbackId: string } }
+) => {
+  const { slug, feedbackId } = params;
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return Response.json('Unauthorized', { status: 401 });
+  }
+
+  const board = await db.board.findUnique({
+    where: {
+      slug,
+      userId: session?.user?.id,
+    },
+  });
+
+  if (!board) {
+    return Response.json('Board not found', { status: 404 });
+  }
+
+  let feedback;
+
+  try {
+    feedback = await db.feedback.delete({
+      where: {
+        id: feedbackId,
+      },
+    });
+  } catch (error) {
+    throw new Error('Failed to update the feedback');
+  }
+
+  return Response.json(
+    { id: feedback.id },
+    {
+      status: 200,
+    }
+  );
+};

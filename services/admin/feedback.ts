@@ -80,3 +80,22 @@ export const updateFeedback = async ({
 
   return id;
 };
+
+export const deleteFeedbackById = async ({
+  slug,
+  feedbackId,
+}: {
+  slug: string;
+  feedbackId: string;
+}) => {
+  const res = await fetch(`/api/admin/board/${slug}/feedback/${feedbackId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { id } = await res.json();
+
+  return id;
+};

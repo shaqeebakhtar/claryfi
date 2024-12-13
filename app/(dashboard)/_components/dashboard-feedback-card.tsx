@@ -12,7 +12,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import FeedbackDropdownMenu from '../../(board)/_components/feedback-dropdown-menu';
@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { IFeedback } from '@/types/feedback';
+import DeleteFeedback from './delete-feedback';
 
 enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -50,8 +51,54 @@ type FeedbackCardProps = {
 
 export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   const { slug } = useParams() as { slug: string };
-  const path = usePathname();
   const [upvoted, setUpvoted] = useState<boolean>(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const tagColors = [
+    {
+      name: 'Gray',
+      tagClass: 'bg-gray-100 text-gray-600',
+      buttonClass: 'bg-gray-500',
+    },
+    {
+      name: 'Red',
+      tagClass: 'bg-red-100 text-red-600',
+      buttonClass: 'bg-red-500',
+    },
+    {
+      name: 'Orange',
+      tagClass: 'bg-orange-100 text-orange-600',
+      buttonClass: 'bg-orange-500',
+    },
+    {
+      name: 'Cyan',
+      tagClass: 'bg-cyan-100 text-cyan-600',
+      buttonClass: 'bg-cyan-500',
+    },
+    {
+      name: 'Green',
+      tagClass: 'bg-green-100 text-green-600',
+      buttonClass: 'bg-green-500',
+    },
+    {
+      name: 'Blue',
+      tagClass: 'bg-blue-100 text-blue-600',
+      buttonClass: 'bg-blue-500',
+    },
+    {
+      name: 'Yellow',
+      tagClass: 'bg-yellow-100 text-yellow-600',
+      buttonClass: 'bg-yellow-500',
+    },
+    {
+      name: 'Purple',
+      tagClass: 'bg-purple-100 text-purple-600',
+      buttonClass: 'bg-purple-500',
+    },
+  ];
+
   // const [canEdit, setCanEdit] = useState<boolean>(false);
   // const [upvotes, setUpvotes] = useState<number>(feedback._count.upvotes);
   // const [status, setStatus] = useState<string>(feedback.status);
@@ -117,18 +164,35 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   return (
     <div className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative border">
       <div className="space-y-3">
-        <div className="flex items-center gap-1.5">
-          <div className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-600 rounded-sm">
-            Feature
+        {feedback.tags.length > 0 && (
+          <div className="flex items-center gap-1.5">
+            {feedback.tags.map((tag) => (
+              <div
+                key={tag.tag.name}
+                className={cn(
+                  'text-xs font-medium px-2 py-0.5 rounded-sm',
+                  tagColors.find(
+                    (color) =>
+                      color.name.toLowerCase() === tag.tag.color.toLowerCase()
+                  )?.tagClass
+                )}
+              >
+                {tag.tag.name}
+              </div>
+            ))}
           </div>
-          <div className="text-xs font-medium px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded-sm">
-            UI/UX
-          </div>
-        </div>
-        <div className="space-y-0.5">
-          <h3 className="font-medium">{feedback.title}</h3>
+        )}
+        <div
+          className="space-y-0.5 group"
+          onClick={() =>
+            router.push(`${pathname}?f=${feedback.id}`, { scroll: false })
+          }
+        >
+          <h3 className="font-medium group-hover:text-primary transition-all">
+            {feedback.title}
+          </h3>
           <p
-            className="text-muted-foreground text-sm line-clamp-2"
+            className="text-muted-foreground text-sm line-clamp-3"
             dangerouslySetInnerHTML={{ __html: feedback.description }}
           ></p>
         </div>
@@ -154,7 +218,7 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
             </span>
           </div>
         </div>
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" aria-label="More options">
               <MoreHorizontal className="size-4" />
@@ -166,13 +230,25 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
               Edit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="font-medium text-destructive focus:text-destructive focus:bg-destructive/10">
+            <DropdownMenuItem
+              className="font-medium text-destructive focus:text-destructive focus:bg-destructive/10"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDeleteDialogOpen(true);
+              }}
+            >
               <Trash2 className="size-4 mr-2" />
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <DeleteFeedback
+        feedbackId={feedback.id}
+        isDialogOpen={isDeleteDialogOpen}
+        setIsDialogOpen={() => setIsDeleteDialogOpen(false)}
+      />
     </div>
   );
 };

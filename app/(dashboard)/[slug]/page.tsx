@@ -12,13 +12,16 @@ import { cn } from '@/lib/utils';
 import { EyeIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { redirect, useParams } from 'next/navigation';
+import { redirect, useParams, useSearchParams } from 'next/navigation';
 import { AddDashboardFeedback } from '../_components/add-dashboard-feedback';
 import { KanbanBoard } from '../_components/kanban-board';
+import FeedbackDisplaySheet from '@/app/(board)/_components/feedback-display-sheet';
 
 const Page = () => {
   const { data: session, status } = useSession();
   const { slug } = useParams<{ slug: string }>();
+  const searchParams = useSearchParams();
+  const feedbackId = searchParams.get('f');
 
   if ((!session || !session?.user) && status !== 'loading') {
     redirect(`/login?next=/${slug}`);
@@ -50,6 +53,7 @@ const Page = () => {
           </div>
         </header>
         <KanbanBoard />
+        {feedbackId && <FeedbackDisplaySheet feedbackId={feedbackId} />}
       </SidebarInset>
     </SidebarProvider>
   );

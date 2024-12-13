@@ -47,7 +47,7 @@ export const TextEditor = ({
 }: {
   placeholder?: string;
   className?: string;
-  form: UseFormReturn<any, undefined>;
+  form?: UseFormReturn<any, undefined>;
 }) => {
   const editor = useEditor({
     extensions: [
@@ -78,7 +78,7 @@ export const TextEditor = ({
     content: '',
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      form.setValue('description', html);
+      form?.setValue('description', html);
     },
   });
 
