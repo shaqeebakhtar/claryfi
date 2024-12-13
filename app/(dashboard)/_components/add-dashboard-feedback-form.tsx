@@ -128,7 +128,7 @@ export const AddDashboardFeedbackForm = ({
     onSuccess: () => {
       closeDialog();
       toast.success('Your feedback has been submitted');
-      queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
     },
     onError: (error) => {
       toast.error(error.message);
