@@ -72,6 +72,7 @@ const SettingsForm = () => {
 
   useEffect(() => {
     if (!isLoading && board) {
+      form.setValue('logo', board?.logoUrl as string);
       form.setValue('name', board?.name);
       form.setValue('slug', board?.slug);
       form.setValue('color', board?.brandColor as string);
@@ -83,6 +84,7 @@ const SettingsForm = () => {
 
   function isAnyFieldUpdated() {
     return (
+      form.watch('logo') !== board?.logoUrl ||
       form.watch('name') !== board?.name ||
       form.watch('slug') !== board?.slug ||
       form.watch('url') !== board?.websiteUrl ||
@@ -105,7 +107,7 @@ const SettingsForm = () => {
           <FormField
             control={form.control}
             name="logo"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <div>
                   <FormLabel className="text-base font-medium">
@@ -116,6 +118,7 @@ const SettingsForm = () => {
                   </FormDescription>
                   <FormControl>
                     <FileUpload
+                      imageSrc={form.watch('logo')}
                       accept="images"
                       className="h-24 w-24 rounded-full border border-gray-300"
                       iconClassName="w-5 h-5"
@@ -123,7 +126,9 @@ const SettingsForm = () => {
                       readFile
                       content={null}
                       maxFileSizeMB={2}
-                      {...field}
+                      onChange={(data) => {
+                        form.setValue('logo', data.src);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

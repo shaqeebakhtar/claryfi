@@ -150,89 +150,93 @@ export const FileUpload = ({
   };
 
   return (
-    <label
-      className={cn(
-        imageUploadVariants({ variant }),
-        clickToUpload && 'cursor-pointer',
-        className
-      )}
-    >
-      {loading && (
-        <div className="absolute inset-0 z-[5] flex items-center justify-center rounded-[inherit] bg-white">
-          <Loader />
-        </div>
-      )}
-      <div
-        className="absolute inset-0 z-[5]"
-        onDragOver={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setDragActive(true);
-        }}
-        onDragEnter={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setDragActive(true);
-        }}
-        onDragLeave={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setDragActive(false);
-        }}
-        onDrop={async (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onFileChange(e);
-          setDragActive(false);
-        }}
-      />
-      <div
+    <div className="flex items-center gap-3">
+      <label
         className={cn(
-          'absolute inset-0 z-[3] flex flex-col items-center justify-center rounded-[inherit] bg-white transition-all',
-          dragActive &&
-            'cursor-copy border-2 border-black bg-gray-50 opacity-100',
-          imageSrc
-            ? cn('opacity-0', showHoverOverlay && 'group-hover:opacity-100')
-            : 'group-hover:bg-gray-50'
+          imageUploadVariants({ variant }),
+          clickToUpload && 'cursor-pointer',
+          className
         )}
       >
-        <UploadCloud
-          className={cn(
-            'h-7 w-7 text-gray-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95',
-            dragActive ? 'scale-110' : 'scale-100',
-            iconClassName
-          )}
-        />
-        {content !== null && (
-          <div className="mt-2 text-center text-sm text-gray-500">
-            {content ?? (
-              <>
-                <p>Drag and drop {clickToUpload && 'or click'} to upload.</p>
-              </>
-            )}
+        {loading && (
+          <div className="absolute inset-0 z-[5] flex items-center justify-center rounded-[inherit] bg-white">
+            <Loader />
           </div>
         )}
-        <span className="sr-only">{accessibilityLabel}</span>
-      </div>
-      {imageSrc && (
-        <Image
-          src={imageSrc}
-          alt="Preview"
-          className="h-full w-full rounded-[inherit] object-cover"
-          width="100"
-          height="100"
+        <div
+          className="absolute inset-0 z-[5]"
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setDragActive(true);
+          }}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setDragActive(true);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setDragActive(false);
+          }}
+          onDrop={async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onFileChange(e);
+            setDragActive(false);
+          }}
         />
-      )}
-      {clickToUpload && (
-        <div className="sr-only mt-1 flex shadow-sm">
-          <input
-            key={fileName} // Gets us a fresh input every time a file is uploaded
-            type="file"
-            accept={acceptFileTypes[accept].types.join(',')}
-            onChange={onFileChange}
+        <div
+          className={cn(
+            'absolute inset-0 z-[3] flex flex-col items-center justify-center rounded-[inherit] bg-white transition-all',
+            dragActive &&
+              'cursor-copy border-2 border-black bg-gray-50 opacity-100',
+            imageSrc
+              ? cn('opacity-0', showHoverOverlay && 'group-hover:opacity-100')
+              : 'group-hover:bg-gray-50'
+          )}
+        >
+          <UploadCloud
+            className={cn(
+              'h-7 w-7 text-gray-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95',
+              dragActive ? 'scale-110' : 'scale-100',
+              iconClassName
+            )}
           />
+          {content !== null && (
+            <div className="mt-2 text-center text-sm text-gray-500">
+              {content ?? (
+                <>
+                  <p>Drag and drop {clickToUpload && 'or click'} to upload.</p>
+                </>
+              )}
+            </div>
+          )}
+          <span className="sr-only">{accessibilityLabel}</span>
         </div>
-      )}
-    </label>
+        {imageSrc && (
+          <Image
+            src={imageSrc}
+            alt="Preview"
+            className="h-full w-full rounded-[inherit] object-cover"
+            width="100"
+            height="100"
+          />
+        )}
+
+        {clickToUpload && (
+          <div className="sr-only mt-1 flex shadow-sm">
+            <input
+              key={fileName} // Gets us a fresh input every time a file is uploaded
+              type="file"
+              accept={acceptFileTypes[accept].types.join(',')}
+              onChange={onFileChange}
+            />
+          </div>
+        )}
+      </label>
+      <span className="text-xs text-muted-foreground">{fileName}</span>
+    </div>
   );
 };
