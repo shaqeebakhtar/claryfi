@@ -2,11 +2,10 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { getPublicBoardBySlug } from '@/services/open/board';
-import { usePublicBoardStore } from '@/store/public-board';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const Layout = ({
   children,
@@ -15,22 +14,11 @@ const Layout = ({
 }>) => {
   const { slug } = useParams<{ slug: string }>();
   const pathname = usePathname();
-  const { boardName, setBoardName, setBoard, setFeedbacks } =
-    usePublicBoardStore((state) => state);
 
   const { data: board, isLoading } = useQuery({
     queryKey: ['board', 'open', slug],
     queryFn: () => getPublicBoardBySlug({ slug }),
   });
-
-  useEffect(() => {
-    if (board && !isLoading) {
-      setBoard(board);
-      setBoardName(board.name);
-      setFeedbacks(board.feedbacks);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug, board]);
 
   return (
     <>
@@ -42,10 +30,10 @@ const Layout = ({
             <div className="w-full lg:w-auto flex items-center gap-8 justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg text-center text-sm font-medium uppercase grid items-center select-none">
-                  {boardName.slice(0, 2)}
+                  {board?.name.slice(0, 2)}
                 </div>
                 <h2 className="max-w-48 truncate font-semibold leading-5">
-                  {boardName}
+                  {board?.name}
                 </h2>
               </div>
               <ul className="flex items-center gap-2">
