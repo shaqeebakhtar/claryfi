@@ -1,5 +1,4 @@
 'use client';
-import { Button } from '@/components/ui/button';
 import {
   Modal,
   ModalClose,
@@ -10,7 +9,8 @@ import {
   ModalTitle,
   ModalTrigger,
 } from '@/components/responsive-dialog';
-import { deleteBoard } from '@/data-access/board';
+import { Button } from '@/components/ui/button';
+import { deleteBoard } from '@/services/admin/board';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
