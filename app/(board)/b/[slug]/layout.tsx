@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { getPublicBoardBySlug } from '@/services/open/board';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
+import { notFound, useParams, usePathname } from 'next/navigation';
 import React from 'react';
 
 const Layout = ({
@@ -19,6 +19,10 @@ const Layout = ({
     queryKey: ['board', 'open', slug],
     queryFn: () => getPublicBoardBySlug({ slug }),
   });
+
+  if (!board && !isLoading) {
+    notFound();
+  }
 
   return (
     <>

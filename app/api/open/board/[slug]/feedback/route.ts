@@ -49,3 +49,55 @@ export const POST = async (
     }
   );
 };
+
+export const GET = async (
+  req: Request,
+  { params }: { params: { slug: string } }
+) => {
+  const { slug } = params;
+
+  const board = await db.board.findUnique({
+    where: {
+      slug,
+    },
+  });
+
+  if (!board) {
+    return new Response('Board not found', { status: 404 });
+  }
+
+  let feedbacks;
+
+  try {
+    feedbacks = await db.feedback.findMany({
+      where: {
+        boardId: board.id,
+      },
+      include: {
+        _count: {
+          select: {
+            upvotes: true,
+            comments: true,
+          },
+        },
+        tags: {
+          include: {
+            tag: {
+              select: {
+                name: true,
+                color: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {
+    return Response.json(
+      { message: 'Error getting feedbacks' },
+      { status: 500 }
+    );
+  }
+
+  return Response.json({ feedbacks }, { status: 200 });
+};

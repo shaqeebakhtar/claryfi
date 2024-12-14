@@ -51,3 +51,20 @@ export const getFeedbackById = async ({
 
   return feedback;
 };
+
+export const getPublicFeedbacks = async ({
+  slug,
+}: {
+  slug: string;
+}): Promise<IFeedback[]> => {
+  const res = await fetch(`/api/open/board/${slug}/feedback`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { feedbacks } = await res.json();
+
+  return feedbacks;
+};

@@ -1,5 +1,11 @@
 'use client';
-import React, { useState } from 'react';
+import AddPublicFeedback from '@/app/(board)/_components/add-public-feedback';
+import FeedbackDisplaySheet from '@/app/(board)/_components/feedback-display-sheet';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn, snakeCaseToString } from '@/lib/utils';
+import { getPublicFeedbacks } from '@/services/open/feedback';
+import { FeedbackStatus, IFeedback } from '@/types/feedback';
+import { useQuery } from '@tanstack/react-query';
 import {
   ChevronUp,
   CircleCheck,
@@ -9,17 +15,13 @@ import {
   CircleMinus,
   MessageCircle,
 } from 'lucide-react';
-import { cn, snakeCaseToString } from '@/lib/utils';
-import { FeedbackCard } from '@/app/(dashboard)/_components/dashboard-feedback-card';
-import AddPublicFeedback from '@/app/(board)/_components/add-public-feedback';
-
-enum FeedbackStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE',
-  CANCELLED = 'CANCELLED',
-}
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const columns = [
   FeedbackStatus.APPROVED,
@@ -27,105 +29,9 @@ const columns = [
   FeedbackStatus.DONE,
 ];
 
-type Feedback = {
-  title: string;
-  description: string;
-  status: FeedbackStatus;
-  upvotes: number;
-  comments: number;
-};
-
 type FeedbackState = {
-  [key in FeedbackStatus]: Feedback[];
+  [key in FeedbackStatus]: IFeedback[];
 };
-
-const feedbacks: Feedback[] = [
-  {
-    title: 'Add dark mode feature',
-    description:
-      'It would be great to have a dark mode option for better usability at night.',
-    status: FeedbackStatus.PENDING,
-    upvotes: 45,
-    comments: 12,
-  },
-  {
-    title: 'Fix login issue on mobile',
-    description:
-      'Users are unable to log in using the mobile app when on slower networks.',
-    status: FeedbackStatus.APPROVED,
-    upvotes: 30,
-    comments: 8,
-  },
-  {
-    title: 'Integrate payment gateway',
-    description:
-      'Add support for a popular payment gateway like PayPal or Stripe.',
-    status: FeedbackStatus.IN_PROGRESS,
-    upvotes: 60,
-    comments: 15,
-  },
-  {
-    title: 'Improve page loading speed',
-    description:
-      'Optimize the website to load faster, especially on older devices.',
-    status: FeedbackStatus.DONE,
-    upvotes: 100,
-    comments: 25,
-  },
-  {
-    title: 'Add multilingual support',
-    description:
-      'Enable users to switch between multiple languages on the platform.',
-    status: FeedbackStatus.CANCELLED,
-    upvotes: 20,
-    comments: 5,
-  },
-  {
-    title: 'Create a user onboarding tutorial',
-    description:
-      'A simple walkthrough to help new users understand the platform quickly.',
-    status: FeedbackStatus.PENDING,
-    upvotes: 35,
-    comments: 9,
-  },
-  {
-    title: 'Enhance accessibility features',
-    description: 'Add screen reader support and better keyboard navigation.',
-    status: FeedbackStatus.APPROVED,
-    upvotes: 50,
-    comments: 10,
-  },
-  {
-    title: 'Implement two-factor authentication',
-    description: 'Improve account security by adding 2FA via SMS or email.',
-    status: FeedbackStatus.IN_PROGRESS,
-    upvotes: 75,
-    comments: 20,
-  },
-  {
-    title: 'Redesign the dashboard layout',
-    description: 'Make the dashboard more intuitive and visually appealing.',
-    status: FeedbackStatus.DONE,
-    upvotes: 95,
-    comments: 30,
-  },
-  {
-    title: 'Add support for file attachments in comments',
-    description:
-      'Allow users to upload files and images within their comments.',
-    status: FeedbackStatus.PENDING,
-    upvotes: 25,
-    comments: 6,
-  },
-  {
-    title: 'Provide an offline mode',
-    description:
-      'Enable basic functionalities to work without an internet connection.',
-    status: FeedbackStatus.CANCELLED,
-    upvotes: 15,
-    comments: 4,
-  },
-];
 
 const statusIconMap = {
   [FeedbackStatus.PENDING]: <CircleDashed className="size-5 text-gray-400" />,
@@ -140,21 +46,81 @@ const statusIconMap = {
 };
 
 const Page = () => {
-  const [sortedFeedbacks, setSortedFeedbacks] = useState(() => {
-    const tempFeedbacks: FeedbackState = {
-      [FeedbackStatus.PENDING]: [],
-      [FeedbackStatus.APPROVED]: [],
-      [FeedbackStatus.IN_PROGRESS]: [],
-      [FeedbackStatus.DONE]: [],
-      [FeedbackStatus.CANCELLED]: [],
-    };
+  const { slug } = useParams<{ slug: string }>();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const feedbackId = searchParams.get('f');
 
-    feedbacks.forEach((feedback) =>
-      tempFeedbacks[feedback.status].push(feedback)
-    );
-
-    return tempFeedbacks;
+  const { data: feedbacks, isLoading } = useQuery({
+    queryKey: [slug, 'feedbacks'],
+    queryFn: () => getPublicFeedbacks({ slug }),
   });
+  const [sortedFeedbacks, setSortedFeedbacks] = useState<FeedbackState>();
+
+  const tagColors = [
+    {
+      name: 'Gray',
+      tagClass: 'bg-gray-50 text-gray-600 border border-gray-200',
+      buttonClass: 'bg-gray-500',
+    },
+    {
+      name: 'Red',
+      tagClass: 'bg-red-50 text-red-600 border border-red-200',
+      buttonClass: 'bg-red-500',
+    },
+    {
+      name: 'Orange',
+      tagClass: 'bg-orange-50 text-orange-600 border border-orange-200',
+      buttonClass: 'bg-orange-500',
+    },
+    {
+      name: 'Cyan',
+      tagClass: 'bg-cyan-50 text-cyan-600 border border-cyan-200',
+      buttonClass: 'bg-cyan-500',
+    },
+    {
+      name: 'Green',
+      tagClass: 'bg-green-50 text-green-600 border border-green-200',
+      buttonClass: 'bg-green-500',
+    },
+    {
+      name: 'Blue',
+      tagClass: 'bg-blue-50 text-blue-600 border border-blue-200',
+      buttonClass: 'bg-blue-500',
+    },
+    {
+      name: 'Yellow',
+      tagClass: 'bg-yellow-50 text-yellow-600 border border-yellow-200',
+      buttonClass: 'bg-yellow-500',
+    },
+    {
+      name: 'Purple',
+      tagClass: 'bg-purple-50 text-purple-600 border border-purple-200',
+      buttonClass: 'bg-purple-500',
+    },
+  ];
+
+  useEffect(() => {
+    if (!isLoading && feedbacks) {
+      setSortedFeedbacks(() => {
+        const groupedFeedbacksByStatus: FeedbackState = {
+          [FeedbackStatus.PENDING]: [],
+          [FeedbackStatus.APPROVED]: [],
+          [FeedbackStatus.IN_PROGRESS]: [],
+          [FeedbackStatus.DONE]: [],
+          [FeedbackStatus.CANCELLED]: [],
+        };
+
+        feedbacks?.forEach((feedback) =>
+          groupedFeedbacksByStatus[feedback.status].push(feedback)
+        );
+
+        return groupedFeedbacksByStatus;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, feedbacks]);
 
   return (
     <div className="px-3 lg:px-9 overflow-x-auto max-w-screen-lg mx-auto py-12 h-[calc(100vh-64px)]">
@@ -163,7 +129,7 @@ const Page = () => {
         <AddPublicFeedback />
       </div>
       <div className="flex gap-3">
-        {columns.map((column, index) => (
+        {columns.map((column) => (
           <div
             className="h-full px-1 flex-1 space-y-4 overflow-y-auto"
             key={column}
@@ -174,58 +140,129 @@ const Page = () => {
                 {snakeCaseToString(column)}
               </span>
               <span className="bg-white px-2.5 py-0.5 border rounded-full text-xs font-semibold">
-                {sortedFeedbacks[column].length}
+                {sortedFeedbacks && sortedFeedbacks[column].length}
               </span>
             </div>
             <div className="space-y-2.5">
-              {sortedFeedbacks[column].map((feedback, index) => (
-                <div
-                  className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative"
-                  key={feedback.title}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-1.5">
-                      <div className="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-600 rounded-sm">
-                        Feature
+              {isLoading ? (
+                [...Array(3)].map((_, index) => (
+                  <RoadmapFeedbackCardSkeleton key={index} />
+                ))
+              ) : sortedFeedbacks && sortedFeedbacks[column].length > 0 ? (
+                sortedFeedbacks[column].map((feedback) => (
+                  <div
+                    className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative"
+                    key={feedback.id}
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-1.5">
+                        {feedback.tags.map((tag) => (
+                          <div
+                            key={tag.tag.name}
+                            className={cn(
+                              'text-xs font-medium px-2 py-0.5 rounded-sm',
+                              tagColors.find(
+                                (color) =>
+                                  color.name.toLowerCase() ===
+                                  tag.tag.color.toLowerCase()
+                              )?.tagClass
+                            )}
+                          >
+                            {tag.tag.name}
+                          </div>
+                        ))}
                       </div>
-                      <div className="text-xs font-medium px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded-sm">
-                        UI/UX
+                      <div
+                        className="space-y-0.5 group cursor-pointer"
+                        onClick={() =>
+                          router.push(`${pathname}?f=${feedback.id}`, {
+                            scroll: false,
+                          })
+                        }
+                      >
+                        <h3 className="font-medium group-hover:text-primary transition-all">
+                          {feedback.title}
+                        </h3>
+                        <p
+                          className="feedback--desc text-muted-foreground text-sm line-clamp-3"
+                          dangerouslySetInnerHTML={{
+                            __html: feedback.description,
+                          }}
+                        ></p>
                       </div>
                     </div>
-                    <div className="space-y-0.5">
-                      <h3 className="font-medium">{feedback.title}</h3>
-                      <p className="text-muted-foreground text-sm line-clamp-2">
-                        {feedback.description}
-                      </p>
+                    <div className="flex items-center justify-between">
+                      <button
+                        className={cn(
+                          'flex gap-1.5 items-center text-xs font-bold rounded-lg py-1.5 px-3 bg-primary/10 hover:bg-primary/20 transition-all'
+                        )}
+                      >
+                        <ChevronUp
+                          className={cn('size-4 text-primary')}
+                          strokeWidth={3}
+                        />
+                        <span>{feedback._count.upvotes}</span>
+                      </button>
+                      <div className="flex items-center gap-1">
+                        <MessageCircle className="size-4 text-muted-foreground" />
+                        <span className="font-semibold text-xs">
+                          {feedback._count.comments}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <button
-                      className={cn(
-                        'flex gap-1.5 items-center text-xs font-bold rounded-lg py-1.5 px-3 bg-primary/10 hover:bg-primary/20 transition-all'
-                      )}
-                    >
-                      <ChevronUp
-                        className={cn('size-4 text-primary')}
-                        strokeWidth={3}
-                      />
-                      <span>{feedback.upvotes}</span>
-                    </button>
-                    <div className="flex items-center gap-1">
-                      <MessageCircle className="size-4 text-muted-foreground" />
-                      <span className="font-semibold text-xs">
-                        {feedback.comments}
-                      </span>
+                ))
+              ) : (
+                <div className="h-1/2 flex flex-col items-center justify-center space-y-6">
+                  <div className="space-y-3 px-4 w-full max-w-sm relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-gray-50/0 via-gray-50/0 to-gray-50/75" />
+                    <div className="w-full space-y-2 rounded-md bg-white p-3 shadow-sm">
+                      <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                      <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                    </div>
+                    <div className="w-full space-y-2 rounded-md bg-white p-3 shadow-sm">
+                      <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                      <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                    </div>
+                    <div className="w-full space-y-2 rounded-md bg-white p-3">
+                      <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                      <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
                     </div>
                   </div>
+                  <p className="font-medium text-center text-muted-foreground">
+                    No feedbacks yet
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         ))}
       </div>
+      {feedbackId && <FeedbackDisplaySheet feedbackId={feedbackId} />}
     </div>
   );
 };
 
 export default Page;
+
+const RoadmapFeedbackCardSkeleton = () => {
+  return (
+    <div className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative">
+      <div className="space-y-3">
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="w-20 h-6" />
+          <Skeleton className="w-20 h-6" />
+        </div>
+        <div className="space-y-0.5">
+          <Skeleton className="w-48 h-6" />
+          <Skeleton className="w-64 h-4" />
+          <Skeleton className="w-56 h-4" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <Skeleton className="w-14 h-7 rounded-lg" />
+        <Skeleton className="size-7 rounded-lg" />
+      </div>
+    </div>
+  );
+};

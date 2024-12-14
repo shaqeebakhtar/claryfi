@@ -1,5 +1,7 @@
 'use client';
-import { useIsClient } from '@uidotdev/usehooks';
+import { Skeleton } from '@/components/ui/skeleton';
+import { getPublicBoardBySlug } from '@/services/open/board';
+import { useQuery } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'next/navigation';
 import AddPublicFeedback from '../../_components/add-public-feedback';
 import FeedbackCard, {
@@ -9,113 +11,6 @@ import FeedbackDisplaySheet from '../../_components/feedback-display-sheet';
 import RoadmapCard, {
   RoadmapCardSkeleton,
 } from '../../_components/roadmap-card';
-import { useIsFetching, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Skeleton } from '@/components/ui/skeleton';
-import { getPublicBoardBySlug } from '@/services/open/board';
-
-enum FeedbackStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE',
-  CANCELLED = 'CANCELLED',
-}
-
-type Feedback = {
-  title: string;
-  description: string;
-  status: FeedbackStatus;
-  upvotes: number;
-  comments: number;
-};
-
-const feedbacks: Feedback[] = [
-  {
-    title: 'Add dark mode feature',
-    description:
-      'It would be great to have a dark mode option for better usability at night.',
-    status: FeedbackStatus.PENDING,
-    upvotes: 45,
-    comments: 12,
-  },
-  {
-    title: 'Fix login issue on mobile',
-    description:
-      'Users are unable to log in using the mobile app when on slower networks.',
-    status: FeedbackStatus.APPROVED,
-    upvotes: 30,
-    comments: 8,
-  },
-  {
-    title: 'Integrate payment gateway',
-    description:
-      'Add support for a popular payment gateway like PayPal or Stripe.',
-    status: FeedbackStatus.IN_PROGRESS,
-    upvotes: 60,
-    comments: 15,
-  },
-  {
-    title: 'Improve page loading speed',
-    description:
-      'Optimize the website to load faster, especially on older devices.',
-    status: FeedbackStatus.DONE,
-    upvotes: 100,
-    comments: 25,
-  },
-  {
-    title: 'Add multilingual support',
-    description:
-      'Enable users to switch between multiple languages on the platform.',
-    status: FeedbackStatus.CANCELLED,
-    upvotes: 20,
-    comments: 5,
-  },
-  {
-    title: 'Create a user onboarding tutorial',
-    description:
-      'A simple walkthrough to help new users understand the platform quickly.',
-    status: FeedbackStatus.PENDING,
-    upvotes: 35,
-    comments: 9,
-  },
-  {
-    title: 'Enhance accessibility features',
-    description: 'Add screen reader support and better keyboard navigation.',
-    status: FeedbackStatus.APPROVED,
-    upvotes: 50,
-    comments: 10,
-  },
-  {
-    title: 'Implement two-factor authentication',
-    description: 'Improve account security by adding 2FA via SMS or email.',
-    status: FeedbackStatus.IN_PROGRESS,
-    upvotes: 75,
-    comments: 20,
-  },
-  {
-    title: 'Redesign the dashboard layout',
-    description: 'Make the dashboard more intuitive and visually appealing.',
-    status: FeedbackStatus.DONE,
-    upvotes: 95,
-    comments: 30,
-  },
-  {
-    title: 'Add support for file attachments in comments',
-    description:
-      'Allow users to upload files and images within their comments.',
-    status: FeedbackStatus.PENDING,
-    upvotes: 25,
-    comments: 6,
-  },
-  {
-    title: 'Provide an offline mode',
-    description:
-      'Enable basic functionalities to work without an internet connection.',
-    status: FeedbackStatus.CANCELLED,
-    upvotes: 15,
-    comments: 4,
-  },
-];
 
 const Page = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -140,15 +35,43 @@ const Page = () => {
               )}
             </div>
             <div className="flex flex-col gap-4 lg:col-span-2">
-              {isLoading
-                ? [...Array(6)].map((_, index) => (
-                    <FeedbackCardSkeleton key={index} />
-                  ))
-                : board?.feedbacks.map((feedback) => (
-                    <>
-                      <FeedbackCard feedback={feedback} key={feedback.id} />
-                    </>
-                  ))}
+              {isLoading ? (
+                [...Array(6)].map((_, index) => (
+                  <FeedbackCardSkeleton key={index} />
+                ))
+              ) : board && board.feedbacks.length > 0 ? (
+                board?.feedbacks.map((feedback) => (
+                  <>
+                    <FeedbackCard feedback={feedback} key={feedback.id} />
+                  </>
+                ))
+              ) : (
+                <div className="h-[600px] flex flex-col items-center justify-center space-y-6">
+                  <div className="space-y-3 px-4 w-full max-w-sm relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-gray-50/0 via-gray-50/0 to-gray-50/75" />
+                    <div className="w-full space-y-2 rounded-md bg-white p-3 shadow-sm">
+                      <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                      <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                    </div>
+                    <div className="w-full space-y-2 rounded-md bg-white p-3 shadow-sm">
+                      <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                      <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                    </div>
+                    <div className="w-full space-y-2 rounded-md bg-white p-3">
+                      <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                      <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="font-medium text-center text-muted-foreground">
+                      No feedbacks yet
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Be the first one to submit a feedback
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="h-max flex flex-col sm:flex-row lg:flex-col gap-4 lg:sticky top-20 -order-1 lg:order-1">
@@ -160,7 +83,7 @@ const Page = () => {
             ) : (
               <>
                 <AddPublicFeedback />
-                <RoadmapCard />
+                <RoadmapCard feedbacks={board?.feedbacks} />
               </>
             )}
           </div>

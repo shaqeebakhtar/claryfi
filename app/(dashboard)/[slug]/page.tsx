@@ -1,4 +1,5 @@
 'use client';
+import FeedbackDisplaySheet from '@/app/(board)/_components/feedback-display-sheet';
 import { AppSidebar } from '@/components/app-sidebar';
 import CopyLinkButton from '@/components/copy-link-button';
 import { buttonVariants } from '@/components/ui/button';
@@ -9,7 +10,9 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { ExternalLinkIcon, EyeIcon } from 'lucide-react';
+import { getBoardBySlug } from '@/services/admin/board';
+import { useQuery } from '@tanstack/react-query';
+import { ExternalLinkIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import {
@@ -20,9 +23,6 @@ import {
 } from 'next/navigation';
 import { AddDashboardFeedback } from '../_components/add-dashboard-feedback';
 import { KanbanBoard } from '../_components/kanban-board';
-import FeedbackDisplaySheet from '@/app/(board)/_components/feedback-display-sheet';
-import { useQuery } from '@tanstack/react-query';
-import { getBoardBySlug } from '@/services/admin/board';
 
 const Page = () => {
   const { data: session, status } = useSession();

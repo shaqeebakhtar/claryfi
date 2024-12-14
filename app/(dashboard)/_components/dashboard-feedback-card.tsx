@@ -159,7 +159,7 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
           </div>
         )}
         <div
-          className="space-y-0.5 group"
+          className="space-y-0.5 group cursor-pointer"
           onClick={() =>
             router.push(`${pathname}?f=${feedback.id}`, { scroll: false })
           }
