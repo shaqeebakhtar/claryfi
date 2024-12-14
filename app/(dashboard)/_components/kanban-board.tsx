@@ -148,28 +148,50 @@ export const KanbanBoard = () => {
                       </span>
                     )}
                   </div>
-                  {isLoading
-                    ? [...Array(3)].map((_, index) => (
-                        <FeedbackCardSkeleton key={index} />
-                      ))
-                    : sortedFeedbacks &&
-                      sortedFeedbacks[column].map((feedback, index) => (
-                        <Draggable
-                          draggableId={`draggable-${feedback.id}`}
-                          index={index}
-                          key={feedback.id}
-                        >
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                            >
-                              <FeedbackCard feedback={feedback} />
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                  {isLoading ? (
+                    [...Array(3)].map((_, index) => (
+                      <FeedbackCardSkeleton key={index} />
+                    ))
+                  ) : sortedFeedbacks && sortedFeedbacks[column].length > 0 ? (
+                    sortedFeedbacks[column].map((feedback, index) => (
+                      <Draggable
+                        draggableId={`draggable-${feedback.id}`}
+                        index={index}
+                        key={feedback.id}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <FeedbackCard feedback={feedback} />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))
+                  ) : (
+                    <div className="h-1/2 flex flex-col items-center justify-center space-y-6">
+                      <div className="space-y-3 px-4 w-full max-w-sm relative">
+                        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/0 via-gray-50/0 to-gray-50/75" />
+                        <div className="w-full space-y-2 rounded-md bg-white p-3 shadow-sm">
+                          <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                          <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                        </div>
+                        <div className="w-full space-y-2 rounded-md bg-white p-3 shadow-sm">
+                          <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                          <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                        </div>
+                        <div className="w-full space-y-2 rounded-md bg-white p-3">
+                          <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                          <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                        </div>
+                      </div>
+                      <p className="font-medium text-center text-muted-foreground">
+                        No feedbacks yet
+                      </p>
+                    </div>
+                  )}
                   {provided.placeholder}
                 </div>
               )}
