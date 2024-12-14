@@ -20,6 +20,7 @@ const CopyLinkButton = ({ value }: CopyLinkButtonProps) => {
         setTimeout(() => setCopied(false), 3000);
       }}
       variant={'secondary'}
+      size={'icon'}
       className="group/copy transition-all"
     >
       {copied ? (
@@ -30,7 +31,7 @@ const CopyLinkButton = ({ value }: CopyLinkButtonProps) => {
           <Copy className="w-4 h-4 hidden group-hover/copy:block" />
         </>
       )}
-      <span className="hidden ml-2 md:block">Share</span>
+      <span className="sr-only">Share</span>
     </Button>
   );
 };

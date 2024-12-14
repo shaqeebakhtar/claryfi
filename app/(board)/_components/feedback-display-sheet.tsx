@@ -30,42 +30,42 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
   const tagColors = [
     {
       name: 'Gray',
-      tagClass: 'bg-gray-100 text-gray-600',
+      tagClass: 'bg-gray-50 text-gray-600 border border-gray-200',
       buttonClass: 'bg-gray-500',
     },
     {
       name: 'Red',
-      tagClass: 'bg-red-100 text-red-600',
+      tagClass: 'bg-red-50 text-red-600 border border-red-200',
       buttonClass: 'bg-red-500',
     },
     {
       name: 'Orange',
-      tagClass: 'bg-orange-100 text-orange-600',
+      tagClass: 'bg-orange-50 text-orange-600 border border-orange-200',
       buttonClass: 'bg-orange-500',
     },
     {
       name: 'Cyan',
-      tagClass: 'bg-cyan-100 text-cyan-600',
+      tagClass: 'bg-cyan-50 text-cyan-600 border border-cyan-200',
       buttonClass: 'bg-cyan-500',
     },
     {
       name: 'Green',
-      tagClass: 'bg-green-100 text-green-600',
+      tagClass: 'bg-green-50 text-green-600 border border-green-200',
       buttonClass: 'bg-green-500',
     },
     {
       name: 'Blue',
-      tagClass: 'bg-blue-100 text-blue-600',
+      tagClass: 'bg-blue-50 text-blue-600 border border-blue-200',
       buttonClass: 'bg-blue-500',
     },
     {
       name: 'Yellow',
-      tagClass: 'bg-yellow-100 text-yellow-600',
+      tagClass: 'bg-yellow-50 text-yellow-600 border border-yellow-200',
       buttonClass: 'bg-yellow-500',
     },
     {
       name: 'Purple',
-      tagClass: 'bg-purple-100 text-purple-600',
+      tagClass: 'bg-purple-50 text-purple-600 border border-purple-200',
       buttonClass: 'bg-purple-500',
     },
   ];

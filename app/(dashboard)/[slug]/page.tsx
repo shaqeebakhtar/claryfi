@@ -9,7 +9,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { EyeIcon } from 'lucide-react';
+import { ExternalLinkIcon, EyeIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { redirect, useParams, useSearchParams } from 'next/navigation';
@@ -41,10 +41,12 @@ const Page = () => {
                 <Link
                   target="_blank"
                   href={`/b/${slug}`}
-                  className={cn(buttonVariants({ variant: 'secondary' }))}
+                  className={cn(
+                    buttonVariants({ variant: 'secondary', size: 'icon' })
+                  )}
                 >
-                  <EyeIcon className="w-4 h-4" />
-                  <span className="hidden ml-2 md:block">Preview</span>
+                  <ExternalLinkIcon className="w-4 h-4" />
+                  <span className="sr-only">Preview</span>
                 </Link>
                 <CopyLinkButton value={`/b/${slug}`} />
                 <AddDashboardFeedback />
