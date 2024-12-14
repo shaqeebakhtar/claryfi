@@ -12,10 +12,17 @@ import { cn } from '@/lib/utils';
 import { ExternalLinkIcon, EyeIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { redirect, useParams, useSearchParams } from 'next/navigation';
+import {
+  notFound,
+  redirect,
+  useParams,
+  useSearchParams,
+} from 'next/navigation';
 import { AddDashboardFeedback } from '../_components/add-dashboard-feedback';
 import { KanbanBoard } from '../_components/kanban-board';
 import FeedbackDisplaySheet from '@/app/(board)/_components/feedback-display-sheet';
+import { useQuery } from '@tanstack/react-query';
+import { getBoardBySlug } from '@/services/admin/board';
 
 const Page = () => {
   const { data: session, status } = useSession();
@@ -23,8 +30,21 @@ const Page = () => {
   const searchParams = useSearchParams();
   const feedbackId = searchParams.get('f');
 
+  const { data: board, isLoading } = useQuery({
+    queryKey: [slug, 'board'],
+    queryFn: () => getBoardBySlug({ slug }),
+  });
+
   if ((!session || !session?.user) && status !== 'loading') {
     redirect(`/login?next=/${slug}`);
+  }
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (!board) {
+    notFound();
   }
 
   return (

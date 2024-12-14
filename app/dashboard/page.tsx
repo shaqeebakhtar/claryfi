@@ -1,12 +1,13 @@
 'use client';
-import { getBoards } from '@/data-access/board';
+import { getBoards } from '@/services/admin/board';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
-  const { data: boards, isPending } = useQuery({
+
+  const { data: boards, isLoading } = useQuery({
     queryKey: ['boards'],
     queryFn: getBoards,
   });
@@ -15,7 +16,11 @@ const Dashboard = () => {
     redirect('/login');
   }
 
-  if (boards && !isPending) {
+  if (boards?.length === 0 && !isLoading) {
+    redirect('/onboarding');
+  }
+
+  if (boards && !isLoading) {
     redirect(`/${boards[0].slug}`);
   }
 };

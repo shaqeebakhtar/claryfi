@@ -16,15 +16,21 @@ import slugify from '@sindresorhus/slugify';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import { CircleCheck, CircleX, Loader } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { redirect, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 const Page = () => {
+  const { data: session, status } = useSession();
   const [slugExists, setSlugExists] = useState(false);
   const router = useRouter();
+
+  if (!session?.user && status !== 'loading') {
+    redirect('/login');
+  }
 
   const form = useForm<z.infer<typeof boardSchema>>({
     resolver: zodResolver(boardSchema),

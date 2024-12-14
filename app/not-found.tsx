@@ -1,9 +1,21 @@
+'use client';
 import { buttonVariants } from '@/components/ui/button';
 import { FileX2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 const NotFound = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status !== 'loading' && session && session.user) {
+      setIsAuthenticated(true);
+    }
+  }, [session, status]);
+
   return (
     <>
       <div className="grid place-items-center min-h-screen">
@@ -17,10 +29,10 @@ const NotFound = () => {
             wrong URL or dont have access to this page.
           </p>
           <Link
-            href="/dashboard"
+            href={isAuthenticated ? '/dashboard' : '/'}
             className={buttonVariants({ variant: 'default' })}
           >
-            Back to my dashboard
+            Back to {isAuthenticated ? 'my dashboard' : 'homepage'}
           </Link>
           <Image
             src="/searching.png"

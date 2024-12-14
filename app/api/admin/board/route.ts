@@ -41,3 +41,19 @@ export const POST = async (req: Request) => {
     }
   );
 };
+
+export const GET = async (req: Request) => {
+  const session = await auth();
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  const boards = await db.board.findMany({
+    where: {
+      userId: session?.user.id,
+    },
+  });
+
+  return Response.json({ boards }, { status: 200 });
+};

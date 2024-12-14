@@ -37,6 +37,36 @@ export const checkSlugExists = async ({ slug }: { slug: string }) => {
   return await res.json();
 };
 
+export const getBoards = async (): Promise<Board[]> => {
+  const res = await fetch('/api/admin/board', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { boards } = await res.json();
+
+  return boards;
+};
+
+export const getBoardBySlug = async ({
+  slug,
+}: {
+  slug: string;
+}): Promise<Board> => {
+  const res = await fetch(`/api/admin/board/${slug}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { board } = await res.json();
+
+  return board;
+};
+
 export const deleteBoard = async ({ slug }: { slug: string }) => {
   const res = await fetch(`/api/admin/board/${slug}`, {
     method: 'DELETE',

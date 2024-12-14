@@ -1,6 +1,27 @@
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 
+export const GET = async (
+  req: Request,
+  { params }: { params: { slug: string } }
+) => {
+  const { slug } = params;
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return Response.json('Unauthorized', { status: 401 });
+  }
+
+  const board = await db.board.findUnique({
+    where: {
+      slug,
+      userId: session?.user?.id,
+    },
+  });
+
+  return Response.json({ board }, { status: 200 });
+};
+
 export const DELETE = async (
   req: Request,
   { params }: { params: { slug: string } }
