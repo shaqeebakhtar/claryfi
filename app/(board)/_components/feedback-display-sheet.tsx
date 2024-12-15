@@ -174,7 +174,7 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
               <TextEditor
                 placeholder="Add a comment..."
                 className={
-                  '[&>.tiptap]:bg-gray-50 [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-28 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
+                  '[&>.tiptap]:bg-gray-50 [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-28 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm break-all'
                 }
               />
               <Button

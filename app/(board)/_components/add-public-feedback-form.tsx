@@ -95,7 +95,7 @@ const AddPublicFeedbackForm = ({ closeDialog }: AddPublicFeedbackFormProps) => {
                   <TextEditor
                     placeholder="Explain in detail..."
                     className={
-                      '[&>.tiptap]:bg-gray-50 [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
+                      '[&>.tiptap]:bg-gray-50 [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm break-all'
                     }
                     {...field}
                     form={form}

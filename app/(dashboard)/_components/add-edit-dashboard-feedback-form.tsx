@@ -227,7 +227,7 @@ export const AddDashboardFeedbackForm = ({
                     <TextEditor
                       placeholder="Explain in detail..."
                       className={
-                        '[&>.tiptap]:bg-transparent [&>.tiptap]:border [&>.tiptap]:border-input [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
+                        '[&>.tiptap]:bg-transparent [&>.tiptap]:border [&>.tiptap]:border-input [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm break-all'
                       }
                       form={form}
                       value={field.value}
