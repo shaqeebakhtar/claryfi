@@ -43,11 +43,13 @@ export const TextEditor = ({
   placeholder,
   className,
   form,
+  value,
   ...props
 }: {
   placeholder?: string;
   className?: string;
   form?: UseFormReturn<any, undefined>;
+  value?: string;
 }) => {
   const editor = useEditor({
     extensions: [
@@ -61,8 +63,7 @@ export const TextEditor = ({
       Underline,
       Link.configure({
         defaultProtocol: 'https',
-      }),
-      Link.extend({
+      }).extend({
         inclusive: false,
       }),
       Code,
@@ -81,6 +82,11 @@ export const TextEditor = ({
       form?.setValue('description', html);
     },
   });
+
+  React.useEffect(() => {
+    editor?.commands.setContent(value as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor]);
 
   if (!editor) {
     return null;

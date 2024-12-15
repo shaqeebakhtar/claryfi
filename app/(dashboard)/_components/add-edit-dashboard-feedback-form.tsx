@@ -49,19 +49,17 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { addFeedback } from '@/services/admin/feedback';
+import {
+  addFeedback,
+  getFeedbackById,
+  updateFeedback,
+} from '@/services/admin/feedback';
+import { FeedbackStatus } from '@/types/feedback';
 
 type FeedbackDialogFormProps = {
+  feedbackId?: string;
   closeDialog: () => void;
 };
-
-enum FeedbackStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE',
-  CANCELLED = 'CANCELLED',
-}
 
 type Status = {
   value: FeedbackStatus;
@@ -99,6 +97,7 @@ const statuses: Status[] = [
 
 export const AddDashboardFeedbackForm = ({
   closeDialog,
+  feedbackId,
 }: FeedbackDialogFormProps) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -109,9 +108,14 @@ export const AddDashboardFeedbackForm = ({
   const [selectedTags, setSelectedTags] = useState<TTag[]>([]);
   const isMobile = useIsMobile();
 
-  const { data: tags } = useQuery({
+  const { data: tags, isLoading: isLoadingTags } = useQuery({
     queryFn: () => getTagsByBoardSlug(slug),
     queryKey: [slug, 'tags'],
+  });
+  const { data: feedback, isLoading: isLoadingFeedback } = useQuery({
+    queryFn: () => getFeedbackById({ slug, feedbackId: feedbackId as string }),
+    queryKey: [slug, 'feedback', feedbackId],
+    enabled: !!feedbackId,
   });
 
   const form = useForm<z.infer<typeof feedbackSchema>>({
@@ -123,27 +127,65 @@ export const AddDashboardFeedbackForm = ({
     },
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: add, isPending: isAddPending } = useMutation({
     mutationFn: addFeedback,
     onSuccess: () => {
       closeDialog();
       toast.success('Your feedback has been submitted');
       queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: () => {
+      toast.error('Failed to add feedback');
+    },
+  });
+
+  const { mutate: update, isPending: isUpdatePending } = useMutation({
+    mutationFn: updateFeedback,
+    onSuccess: () => {
+      closeDialog();
+      toast.success('Feedback updated successfully');
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
+    },
+    onError: () => {
+      toast.error('Failed to update feedback');
     },
   });
 
   const onSubmit = (data: z.infer<typeof feedbackSchema>) => {
-    mutate({
-      slug,
-      title: data.title,
-      description: data.description,
-      status: data.status,
-      tagIds: selectedTags.map((tag) => tag.id),
-    });
+    feedbackId
+      ? update({
+          slug,
+          feedbackId,
+          title: data.title,
+          description: data.description,
+          status: data.status,
+          tagIds: selectedTags.map((tag) => tag.id),
+        })
+      : add({
+          slug,
+          title: data.title,
+          description: data.description,
+          status: data.status,
+          tagIds: selectedTags.map((tag) => tag.id),
+        });
   };
+
+  useEffect(() => {
+    if (!isLoadingFeedback && feedback) {
+      form.setValue('title', feedback.title);
+      form.setValue('description', feedback.description);
+      form.setValue('status', feedback.status);
+    }
+
+    if (!isLoadingFeedback && !isLoadingTags && feedback && tags) {
+      const matchedTags = feedback?.tags
+        .map((tag) => tags?.find((t) => t.id === tag.tagId))
+        .filter(Boolean);
+      setSelectedTags(matchedTags as TTag[]);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [feedbackId, feedback, tags, isLoadingTags, isLoadingFeedback]);
 
   useEffect(() => {
     setSelectedStatus(
@@ -188,7 +230,7 @@ export const AddDashboardFeedbackForm = ({
                         '[&>.tiptap]:bg-transparent [&>.tiptap]:border [&>.tiptap]:border-input [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-20 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm'
                       }
                       form={form}
-                      {...field}
+                      value={field.value}
                     />
                   </FormControl>
                 </div>
@@ -280,6 +322,7 @@ export const AddDashboardFeedbackForm = ({
             <MultiSelect
               options={tags}
               onValueChange={setSelectedTags}
+              defaultValues={selectedTags}
               placeholder="Select tags..."
               maxCount={isMobile ? 1 : 3}
             />
@@ -291,9 +334,11 @@ export const AddDashboardFeedbackForm = ({
               Cancel
             </Button>
           </ModalClose>
-          <Button disabled={isPending}>
-            {isPending && <Loader className="w-4 h-4 mr-1.5 animate-spin" />}
-            Submit
+          <Button disabled={isAddPending || isUpdatePending}>
+            {(isAddPending || isUpdatePending) && (
+              <Loader className="w-4 h-4 mr-1.5 animate-spin" />
+            )}
+            {feedbackId ? 'Update' : 'Submit'}
           </Button>
         </ModalFooter>
       </form>

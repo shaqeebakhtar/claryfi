@@ -10,7 +10,7 @@ import {
 } from '@/components/responsive-dialog';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
-import { AddDashboardFeedbackForm } from './add-dashboard-feedback-form';
+import { AddDashboardFeedbackForm } from './add-edit-dashboard-feedback-form';
 
 export const AddDashboardFeedback = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -31,6 +31,33 @@ export const AddDashboardFeedback = () => {
           </ModalDescription>
         </ModalHeader>
         <AddDashboardFeedbackForm closeDialog={() => setIsDialogOpen(false)} />
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export const EditDashboardFeedback = ({
+  feedbackId,
+  isDialogOpen,
+  setIsDialogOpen,
+}: {
+  feedbackId: string;
+  isDialogOpen: boolean;
+  setIsDialogOpen: () => void;
+}) => {
+  return (
+    <Modal open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <ModalContent className="sm:max-w-lg">
+        <ModalHeader>
+          <ModalTitle>Edit Feedback</ModalTitle>
+          <ModalDescription>
+            Update your feedback to share new ideas or suggestions.
+          </ModalDescription>
+        </ModalHeader>
+        <AddDashboardFeedbackForm
+          closeDialog={setIsDialogOpen}
+          feedbackId={feedbackId}
+        />
       </ModalContent>
     </Modal>
   );

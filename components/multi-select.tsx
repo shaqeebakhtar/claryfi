@@ -24,6 +24,7 @@ interface MultiSelectProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   options: TTag[] | undefined;
   onValueChange: (value: TTag[]) => void;
+  defaultValues?: TTag[];
   placeholder?: string;
   maxCount?: number;
   modalPopover?: boolean;
@@ -39,6 +40,7 @@ export const MultiSelect = React.forwardRef<
     {
       options,
       onValueChange,
+      defaultValues,
       placeholder = 'Select options...',
       maxCount = 3,
       modalPopover = false,
@@ -80,6 +82,10 @@ export const MultiSelect = React.forwardRef<
     const handleTogglePopover = () => {
       setIsPopoverOpen((prev) => !prev);
     };
+
+    React.useEffect(() => {
+      if (defaultValues) setSelectedValues(defaultValues);
+    }, [defaultValues]);
 
     const tagColors = [
       {

@@ -2,6 +2,62 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { feedbackSchema } from '@/validations/feedback';
 
+export const GET = async (
+  req: Request,
+  { params }: { params: { slug: string; feedbackId: string } }
+) => {
+  const { slug, feedbackId } = params;
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return Response.json('Unauthorized', { status: 401 });
+  }
+
+  const board = await db.board.findUnique({
+    where: {
+      slug,
+      userId: session?.user?.id,
+    },
+  });
+
+  if (!board) {
+    return Response.json('Board not found', { status: 404 });
+  }
+
+  let feedback;
+
+  try {
+    feedback = await db.feedback.findFirst({
+      where: {
+        id: feedbackId,
+        boardId: board.id,
+      },
+      include: {
+        tags: {
+          include: {
+            tag: {
+              select: {
+                name: true,
+                color: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {
+    throw new Error('Failed to get the feedback');
+  }
+
+  return Response.json(
+    { feedback },
+    {
+      status: 200,
+    }
+  );
+};
+
 export const PATCH = async (
   req: Request,
   { params }: { params: { slug: string; feedbackId: string } }
@@ -54,6 +110,7 @@ export const PATCH = async (
         description,
         status,
         tags: {
+          deleteMany: {},
           create: tagIds?.map((id) => ({
             tag: {
               connect: {
@@ -65,6 +122,8 @@ export const PATCH = async (
       },
     });
   } catch (error) {
+    console.log(error);
+
     throw new Error('Failed to update the feedback');
   }
 

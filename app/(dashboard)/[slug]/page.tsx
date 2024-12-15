@@ -21,7 +21,7 @@ import {
   useParams,
   useSearchParams,
 } from 'next/navigation';
-import { AddDashboardFeedback } from '../_components/add-dashboard-feedback';
+import { AddDashboardFeedback } from '../_components/add-edit-dashboard-feedback';
 import { KanbanBoard } from '../_components/kanban-board';
 
 const Page = () => {

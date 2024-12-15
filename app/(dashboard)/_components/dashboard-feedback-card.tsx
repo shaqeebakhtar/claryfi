@@ -20,6 +20,7 @@ import {
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import DeleteFeedback from './delete-feedback';
+import { EditDashboardFeedback } from './add-edit-dashboard-feedback';
 
 type FeedbackCardProps = {
   feedback: IFeedback;
@@ -31,6 +32,7 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const tagColors = [
     {
@@ -201,7 +203,14 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="font-medium">
+            <DropdownMenuItem
+              className="font-medium"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsEditDialogOpen(true);
+              }}
+            >
               <PencilLine className="size-4 mr-2 text-muted-foreground" />
               Edit
             </DropdownMenuItem>
@@ -224,6 +233,11 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
         feedbackId={feedback.id}
         isDialogOpen={isDeleteDialogOpen}
         setIsDialogOpen={() => setIsDeleteDialogOpen(false)}
+      />
+      <EditDashboardFeedback
+        feedbackId={feedback.id}
+        isDialogOpen={isEditDialogOpen}
+        setIsDialogOpen={() => setIsEditDialogOpen(false)}
       />
     </div>
   );

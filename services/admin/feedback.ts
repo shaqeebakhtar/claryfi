@@ -48,6 +48,25 @@ export const getFeedbacks = async ({
   return feedbacks;
 };
 
+export const getFeedbackById = async ({
+  slug,
+  feedbackId,
+}: {
+  slug: string;
+  feedbackId: string;
+}): Promise<IFeedback> => {
+  const res = await fetch(`/api/admin/board/${slug}/feedback/${feedbackId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const { feedback } = await res.json();
+
+  return feedback;
+};
+
 export const updateFeedback = async ({
   slug,
   feedbackId,
