@@ -41,6 +41,54 @@ export function snakeCaseToString(snakeCase: string): string {
     .join(' ');
 }
 
+export function hextToHSL(hex: string) {
+  hex = hex.replace('#', '');
+
+  // Convert hex to RGB
+  let r = parseInt(hex.substring(0, 2), 16) / 255;
+  let g = parseInt(hex.substring(2, 4), 16) / 255;
+  let b = parseInt(hex.substring(4, 6), 16) / 255;
+
+  // Get the max and min of RGB
+  let max = Math.max(r, g, b);
+  let min = Math.min(r, g, b);
+  let delta = max - min;
+
+  // Calculate lightness
+  let l = (max + min) / 2;
+
+  // If max and min are equal, it's a shade of gray
+  let h, s;
+
+  if (delta === 0) {
+    h = 0;
+    s = 0;
+  } else {
+    // Calculate saturation
+    s = l > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+
+    // Calculate hue
+    switch (max) {
+      case r:
+        h = ((g - b) / delta + (g < b ? 6 : 0)) * 60;
+        break;
+      case g:
+        h = ((b - r) / delta + 2) * 60;
+        break;
+      case b:
+        h = ((r - g) / delta + 4) * 60;
+        break;
+    }
+  }
+
+  // Round the results to make them look cleaner
+  h = Math.round(h as number);
+  s = Math.round(s * 100);
+  l = Math.round(l * 100);
+
+  return `${h} ${s}% ${l}%`;
+}
+
 export const tagColors = [
   {
     name: 'Gray',

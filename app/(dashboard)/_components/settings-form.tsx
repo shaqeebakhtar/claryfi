@@ -72,11 +72,11 @@ const SettingsForm = () => {
 
   useEffect(() => {
     if (!isLoading && board) {
-      form.setValue('logo', board?.logoUrl as string);
+      form.setValue('logo', board?.logoUrl || '');
       form.setValue('name', board?.name);
       form.setValue('slug', board?.slug);
       form.setValue('color', board?.brandColor as string);
-      form.setValue('url', board?.websiteUrl as string);
+      form.setValue('url', board.websiteUrl || '');
       form.setValue('hide_branding', board?.hideBranding as boolean);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

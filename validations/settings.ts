@@ -5,7 +5,7 @@ export const settingsFormSchema = z.object({
   name: z.string({
     required_error: 'Please set a memorable name of your board.',
   }),
-  url: z.string().url().optional(),
+  url: z.string().url().optional().or(z.literal('')),
   slug: z.string({
     required_error: 'Please choose a unique slug for your board.',
   }),

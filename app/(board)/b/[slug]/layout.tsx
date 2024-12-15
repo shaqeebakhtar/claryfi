@@ -1,11 +1,11 @@
 'use client';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
+import { cn, hextToHSL } from '@/lib/utils';
 import { getPublicBoardBySlug } from '@/services/open/board';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { notFound, useParams, usePathname } from 'next/navigation';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const Layout = ({
   children,
@@ -20,9 +20,19 @@ const Layout = ({
     queryFn: () => getPublicBoardBySlug({ slug }),
   });
 
+  useEffect(() => {
+    if (!isLoading && board && board.brandColor) {
+      const hsl = hextToHSL(board.brandColor);
+      document.documentElement.style.setProperty('--primary', hsl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [board?.brandColor]);
+
   if (!board && !isLoading) {
     notFound();
   }
+
+  console.log(board);
 
   return (
     <>
