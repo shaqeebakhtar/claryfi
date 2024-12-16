@@ -1,5 +1,6 @@
-import { Feedback, Upvote } from '@prisma/client';
+import { Comment, Feedback, Upvote, User } from '@prisma/client';
 import { ITagOnPosts } from './tag';
+import { IComment } from './comment';
 
 export enum FeedbackStatus {
   PENDING = 'PENDING',
@@ -14,6 +15,8 @@ export interface IFeedback extends Feedback {
     upvotes: number;
     comments: number;
   };
+  user: User;
   upvotes: Upvote[];
   tags: ITagOnPosts[];
+  comments: IComment[];
 }

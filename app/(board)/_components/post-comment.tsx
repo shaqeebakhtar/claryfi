@@ -1,80 +1,86 @@
+import { TextEditor } from '@/components/text-editor';
 import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
-import { postComment } from '@/data-access/comment';
+import { postComment } from '@/services/comment';
+import { postCommentSchema } from '@/validations/comment';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
-const PostComment = () => {
-  const { slug, feedbackId } = useParams() as {
-    slug: string;
-    feedbackId: string;
-  };
-  const [comment, setComment] = useState('');
-  const [commentError, setCommentError] = useState<string | null>(null);
-
+const PostComment = ({ feedbackId }: { feedbackId: string }) => {
   const queryClient = useQueryClient();
+  const { slug } = useParams() as {
+    slug: string;
+  };
 
-  const postCommentMutation = useMutation({
-    mutationFn: postComment,
-    onSuccess: () => {
-      setCommentError(null);
-      setComment('');
-      queryClient.invalidateQueries({ queryKey: ['comments', feedbackId] });
-    },
-    onError: (err) => {
-      toast.error(err.message);
+  const form = useForm<z.infer<typeof postCommentSchema>>({
+    resolver: zodResolver(postCommentSchema),
+    defaultValues: {
+      comment: '',
     },
   });
 
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-    if (!comment) {
-      setCommentError("Comment can't be empty.");
-      return;
-    } else {
-      postCommentMutation.mutate({ slug, feedbackId, content: comment });
-    }
+  const { mutate, isPending } = useMutation({
+    mutationFn: postComment,
+    onSuccess: () => {
+      toast.success('Your comment has been added');
+      queryClient.invalidateQueries({ queryKey: ['feedback', feedbackId] });
+    },
+    onError: () => {
+      toast.error('Failed to post your comment');
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof postCommentSchema>) => {
+    mutate({ slug, feedbackId, content: data.comment });
   };
 
   return (
-    <div className="p-6 sm:p-8 bg-background rounded-xl shadow space-y-4">
-      <h3 className="font-semibold text-base md:text-lg">Post Comment</h3>
-      <form method="POST" onSubmit={onSubmit} className="space-y-5">
-        <div className="space-y-1">
-          <Textarea
-            className="shadow-none bg-muted/70 font-medium min-h-24 max-h-40 p-3"
-            placeholder="Add your response"
-            maxLength={255}
-            value={comment}
-            onChange={(e) => setComment(e.currentTarget.value)}
-          />
-          {commentError && !comment && (
-            <p className="text-sm font-medium text-destructive">
-              {commentError}
-            </p>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col items-end space-y-2 px-6 py-5"
+      >
+        <FormField
+          control={form.control}
+          name="comment"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormControl>
+                <TextEditor
+                  placeholder="Add a comment..."
+                  className={
+                    '[&>.tiptap]:bg-transparent [&>.tiptap]:border [&>.tiptap]:border-input [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-28 [&>.tiptap]:max-h-40 [&>.tiptap]:overflow-y-auto [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm break-all'
+                  }
+                  {...field}
+                  form={form}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-sm text-muted-foreground break-words">
-            {255 - comment.length} characters left
-          </span>
-          <Button
-            size={'lg'}
-            type="submit"
-            disabled={postCommentMutation.isPending || !comment}
-          >
-            {postCommentMutation.isPending && (
-              <Loader className="w-4 h-4 mr-1.5 animate-spin" />
-            )}
-            Post Comment
-          </Button>
-        </div>
+        />
+        <Button
+          type="submit"
+          size="sm"
+          disabled={isPending || form.watch('comment') === ''}
+        >
+          {isPending && <Loader className="w-4 h-4 mr-1.5 animate-spin" />}
+          Post
+        </Button>
       </form>
-    </div>
+    </Form>
   );
 };
 
@@ -82,18 +88,10 @@ export default PostComment;
 
 export const PostCommentSkeleton = () => {
   return (
-    <div className="p-6 sm:p-8 bg-background rounded-xl shadow space-y-4">
-      <Skeleton className="w-32 h-6" />
-
-      <div className="space-y-5">
-        <div className="space-y-1">
-          <Skeleton className="h-24 w-full" />
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <Skeleton className="w-32 h-4" />
-          <Skeleton className="w-48 h-10 rounded-lg" />
-        </div>
-      </div>
+    <div className="flex flex-col items-end space-y-2 px-6 py-5">
+      <Skeleton className="w-full h-10" />
+      <Skeleton className="w-full h-28" />
+      <Skeleton className="w-12 h-8" />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { TextEditor } from '@/components/text-editor';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -9,23 +9,27 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { undovoteFeedback, upvoteFeedback } from '@/services/feedback';
 import { getFeedbackById } from '@/services/open/feedback';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatDistance } from 'date-fns';
-import {
-  ChevronUp,
-  PencilLineIcon,
-  Share2Icon,
-  ThumbsUpIcon,
-  XIcon,
-} from 'lucide-react';
+import { ChevronUp, Share2Icon, UserRound, XIcon } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import Comment from './comment';
 import FeedbackCardStatus from './feedback-card-status';
+import PostComment from './post-comment';
 
 const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
+  const queryClient = useQueryClient();
   const { slug } = useParams<{ slug: string }>();
+  const { data: session } = useSession();
   const pathname = usePathname();
   const router = useRouter();
+  const [upvoted, setUpvoted] = useState<boolean>(false);
+  const [upvotes, setUpvotes] = useState<number>(0);
 
   const tagColors = [
     {
@@ -75,7 +79,65 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
     queryFn: () => getFeedbackById({ slug, feedbackId }),
   });
 
-  if (isLoading && !feedback) return null;
+  useEffect(() => {
+    if (!isLoading && feedback) {
+      setUpvotes(feedback._count.upvotes);
+      const hasUpvoted = feedback?.upvotes.some(
+        (upvote) => upvote.upvoterId === session?.user?.id
+      );
+      setUpvoted(hasUpvoted);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [feedback, session?.user?.id]);
+
+  const upvoteFeedbackMutation = useMutation({
+    mutationFn: upvoteFeedback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
+    },
+    onError: () => {
+      toast.error('Failed to upvote');
+      setUpvoted(!upvoted);
+      setUpvotes((prev) => prev - 1);
+    },
+  });
+
+  const undovoteFeedbackMutation = useMutation({
+    mutationFn: undovoteFeedback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
+    },
+    onError: () => {
+      toast.error('Failed to remove vote');
+    },
+  });
+
+  const handleUpvoteAndUndovote = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    if (!session?.user) {
+      toast.info('You need to be logged in to upvote');
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    setUpvoted(!upvoted);
+    if (upvoted) {
+      setUpvotes((prev) => prev - 1);
+      undovoteFeedbackMutation.mutate({
+        slug,
+        feedbackId,
+      });
+    } else {
+      setUpvotes((prev) => prev + 1);
+      upvoteFeedbackMutation.mutate({
+        slug,
+        feedbackId,
+      });
+    }
+  };
+
+  if (isLoading || !feedback) return;
 
   return (
     <Sheet
@@ -124,17 +186,23 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
                 {feedback?.title}
               </SheetTitle>
               <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                <div className="size-6 rounded-full bg-muted"></div>
-                <span>John Doe</span>
+                <Avatar className="size-6 rounded-full">
+                  <AvatarImage src={feedback?.user?.image as string} />
+                  <AvatarFallback>
+                    <UserRound className="size-4 text-muted-foreground" />
+                  </AvatarFallback>
+                </Avatar>
+                <span>{feedback?.user?.name || 'Anonymous'}</span>
                 <span>•</span>
                 <span>
-                  {formatDistance(
-                    new Date(feedback?.createdAt as Date),
-                    new Date(),
-                    {
-                      addSuffix: true,
-                    }
-                  )}
+                  {feedback &&
+                    formatDistance(
+                      new Date(feedback?.createdAt as Date),
+                      new Date(),
+                      {
+                        addSuffix: true,
+                      }
+                    )}
                 </span>
               </div>
             </SheetHeader>
@@ -148,43 +216,28 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
               <div className="flex items-center justify-between">
                 <Button
                   className={cn(
-                    'w-max flex gap-1.5 items-center text-xs font-bold rounded-lg py-2 px-3 bg-primary/10 hover:bg-primary/20 transition-all text-foreground shadow-none'
+                    'w-max flex gap-1.5 items-center text-xs font-bold rounded-lg py-2 px-3 bg-primary/10 hover:bg-primary/20 transition-all text-foreground shadow-none',
+                    upvoted && 'bg-primary text-white hover:bg-primary/80'
                   )}
                   size="sm"
+                  onClick={handleUpvoteAndUndovote}
                 >
                   <ChevronUp
-                    className={cn('size-4 text-primary')}
+                    className={cn(
+                      'size-4 text-primary',
+                      upvoted && 'text-white'
+                    )}
                     strokeWidth={3}
                   />
-                  <span>{feedback?._count.upvotes}</span>
+                  <span>{upvotes}</span>
                 </Button>
-                <div className="space-x-2.5">
-                  <Button size="sm" variant="secondary" className="shadow-none">
-                    <PencilLineIcon className="w-4 h-4 text-muted-foreground mr-2" />
-                    Edit
-                  </Button>
-                  <Button size="sm" variant="secondary" className="shadow-none">
-                    <Share2Icon className="w-4 h-4 text-muted-foreground mr-2" />
-                    Share
-                  </Button>
-                </div>
+                <Button size="sm" variant="secondary" className="shadow-none">
+                  <Share2Icon className="w-4 h-4 text-muted-foreground mr-2" />
+                  Share
+                </Button>
               </div>
             </div>
-            <div className="relative px-6 py-5">
-              <TextEditor
-                placeholder="Add a comment..."
-                className={
-                  '[&>.tiptap]:bg-gray-50 [&>.tiptap]:rounded-sm [&>.tiptap]:min-h-28 [&>.tiptap]:px-3 [&>.tiptap]:py-2 [&>.tiptap]:text-sm break-all'
-                }
-              />
-              <Button
-                size="sm"
-                className="absolute right-9 bottom-9 px-5"
-                disabled
-              >
-                Post
-              </Button>
-            </div>
+            <PostComment feedbackId={feedbackId} />
             <Separator className="bg-gray-100" />
             <div className="px-6 py-5 space-y-5">
               <h3 className="font-semibold">
@@ -196,9 +249,13 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
             </div>
           </div>
           <div className="space-y-5 px-6 pb-6">
-            <Comment />
-            <Comment />
-            <Comment />
+            {feedback.comments.length > 0 ? (
+              feedback.comments.map((comment) => (
+                <Comment key={comment.id} comment={comment} />
+              ))
+            ) : (
+              <p>No comments yet</p>
+            )}
           </div>
         </div>
       </SheetContent>
@@ -207,44 +264,3 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
 };
 
 export default FeedbackDisplaySheet;
-
-const Comment = () => {
-  return (
-    <div>
-      <div className="flex items-start space-x-3">
-        <div className="size-8 rounded-full bg-muted"></div>
-        <div className="space-y-1 flex-1">
-          <div className="flex items-center space-x-2 mt-1.5">
-            <span className="text-sm text-foreground font-medium">
-              John Doe
-            </span>
-            <span className="text-xs text-muted-foreground">Nov 15, 2024</span>
-          </div>
-          <div className="space-y-2 5">
-            <p className="text-sm text-muted-foreground">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quaerat
-              ex rem itaque ad aliquam quia?
-            </p>
-            <div className="flex items-center gap-1">
-              <Button
-                size="sm"
-                className="rounded-full px-2.5 h-6 shadow-none text-muted-foreground"
-                variant="outline"
-              >
-                <ThumbsUpIcon className="size-3 mr-1" />
-                25
-              </Button>
-              <Button
-                size="sm"
-                variant="link"
-                className="hover:no-underline text-muted-foreground"
-              >
-                Reply
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};

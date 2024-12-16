@@ -27,6 +27,13 @@ export const GET = async (
           comments: true,
         },
       },
+      user: true,
+      upvotes: true,
+      comments: {
+        include: {
+          user: true,
+        },
+      },
       tags: {
         include: {
           tag: {

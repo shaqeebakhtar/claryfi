@@ -80,6 +80,7 @@ export const TextEditor = ({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       form?.setValue('description', html);
+      form?.setValue('comment', html);
     },
   });
 

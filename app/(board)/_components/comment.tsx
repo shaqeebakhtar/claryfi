@@ -1,123 +1,63 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { deleteComment } from '@/data-access/comment';
-import { generateBgColors } from '@/lib/utils';
-import {
-  Comment as TComment,
-  Reply as TReply,
-  User as TUser,
-} from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { IComment } from '@/types/comment';
 import { formatDistance } from 'date-fns';
-import { ReplyIcon, Trash2 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import PostReply from './post-reply';
-import Reply from './reply';
+import { ThumbsUpIcon, UserRound } from 'lucide-react';
 
-type TReplyUser = TReply & {
-  user: TUser;
-};
-
-const Comment = ({
-  comment,
-}: {
-  comment: TComment & {
-    replies: TReplyUser[];
-    user: TUser;
-  };
-}) => {
-  const [isCommentor, setIsCommentor] = useState(false);
-  const [showPostReply, setShowPostReply] = useState(false);
-  const { slug, feedbackId } = useParams() as {
-    slug: string;
-    feedbackId: string;
-  };
-
-  const { data: session } = useSession();
-
-  const queryClient = useQueryClient();
-
-  const deleteCommentMutation = useMutation({
-    mutationFn: deleteComment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', feedbackId] });
-    },
-  });
-
-  useEffect(() => {
-    setIsCommentor(comment.userId === session?.user?.id);
-  }, [session?.user, comment]);
-
-  const bgColor = generateBgColors(comment.user.email);
-
+const Comment = ({ comment }: { comment: IComment }) => {
   return (
-    <li className="pt-8 space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div
-            className="w-10 h-10 rounded-full grid place-items-center font-semibold text-white text-sm select-none"
-            style={{ background: bgColor }}
-          >
-            {comment.user.username && comment.user.username[0].toUpperCase()}
+    <div>
+      <div className="flex items-start space-x-3">
+        <Avatar className="size-8 rounded-full">
+          <AvatarImage src={comment?.user?.image as string} />
+          <AvatarFallback>
+            <UserRound className="size-4 text-muted-foreground" />
+          </AvatarFallback>
+        </Avatar>
+        <div className="space-y-1 flex-1">
+          <div className="flex items-center space-x-2 mt-1.5">
+            <span className="text-sm text-foreground font-medium">
+              {comment?.user?.name || 'Anonymous'}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {formatDistance(
+                new Date(comment?.createdAt as Date),
+                new Date(),
+                {
+                  addSuffix: true,
+                }
+              )}
+            </span>
           </div>
-          <div className="space-y-0.5">
-            <h4 className="font-semibold max-w-24 lg:max-w-full truncate">
-              {comment.user.username}
-            </h4>
-            <p className="text-xs text-muted-foreground font-semibold">
-              {formatDistance(new Date(comment.createdAt), new Date(), {
-                addSuffix: true,
-              })}
-            </p>
+          <div className="space-y-2 5">
+            <p
+              className="text-sm text-muted-foreground"
+              dangerouslySetInnerHTML={{
+                __html: comment?.content as string,
+              }}
+            ></p>
+            <div className="flex items-center gap-1">
+              <Button
+                size="sm"
+                className="rounded-full px-2.5 h-6 shadow-none text-muted-foreground"
+                variant="outline"
+              >
+                <ThumbsUpIcon className="size-3 mr-1" />
+                25
+              </Button>
+              <Button
+                size="sm"
+                variant="link"
+                className="hover:no-underline text-muted-foreground"
+              >
+                Reply
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            size={'sm'}
-            variant={'ghost'}
-            className="text-primary hover:bg-primary/10 font-bold"
-            onClick={() => setShowPostReply(!showPostReply)}
-          >
-            <ReplyIcon className="w-4 h-4 mr-1.5" strokeWidth={2.5} />
-            Reply
-          </Button>
-          {isCommentor && (
-            <Button
-              size={'sm'}
-              variant={'ghost'}
-              className="text-destructive hover:bg-destructive/10"
-              onClick={() =>
-                deleteCommentMutation.mutate({
-                  slug,
-                  feedbackId,
-                  commentId: comment.id,
-                })
-              }
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          )}
         </div>
       </div>
-
-      <p className="text-sm text-muted-foreground sm:ml-14">
-        {comment.content}
-      </p>
-      {showPostReply && (
-        <PostReply
-          commentId={comment.id}
-          replyTo={comment.user.username as string}
-          hidePostReply={() => setShowPostReply(false)}
-        />
-      )}
-      <ul className="relative before:absolute before:top-0 before:left-0.5 sm:before:left-4 before:w-[1px] before:h-full before:bg-muted">
-        {comment.replies.map((reply) => (
-          <Reply key={reply.id} reply={reply} commentId={comment.id} />
-        ))}
-      </ul>
-    </li>
+    </div>
   );
 };
 
