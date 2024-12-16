@@ -8,7 +8,7 @@ const Navbar = async () => {
   const session = await auth();
 
   return (
-    <header className="bg-white sticky inset-x-0 top-0 z-[100] shadow-sm">
+    <header className="bg-white sticky inset-x-0 top-0 z-[10] shadow-sm">
       <div className="h-16 flex gap-4 items-center justify-between max-w-screen-xl mx-auto px-3 lg:px-16">
         <Link href="/">
           <span className="flex items-center space-x-1.5">

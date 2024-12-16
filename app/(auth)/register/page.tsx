@@ -1,12 +1,20 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import OAuthLogins from '../_components/oauth-logins';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Create an account | Claryfi',
 };
 
-const Register = () => {
+const Register = async () => {
+  const session = await auth();
+
+  if (session?.user) {
+    redirect('/dashboard');
+  }
+
   return (
     <div className="w-full max-w-sm mx-auto flex flex-col items-center">
       <div className="w-full space-y-6">
