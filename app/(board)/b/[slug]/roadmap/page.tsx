@@ -139,9 +139,13 @@ const Page = () => {
               <span className="font-medium text-sm">
                 {snakeCaseToString(column)}
               </span>
-              <span className="bg-white px-2.5 py-0.5 border rounded-full text-xs font-semibold">
-                {sortedFeedbacks && sortedFeedbacks[column].length}
-              </span>
+              {isLoading ? (
+                <Skeleton className="w-7 h-5 rounded-full bg-white" />
+              ) : (
+                <span className="bg-white px-2.5 py-0.5 border rounded-full text-xs font-semibold">
+                  {sortedFeedbacks && sortedFeedbacks[column].length}
+                </span>
+              )}
             </div>
             <div className="space-y-2.5">
               {isLoading ? (
