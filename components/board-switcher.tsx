@@ -35,7 +35,7 @@ export function BoardSwitcher({ boards }: { boards: Board[] }) {
     <>
       <SidebarMenu>
         <SidebarMenuItem>
-          <DropdownMenu modal={false}>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
