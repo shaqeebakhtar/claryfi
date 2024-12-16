@@ -72,7 +72,7 @@ const SettingsForm = () => {
 
   useEffect(() => {
     if (!isLoading && board) {
-      form.setValue('logo', board?.logoUrl || '');
+      form.setValue('logo', board?.logoUrl || null);
       form.setValue('name', board?.name);
       form.setValue('slug', board?.slug);
       form.setValue('color', board?.brandColor as string);
@@ -251,7 +251,7 @@ const SettingsForm = () => {
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    disabled={isLoading}
+                    disabled={isLoading || true}
                   />
                 </FormControl>
               </FormItem>

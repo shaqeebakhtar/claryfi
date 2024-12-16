@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const settingsFormSchema = z.object({
-  logo: z.string().optional(),
+  logo: z.string().optional().nullable(),
   name: z.string({
     required_error: 'Please set a memorable name of your board.',
   }),
-  url: z.string().url().optional().or(z.literal('')),
+  url: z.string().url().optional(),
   slug: z.string({
     required_error: 'Please choose a unique slug for your board.',
   }),
