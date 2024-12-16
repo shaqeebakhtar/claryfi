@@ -16,6 +16,7 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export function NavMain({
   items,
@@ -69,7 +70,10 @@ export function NavMain({
             ) : (
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip={item.title}>
-                  <Link href={item.url}>
+                  <Link
+                    href={item.url}
+                    className={cn(item.isActive && 'bg-muted')}
+                  >
                     <item.icon className="text-muted-foreground" />
                     <span className="font-medium">{item.title}</span>
                   </Link>

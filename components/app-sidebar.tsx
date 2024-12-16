@@ -16,7 +16,7 @@ import {
 import { getBoards } from '@/data-access/board';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { BoardSwitcher, BoardSwitcherLoader } from './board-switcher';
 import { Separator } from './ui/separator';
 
@@ -28,6 +28,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const { data: session, status } = useSession();
   const { slug } = useParams<{ slug: string }>();
+  const pathname = usePathname();
 
   const navLinks = {
     navMain: [
@@ -35,11 +36,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: 'Feedbacks',
         url: `/${slug}`,
         icon: Send,
+        isActive: pathname === `/${slug}`,
       },
       {
         title: 'Settings',
         url: `/${slug}/settings`,
         icon: Settings,
+        isActive: pathname === `/${slug}/settings`,
       },
     ],
     navSecondary: [
