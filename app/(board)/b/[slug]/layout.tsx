@@ -31,6 +31,7 @@ const Layout = ({
     if (!isLoading && board && board.brandColor) {
       const hsl = hextToHSL(board.brandColor);
       document.documentElement.style.setProperty('--primary', hsl);
+      document.documentElement.style.setProperty('--ring', hsl);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board?.brandColor]);
@@ -69,7 +70,7 @@ const Layout = ({
                       href={`/b/${slug}`}
                       className={cn(
                         'cursor-pointer text-sm font-medium text-muted-foreground px-3 py-2 rounded-md hover:text-foreground transition-all',
-                        pathname === `/b/${slug}` && 'bg-muted text-primary'
+                        pathname === `/b/${slug}` && 'bg-primary/5 text-primary'
                       )}
                     >
                       Feedbacks
@@ -81,7 +82,7 @@ const Layout = ({
                       className={cn(
                         'cursor-pointer text-sm font-medium text-muted-foreground px-3 py-2 rounded-md hover:text-black transition-all',
                         pathname === `/b/${slug}/roadmap` &&
-                          'bg-muted text-primary'
+                          'bg-primary/5 text-primary'
                       )}
                     >
                       Roadmap

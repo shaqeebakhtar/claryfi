@@ -166,7 +166,7 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
             router.push(`${pathname}?f=${feedback.id}`, { scroll: false })
           }
         >
-          <h3 className="font-medium group-hover:text-primary transition-all">
+          <h3 className="font-semibold group-hover:text-primary transition-all">
             {feedback.title}
           </h3>
           <p
