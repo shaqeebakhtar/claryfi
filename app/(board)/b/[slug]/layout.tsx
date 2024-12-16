@@ -6,7 +6,7 @@ import UserProfileDropdown from '@/components/user-profile-dropdown';
 import { cn, hextToHSL } from '@/lib/utils';
 import { getPublicBoardBySlug } from '@/services/open/board';
 import { useQuery } from '@tanstack/react-query';
-import { LoaderIcon } from 'lucide-react';
+import { LoaderIcon, Zap } from 'lucide-react';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { notFound, useParams, usePathname } from 'next/navigation';
@@ -110,7 +110,30 @@ const Layout = ({
           )}
         </div>
       </header>
-      <main>{children}</main>
+      <main>
+        {children}
+
+        <div className="w-max mx-auto pb-8 lg:fixed lg:right-8 lg:bottom-8 lg:pb-0">
+          <Link
+            href={'/'}
+            className="font-bold text-xs flex items-center gap-1.5 bg-background shadow-sm rounded-md px-3 py-1.5 border hover:-translate-y-0.5 hover:scale-105 transition-all"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="size-4 text-yellow-500"
+            >
+              <path
+                fillRule="evenodd"
+                d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .913-.143Z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Powered by Claryfi
+          </Link>
+        </div>
+      </main>
     </>
   );
 };
