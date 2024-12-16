@@ -9,7 +9,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { undovoteFeedback, upvoteFeedback } from '@/services/feedback';
 import { IFeedback } from '@/types/feedback';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ChevronUp,
   MessageCircle,
@@ -17,20 +19,25 @@ import {
   PencilLine,
   Trash2,
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import DeleteFeedback from './delete-feedback';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { EditDashboardFeedback } from './add-edit-dashboard-feedback';
+import DeleteFeedback from './delete-feedback';
 
 type FeedbackCardProps = {
   feedback: IFeedback;
 };
 
 export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
-  const { slug } = useParams() as { slug: string };
-  const [upvoted, setUpvoted] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const { slug } = useParams() as { slug: string };
+  const [upvoted, setUpvoted] = useState<boolean>(false);
+  const [upvotes, setUpvotes] = useState<number>(feedback._count.upvotes);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
@@ -77,67 +84,55 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
     },
   ];
 
-  // const [canEdit, setCanEdit] = useState<boolean>(false);
-  // const [upvotes, setUpvotes] = useState<number>(feedback._count.upvotes);
-  // const [status, setStatus] = useState<string>(feedback.status);
+  const upvoteFeedbackMutation = useMutation({
+    mutationFn: upvoteFeedback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
+    },
+    onError: () => {
+      toast.error('Failed to upvote');
+      setUpvoted(!upvoted);
+      setUpvotes((prev) => prev - 1);
+    },
+  });
 
-  // const { data: session } = useSession();
+  const undovoteFeedbackMutation = useMutation({
+    mutationFn: undovoteFeedback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
+    },
+    onError: () => {
+      toast.error('Failed to remove vote');
+    },
+  });
 
-  // const queryClient = useQueryClient();
+  useEffect(() => {
+    const hasUpvoted = feedback.upvotes.some(
+      (upvote) => upvote.upvoterId === session?.user?.id
+    );
+    setUpvoted(hasUpvoted);
+  }, [feedback.upvotes, session?.user?.id]);
 
-  // const upvoteFeedbackMutation = useMutation({
-  //   mutationFn: upvoteFeedback,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ['feedbacks', slug] });
-  //   },
-  //   onError: (error) => {
-  //     toast.error(error.message);
-  //     setUpvoted(!upvoted);
-  //     setUpvotes((prev) => prev - 1);
-  //   },
-  // });
-
-  // const undovoteFeedbackMutation = useMutation({
-  //   mutationFn: undovoteFeedback,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ['feedbacks', slug] });
-  //   },
-  //   onError: (error) => {
-  //     toast.error(error.message);
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   const hasUpvoted = feedback.upvotes.some(
-  //     (upvote) => upvote.upvoterId === session?.user?.id
-  //   );
-  //   setUpvoted(hasUpvoted);
-  // }, [feedback.upvotes, session?.user?.id]);
-
-  // useEffect(() => {
-  //   setCanEdit(path === `/b/${slug}/admin`);
-  // }, [path, slug]);
-
-  // const handleUpvoteAndUndovote = (
-  //   e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  // ) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   setUpvoted(!upvoted);
-  //   if (upvoted) {
-  //     undovoteFeedbackMutation.mutate({
-  //       slug,
-  //       feedbackId: feedback.id,
-  //     });
-  //     setUpvotes((prev) => prev - 1);
-  //   } else {
-  //     upvoteFeedbackMutation.mutate({
-  //       slug,
-  //       feedbackId: feedback.id,
-  //     });
-  //     setUpvotes((prev) => prev + 1);
-  //   }
-  // };
+  const handleUpvoteAndUndovote = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setUpvoted(!upvoted);
+    if (upvoted) {
+      setUpvotes((prev) => prev - 1);
+      undovoteFeedbackMutation.mutate({
+        slug,
+        feedbackId: feedback.id,
+      });
+    } else {
+      setUpvotes((prev) => prev + 1);
+      upvoteFeedbackMutation.mutate({
+        slug,
+        feedbackId: feedback.id,
+      });
+    }
+  };
 
   return (
     <div className="mt-2 p-4 sm:p-5 bg-background rounded-md flex flex-col gap-4 relative border">
@@ -182,12 +177,13 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
               'flex gap-1.5 items-center text-xs font-bold rounded-lg py-1.5 px-3 bg-primary/10 hover:bg-primary/20 transition-all',
               upvoted && 'bg-primary text-white hover:bg-primary/80'
             )}
+            onClick={handleUpvoteAndUndovote}
           >
             <ChevronUp
               className={cn('size-4 text-primary', upvoted && 'text-white')}
               strokeWidth={3}
             />
-            <span>{feedback._count.upvotes}</span>
+            <span>{upvotes}</span>
           </button>
           <div className="flex items-center gap-1">
             <MessageCircle className="size-4 text-muted-foreground" />

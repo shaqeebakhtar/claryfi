@@ -1,4 +1,4 @@
-import { Feedback } from '@prisma/client';
+import { Feedback, Upvote } from '@prisma/client';
 import { ITagOnPosts } from './tag';
 
 export enum FeedbackStatus {
@@ -14,5 +14,6 @@ export interface IFeedback extends Feedback {
     upvotes: number;
     comments: number;
   };
+  upvotes: Upvote[];
   tags: ITagOnPosts[];
 }

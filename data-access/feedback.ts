@@ -50,52 +50,6 @@ export const getFeedbacksByBoardSlug = async ({
   return feedbacks;
 };
 
-export const upvoteFeedback = async ({
-  slug,
-  feedbackId,
-}: {
-  slug: string;
-  feedbackId: string;
-}) => {
-  const res = await fetch(`/api/boards/${slug}/feedback/${feedbackId}/upvote`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (res.status === 401) {
-    throw new Error('You must need to be logged in to upvote.');
-  }
-
-  if (!res.ok) {
-    throw new Error('Failed to upvote the feedback');
-  }
-
-  const { upvoted } = await res.json();
-
-  return !!upvoted;
-};
-
-export const undovoteFeedback = async ({
-  slug,
-  feedbackId,
-}: {
-  slug: string;
-  feedbackId: string;
-}) => {
-  const res = await fetch(`/api/boards/${slug}/feedback/${feedbackId}/upvote`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  const { unvoted } = await res.json();
-
-  return !!unvoted;
-};
-
 export const deleteFeedback = async ({
   slug,
   feedbackId,

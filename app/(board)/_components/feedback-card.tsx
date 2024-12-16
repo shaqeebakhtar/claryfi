@@ -1,39 +1,24 @@
 'use client';
-import { cn } from '@/lib/utils';
-import { ChevronUp, MessageCircle } from 'lucide-react';
-import React, { useState } from 'react';
-import FeedbackCardStatus from './feedback-card-status';
-import { usePathname, useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Comment, Feedback, TagOnPosts, Upvote } from '@prisma/client';
-
-enum FeedbackStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE',
-  CANCELLED = 'CANCELLED',
-}
-
-interface ITagOnPosts extends TagOnPosts {
-  tag: {
-    name: string;
-    color: string;
-  };
-}
-
-interface IFeedback extends Feedback {
-  _count: {
-    upvotes: number;
-    comments: number;
-  };
-  tags: ITagOnPosts[];
-}
+import { cn } from '@/lib/utils';
+import { undovoteFeedback, upvoteFeedback } from '@/services/feedback';
+import { IFeedback } from '@/types/feedback';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ChevronUp, MessageCircle } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useParams, usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import FeedbackCardStatus from './feedback-card-status';
 
 const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
-  const [upvoted, setUpvoted] = useState<boolean>(false);
+  const queryClient = useQueryClient();
   const pathname = usePathname();
   const router = useRouter();
+  const { slug } = useParams() as { slug: string };
+  const { data: session } = useSession();
+  const [upvoted, setUpvoted] = useState<boolean>(false);
+  const [upvotes, setUpvotes] = useState<number>(feedback._count.upvotes);
 
   const tagColors = [
     {
@@ -78,6 +63,60 @@ const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
     },
   ];
 
+  const upvoteFeedbackMutation = useMutation({
+    mutationFn: upvoteFeedback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
+    },
+    onError: () => {
+      toast.error('Failed to upvote');
+      setUpvoted(!upvoted);
+      setUpvotes((prev) => prev - 1);
+    },
+  });
+
+  const undovoteFeedbackMutation = useMutation({
+    mutationFn: undovoteFeedback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [slug, 'feedbacks'] });
+    },
+    onError: () => {
+      toast.error('Failed to remove vote');
+    },
+  });
+
+  useEffect(() => {
+    const hasUpvoted = feedback.upvotes.some(
+      (upvote) => upvote.upvoterId === session?.user?.id
+    );
+    setUpvoted(hasUpvoted);
+  }, [feedback.upvotes, session?.user?.id]);
+
+  const handleUpvoteAndUndovote = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    if (!session?.user) {
+      toast.info('You need to be logged in to upvote');
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    setUpvoted(!upvoted);
+    if (upvoted) {
+      setUpvotes((prev) => prev - 1);
+      undovoteFeedbackMutation.mutate({
+        slug,
+        feedbackId: feedback.id,
+      });
+    } else {
+      setUpvotes((prev) => prev + 1);
+      upvoteFeedbackMutation.mutate({
+        slug,
+        feedbackId: feedback.id,
+      });
+    }
+  };
+
   return (
     <div className="group p-4 sm:p-5 bg-background rounded-md flex gap-6 relative cursor-pointer hover:shadow-sm">
       <div className="flex flex-col items-center justify-between">
@@ -86,12 +125,13 @@ const FeedbackCard = ({ feedback }: { feedback: IFeedback }) => {
             'flex flex-col gap-1 items-center text-xs font-bold rounded-lg py-2 px-2.5 bg-primary/10 hover:bg-primary/20 transition-all',
             upvoted && 'bg-primary text-white hover:bg-primary/80'
           )}
+          onClick={handleUpvoteAndUndovote}
         >
           <ChevronUp
             className={cn('size-4 text-primary', upvoted && 'text-white')}
             strokeWidth={3}
           />
-          <span>{feedback._count.upvotes}</span>
+          <span>{upvotes}</span>
         </button>
         <div className="flex items-center gap-1">
           <MessageCircle className="size-4 text-muted-foreground" />

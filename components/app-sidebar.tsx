@@ -13,12 +13,12 @@ import {
   SidebarHeader,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
-import { getBoards } from '@/data-access/board';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useParams, usePathname } from 'next/navigation';
 import { BoardSwitcher, BoardSwitcherLoader } from './board-switcher';
 import { Separator } from './ui/separator';
+import { getBoards } from '@/services/admin/board';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: boards, isPending } = useQuery({
@@ -65,7 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {isPending ? (
           <BoardSwitcherLoader />
         ) : (
-          <BoardSwitcher boards={boards} />
+          boards && <BoardSwitcher boards={boards} />
         )}
       </SidebarHeader>
       <SidebarContent>

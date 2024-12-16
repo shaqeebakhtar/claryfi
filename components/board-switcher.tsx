@@ -1,8 +1,5 @@
 'use client';
 
-import { ChevronsUpDown } from 'lucide-react';
-import { useMemo, useState } from 'react';
-
 import CreateBoardDialog from '@/app/dashboard/_components/create-board-dialog';
 import {
   DropdownMenu,
@@ -19,9 +16,11 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Board } from '@prisma/client';
+import { ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
-import { Skeleton } from './ui/skeleton';
 import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
+import { Skeleton } from './ui/skeleton';
 
 export function BoardSwitcher({ boards }: { boards: Board[] }) {
   const { isMobile } = useSidebar();

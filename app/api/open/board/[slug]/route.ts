@@ -22,6 +22,7 @@ export const GET = async (
                 comments: true,
               },
             },
+            upvotes: true,
             tags: {
               include: {
                 tag: {

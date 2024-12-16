@@ -41,9 +41,7 @@ const Page = () => {
                 ))
               ) : board && board.feedbacks.length > 0 ? (
                 board?.feedbacks.map((feedback) => (
-                  <>
-                    <FeedbackCard feedback={feedback} key={feedback.id} />
-                  </>
+                  <FeedbackCard feedback={feedback} key={feedback.id} />
                 ))
               ) : (
                 <div className="h-[600px] flex flex-col items-center justify-center space-y-6">
