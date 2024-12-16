@@ -1,38 +1,38 @@
 'use client';
 import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  Modal,
+  ModalContent,
+  ModalDescription,
+  ModalHeader,
+  ModalTitle,
+  ModalTrigger,
+} from '@/components/responsive-dialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import AddPublicFeedbackForm from './add-public-feedback-form';
 
 const AddPublicFeedback = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger asChild>
+    <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <ModalTrigger asChild>
         <Button>
           <Plus className="w-3.5 h-3.5 mr-1.5" strokeWidth={3} />
           Add feedback
         </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader className="mb-2">
-          <DialogTitle>Add Feedback</DialogTitle>
-          <DialogDescription>
+      </ModalTrigger>
+      <ModalContent className="sm:max-w-lg">
+        <ModalHeader className="mb-2">
+          <ModalTitle>Add Feedback</ModalTitle>
+          <ModalDescription>
             Submit a new feature request/suggestion.
-          </DialogDescription>
-        </DialogHeader>
-        <AddPublicFeedbackForm closeDialog={() => setIsDialogOpen(false)} />
-      </DialogContent>
-    </Dialog>
+          </ModalDescription>
+        </ModalHeader>
+        <AddPublicFeedbackForm closeDialog={() => setIsModalOpen(false)} />
+      </ModalContent>
+    </Modal>
   );
 };
 

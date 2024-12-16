@@ -42,6 +42,7 @@ export const POST = async (
         title,
         description,
         status,
+        userId: session.user.id,
         tags: {
           create: tagIds?.map((id) => ({
             tag: {

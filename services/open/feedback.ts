@@ -4,14 +4,10 @@ export const addPublicFeedback = async ({
   slug,
   title,
   description,
-  name,
-  email,
 }: {
   slug: string;
   title: string;
   description: string;
-  name: string;
-  email: string;
 }): Promise<{
   id: string;
 }> => {
@@ -23,8 +19,6 @@ export const addPublicFeedback = async ({
     body: JSON.stringify({
       title,
       description,
-      name,
-      email,
     }),
   });
 

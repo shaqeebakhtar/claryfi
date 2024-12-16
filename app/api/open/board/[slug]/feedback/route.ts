@@ -1,3 +1,4 @@
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { publicFeedbackSchema } from '@/validations/feedback';
 
@@ -7,6 +8,7 @@ export const POST = async (
 ) => {
   const body = await req.json();
   const slug = params.slug;
+  const session = await auth();
 
   const validateFields = publicFeedbackSchema.safeParse(body);
 
@@ -24,7 +26,7 @@ export const POST = async (
     return new Response('Board not found', { status: 404 });
   }
 
-  const { title, description, name, email } = validateFields.data;
+  const { title, description } = validateFields.data;
 
   let createdFeedback = null;
 
@@ -34,8 +36,7 @@ export const POST = async (
         boardId: board.id,
         title,
         description,
-        submitterName: name,
-        submitterEmail: email,
+        userId: session?.user.id,
       },
     });
   } catch (error) {

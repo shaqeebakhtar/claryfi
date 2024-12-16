@@ -21,8 +21,9 @@ export const publicFeedbackSchema = z.object({
   description: z.string().min(5, {
     message: 'Details must be at least 5 characters.',
   }),
-  name: z.string({ required_error: 'Your name is required' }),
+  name: z.string({ required_error: 'Your name is required' }).optional(),
   email: z
     .string({ required_error: 'Your email is required' })
-    .email({ message: 'Please enter a valid email' }),
+    .email({ message: 'Please enter a valid email' })
+    .optional(),
 });

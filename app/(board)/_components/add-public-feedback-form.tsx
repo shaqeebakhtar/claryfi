@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { TextEditor } from '@/components/text-editor';
 import { Button } from '@/components/ui/button';
-import { DialogClose, DialogFooter } from '@/components/ui/dialog';
+import { ModalClose, ModalFooter } from '@/components/responsive-dialog';
 import {
   Form,
   FormControl,
@@ -60,14 +60,15 @@ const AddPublicFeedbackForm = ({ closeDialog }: AddPublicFeedbackFormProps) => {
       slug,
       title: data.title,
       description: data.description,
-      name: data.name,
-      email: data.email,
     });
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="p-4 lg:p-0 space-y-4"
+      >
         <FormField
           control={form.control}
           name="title"
@@ -109,54 +110,19 @@ const AddPublicFeedbackForm = ({ closeDialog }: AddPublicFeedbackFormProps) => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <div className="space-y-1">
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="John Doe" {...field} />
-                </FormControl>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <div className="space-y-1">
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="john@example.com"
-                    {...field}
-                  />
-                </FormControl>
-              </div>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <DialogFooter className="sm:justify-end gap-2 flex-col">
-          <DialogClose asChild>
+        <ModalFooter className="sm:justify-end gap-2 flex-col">
+          <ModalClose asChild>
             <Button type="button" variant="secondary">
               Cancel
             </Button>
-          </DialogClose>
+          </ModalClose>
           <Button disabled={createFeedbackMutation.isPending}>
             {createFeedbackMutation.isPending && (
               <Loader className="w-4 h-4 mr-1.5 animate-spin" />
             )}
             Submit
           </Button>
-        </DialogFooter>
+        </ModalFooter>
       </form>
     </Form>
   );
