@@ -1,5 +1,4 @@
 import { buttonVariants } from '@/components/ui/button';
-import UserProfileDropdown from '@/components/user-profile-dropdown';
 import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -53,18 +52,15 @@ const Navbar = async () => {
               </Link>
             </>
           ) : (
-            <>
-              <Link
-                href="/dashboard"
-                className={cn(
-                  buttonVariants({ variant: 'outline' }),
-                  'rounded-full px-6 h-9 hover:bg-secondary mr-2'
-                )}
-              >
-                Dashboard
-              </Link>
-              <UserProfileDropdown />
-            </>
+            <Link
+              href="/dashboard"
+              className={cn(
+                buttonVariants({ variant: 'outline' }),
+                'rounded-full px-6 h-9 hover:bg-secondary mr-2'
+              )}
+            >
+              Dashboard
+            </Link>
           )}
         </div>
       </div>

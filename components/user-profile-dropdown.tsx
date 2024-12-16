@@ -1,25 +1,17 @@
 'use client';
-
 import { generateAvatar } from '@/components/random-avatar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  CircleHelp,
-  CircleUserRound,
-  LogOut,
-  MessageCircleReply,
-} from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
-import Link from 'next/link';
 import { ReactNode, useEffect, useState } from 'react';
 
 const UserProfileDropdown = () => {
@@ -54,30 +46,9 @@ const UserProfileDropdown = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <Link href={`/b/claryfi`} target="_blank">
-            <DropdownMenuItem>
-              <MessageCircleReply className="w-4 h-4 mr-2 text-gray-700" />
-              <span className="font-normal">Share feedback</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link href={`#`}>
-            <DropdownMenuItem>
-              <CircleHelp className="w-4 h-4 mr-2 text-gray-700" />
-              <span className="font-normal">Support</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link href={`#`}>
-            <DropdownMenuItem>
-              <CircleUserRound className="w-4 h-4 mr-2 text-gray-700" />
-              <span className="font-normal">Account</span>
-            </DropdownMenuItem>
-          </Link>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-destructive focus:text-destructive focus:bg-destructive/10"
-          onClick={() => signOut({ redirectTo: '/login' })}
+          onClick={() => signOut()}
         >
           <LogOut className="w-4 h-4 mr-2" />
           <span className="font-normal">Log out</span>

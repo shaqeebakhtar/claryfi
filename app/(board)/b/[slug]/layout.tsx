@@ -1,11 +1,16 @@
 'use client';
+import { Icons } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import UserProfileDropdown from '@/components/user-profile-dropdown';
 import { cn, hextToHSL } from '@/lib/utils';
 import { getPublicBoardBySlug } from '@/services/open/board';
 import { useQuery } from '@tanstack/react-query';
+import { LoaderIcon } from 'lucide-react';
+import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { notFound, useParams, usePathname } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Layout = ({
   children,
@@ -13,7 +18,9 @@ const Layout = ({
   children: React.ReactNode;
 }>) => {
   const { slug } = useParams<{ slug: string }>();
+  const [isGoogleSignin, setIsGoogleSignin] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const { data: board, isLoading } = useQuery({
     queryKey: ['board', 'open', slug],
@@ -28,6 +35,13 @@ const Layout = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board?.brandColor]);
 
+  const handleGoogleSingin = async () => {
+    setIsGoogleSignin(true);
+    await signIn('google', {
+      callbackUrl: `${pathname}`,
+    });
+  };
+
   if (!board && !isLoading) {
     notFound();
   }
@@ -39,40 +53,59 @@ const Layout = ({
           {isLoading ? (
             <HeaderSkeleton />
           ) : (
-            <div className="w-full lg:w-auto flex items-center gap-8 justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg text-center text-sm font-medium uppercase grid items-center select-none">
-                  {board?.name.slice(0, 2)}
+            <div className="w-full flex items-center gap-8 justify-between">
+              <div className="flex items-center space-x-8">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg text-center text-sm font-medium uppercase grid items-center select-none">
+                    {board?.name.slice(0, 2)}
+                  </div>
+                  <h2 className="max-w-48 truncate font-semibold leading-5">
+                    {board?.name}
+                  </h2>
                 </div>
-                <h2 className="max-w-48 truncate font-semibold leading-5">
-                  {board?.name}
-                </h2>
+                <ul className="flex items-center gap-2">
+                  <li>
+                    <Link
+                      href={`/b/${slug}`}
+                      className={cn(
+                        'cursor-pointer text-sm font-medium text-muted-foreground px-3 py-2 rounded-md hover:text-foreground transition-all',
+                        pathname === `/b/${slug}` && 'bg-muted text-primary'
+                      )}
+                    >
+                      Feedbacks
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href={`/b/${slug}/roadmap`}
+                      className={cn(
+                        'cursor-pointer text-sm font-medium text-muted-foreground px-3 py-2 rounded-md hover:text-black transition-all',
+                        pathname === `/b/${slug}/roadmap` &&
+                          'bg-muted text-primary'
+                      )}
+                    >
+                      Roadmap
+                    </Link>
+                  </li>
+                </ul>
               </div>
-              <ul className="flex items-center gap-2">
-                <li>
-                  <Link
-                    href={`/b/${slug}`}
-                    className={cn(
-                      'cursor-pointer text-sm font-medium text-muted-foreground px-3 py-2 rounded-md hover:text-foreground transition-all',
-                      pathname === `/b/${slug}` && 'bg-muted text-primary'
-                    )}
-                  >
-                    Feedbacks
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={`/b/${slug}/roadmap`}
-                    className={cn(
-                      'cursor-pointer text-sm font-medium text-muted-foreground px-3 py-2 rounded-md hover:text-black transition-all',
-                      pathname === `/b/${slug}/roadmap` &&
-                        'bg-muted text-primary'
-                    )}
-                  >
-                    Roadmap
-                  </Link>
-                </li>
-              </ul>
+              {!session?.user ? (
+                <Button
+                  variant="outline"
+                  className="shadow-none"
+                  disabled={isGoogleSignin}
+                  onClick={handleGoogleSingin}
+                >
+                  {isGoogleSignin ? (
+                    <LoaderIcon className="w-4 h-4 animate-spin mr-2" />
+                  ) : (
+                    <Icons.google className="w-4 h-4 mr-2" />
+                  )}
+                  SigIn with Google
+                </Button>
+              ) : (
+                <UserProfileDropdown />
+              )}
             </div>
           )}
         </div>
