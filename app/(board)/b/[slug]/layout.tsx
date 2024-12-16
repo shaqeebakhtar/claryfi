@@ -32,8 +32,6 @@ const Layout = ({
     notFound();
   }
 
-  console.log(board);
-
   return (
     <>
       <header className="sticky left-0 right-0 top-0 z-20 border-gray-200 bg-white shadow-sm">

@@ -122,8 +122,6 @@ export const PATCH = async (
       },
     });
   } catch (error) {
-    console.log(error);
-
     throw new Error('Failed to update the feedback');
   }
 

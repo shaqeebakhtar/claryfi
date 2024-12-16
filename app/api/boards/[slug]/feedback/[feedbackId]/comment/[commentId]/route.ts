@@ -102,8 +102,6 @@ export const DELETE = async (
       },
     });
   } catch (error) {
-    console.log(error);
-
     throw new Error('Failed to delete the comment');
   }
 
