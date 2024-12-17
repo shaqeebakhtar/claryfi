@@ -8,6 +8,7 @@ import {
 import DeleteBoardDialog from '../../_components/delete-board-dialog';
 import SettingsForm from '../../_components/settings-form';
 import ManageTags from '../../_components/manage-tags';
+import DeleteBoard from '../../_components/delete-board';
 
 const Page = () => {
   return (
@@ -28,18 +29,7 @@ const Page = () => {
           <Separator orientation="horizontal" className="bg-gray-100" />
           <ManageTags />
           <Separator orientation="horizontal" className="bg-gray-100" />
-          <div className="space-y-4 p-4 border border-destructive rounded-lg bg-destructive/5">
-            <div className="space-y-1">
-              <h2 className="text-base font-medium text-destructive">
-                Delete Board
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Deleting your board will also delete all the feedbacks and
-                others things associated with it.
-              </p>
-            </div>
-            <DeleteBoardDialog />
-          </div>
+          <DeleteBoard />
         </div>
       </SidebarInset>
     </SidebarProvider>
