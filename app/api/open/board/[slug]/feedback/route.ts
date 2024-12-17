@@ -90,6 +90,8 @@ export const GET = async (
             comments: true,
           },
         },
+        upvotes: true,
+        comments: true,
         tags: {
           include: {
             tag: {
