@@ -10,6 +10,10 @@ export const POST = async (
   const slug = params.slug;
   const session = await auth();
 
+  if (!session?.user) {
+    return Response.json('Unauthorized', { status: 401 });
+  }
+
   const validateFields = publicFeedbackSchema.safeParse(body);
 
   if (!validateFields.success) {
@@ -37,6 +41,11 @@ export const POST = async (
         title,
         description,
         userId: session?.user.id,
+        upvotes: {
+          create: {
+            upvoterId: session?.user.id,
+          },
+        },
       },
     });
   } catch (error) {

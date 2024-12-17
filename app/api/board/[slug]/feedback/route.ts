@@ -41,7 +41,6 @@ export const POST = async (
         boardId: board.id,
         title,
         description,
-        submittedBy: session.user.id,
       },
     });
   } catch (error) {
