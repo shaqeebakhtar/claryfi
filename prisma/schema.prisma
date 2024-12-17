@@ -17,7 +17,6 @@ model User {
   accounts      Account[]
   boards        Board[]
   comments      Comment[]
-  replies       Reply[]
   feedbacks     Feedback[]
 
   createdAt DateTime @default(now())
@@ -52,7 +51,7 @@ model Board {
   slug         String   @unique
   websiteUrl   String?
   brandColor   String?
-  hideBranding Boolean?
+  hideBranding Boolean? @default(false)
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -139,27 +138,27 @@ model Comment {
   userId  String
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  replies Reply[]
-
   feedbackId String
   feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  commentLikes CommentLike[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Reply {
+model CommentLike {
   id String @id @default(cuid())
 
-  content String @db.Text
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likedCommentId String
+  likedComment   Comment @relation(fields: [likedCommentId], references: [id], onDelete: Cascade)
 
-  replyTo String
-
-  commentId String
-  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  likedBy String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([likedBy, likedCommentId])
+  @@index([likedBy])
+  @@index([likedCommentId])
 }

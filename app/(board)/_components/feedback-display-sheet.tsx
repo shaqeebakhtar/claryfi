@@ -18,9 +18,10 @@ import { useSession } from 'next-auth/react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import Comment from './comment';
+import Comment, { CommentSkeleton } from './comment';
 import FeedbackCardStatus from './feedback-card-status';
-import PostComment from './post-comment';
+import PostComment, { PostCommentSkeleton } from './post-comment';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
   const queryClient = useQueryClient();
@@ -137,7 +138,7 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
     }
   };
 
-  if (isLoading || !feedback) return;
+  if (!isLoading && !feedback) return;
 
   return (
     <Sheet
@@ -155,10 +156,14 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
             </SheetClose>
             <SheetHeader className="px-6 pt-6">
               <div className="flex items-center gap-3">
-                <FeedbackCardStatus
-                  status={feedback?.status as string}
-                  className="text-sm"
-                />
+                {isLoading ? (
+                  <Skeleton className="w-18 h-5" />
+                ) : (
+                  <FeedbackCardStatus
+                    status={feedback?.status as string}
+                    className="text-sm"
+                  />
+                )}
                 {feedback && feedback?.tags.length > 0 && (
                   <>
                     <Separator orientation="vertical" className="h-4" />
@@ -183,78 +188,143 @@ const FeedbackDisplaySheet = ({ feedbackId }: { feedbackId: string }) => {
                 )}
               </div>
               <SheetTitle className="text-xl text-left">
-                {feedback?.title}
+                {isLoading ? (
+                  <Skeleton className="w-96 h-7" />
+                ) : (
+                  feedback?.title
+                )}
               </SheetTitle>
               <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                <Avatar className="size-6 rounded-full">
-                  <AvatarImage src={feedback?.user?.image as string} />
-                  <AvatarFallback>
-                    <UserRound className="size-4 text-muted-foreground" />
-                  </AvatarFallback>
-                </Avatar>
-                <span>{feedback?.user?.name || 'Anonymous'}</span>
+                {isLoading ? (
+                  <Skeleton className="size-6 rounded-full" />
+                ) : (
+                  <Avatar className="size-6 rounded-full">
+                    <AvatarImage src={feedback?.user?.image as string} />
+                    <AvatarFallback>
+                      <UserRound className="size-4 text-muted-foreground" />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+                {isLoading ? (
+                  <Skeleton className="w-20 h-4" />
+                ) : (
+                  <span>{feedback?.user?.name || 'Anonymous'}</span>
+                )}
                 <span>•</span>
-                <span>
-                  {feedback &&
-                    formatDistance(
-                      new Date(feedback?.createdAt as Date),
-                      new Date(),
-                      {
-                        addSuffix: true,
-                      }
-                    )}
-                </span>
+                {isLoading ? (
+                  <Skeleton className="w-20 h-4" />
+                ) : (
+                  <span>
+                    {feedback &&
+                      formatDistance(
+                        new Date(feedback?.createdAt as Date),
+                        new Date(),
+                        {
+                          addSuffix: true,
+                        }
+                      )}
+                  </span>
+                )}
               </div>
             </SheetHeader>
             <div className="px-6 pt-4 pb-5 space-y-5 border-b border-b-gray-100">
-              <p
-                className="feedback--desc text-muted-foreground"
-                dangerouslySetInnerHTML={{
-                  __html: feedback?.description as string,
-                }}
-              ></p>
-              <div className="flex items-center justify-between">
-                <Button
-                  className={cn(
-                    'w-max flex gap-1.5 items-center text-xs font-bold rounded-lg py-2 px-3 bg-primary/10 hover:bg-primary/20 transition-all text-foreground shadow-none',
-                    upvoted && 'bg-primary text-white hover:bg-primary/80'
-                  )}
-                  size="sm"
-                  onClick={handleUpvoteAndUndovote}
-                >
-                  <ChevronUp
-                    className={cn(
-                      'size-4 text-primary',
-                      upvoted && 'text-white'
-                    )}
-                    strokeWidth={3}
-                  />
-                  <span>{upvotes}</span>
-                </Button>
-                <Button size="sm" variant="secondary" className="shadow-none">
-                  <Share2Icon className="w-4 h-4 text-muted-foreground mr-2" />
-                  Share
-                </Button>
+              {isLoading ? (
+                <div className="space-y-1">
+                  <Skeleton className="w-full h-5" />
+                  <Skeleton className="w-1/2 h-5" />
+                </div>
+              ) : (
+                <p
+                  className="feedback--desc text-muted-foreground"
+                  dangerouslySetInnerHTML={{
+                    __html: feedback?.description as string,
+                  }}
+                ></p>
+              )}
+              <div className="flex items-center gap-2">
+                {isLoading ? (
+                  <>
+                    <Skeleton className="w-14 h-8" />
+                    <Skeleton className="w-8 h-8" />
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      className={cn(
+                        'w-max flex gap-1.5 items-center text-xs font-bold rounded-lg py-2 px-3 bg-primary/10 hover:bg-primary/20 transition-all text-foreground shadow-none',
+                        upvoted && 'bg-primary text-white hover:bg-primary/80'
+                      )}
+                      size="sm"
+                      onClick={handleUpvoteAndUndovote}
+                    >
+                      <ChevronUp
+                        className={cn(
+                          'size-4 text-primary',
+                          upvoted && 'text-white'
+                        )}
+                        strokeWidth={3}
+                      />
+                      <span>{upvotes}</span>
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="shadow-none"
+                    >
+                      <Share2Icon className="w-4 h-4 text-muted-foreground" />
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
-            <PostComment feedbackId={feedbackId} />
+            {isLoading ? (
+              <PostCommentSkeleton />
+            ) : (
+              <PostComment feedbackId={feedbackId} />
+            )}
             <Separator className="bg-gray-100" />
             <div className="px-6 py-5 space-y-5">
-              <h3 className="font-semibold">
-                Comments
-                <span className="px-2.5 py-0.5 border rounded-full text-xs font-semibold ml-3">
-                  {feedback?._count.comments}
-                </span>
-              </h3>
+              <div className="flex items-center gap-3">
+                {isLoading ? (
+                  <>
+                    <Skeleton className="w-20 h-6" />
+                    <Skeleton className="w-7 h-5 rounded-full" />
+                  </>
+                ) : (
+                  <>
+                    <h3 className="font-semibold">Comments</h3>
+                    <span className="px-2.5 py-0.5 border rounded-full text-xs font-semibold">
+                      {feedback?._count.comments}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <div className="space-y-5 px-6 pb-6">
-            {feedback.comments.length > 0 ? (
-              feedback.comments.map((comment) => (
+            {isLoading ? (
+              [...Array(3)].map((_, index) => <CommentSkeleton key={index} />)
+            ) : feedback && feedback.comments.length > 0 ? (
+              feedback?.comments.map((comment) => (
                 <Comment key={comment.id} comment={comment} />
               ))
             ) : (
-              <p>No comments yet</p>
+              <div className="h-1/2 flex flex-col items-center justify-center space-y-6">
+                <div className="space-y-3 px-4 w-full max-w-sm relative">
+                  <div className="absolute inset-0 bg-gradient-to-b from-gray-50/0 via-gray-50/0 to-gray-50/75" />
+                  <div className="w-full space-y-2 rounded-md bg-white p-3 shadow-sm">
+                    <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                    <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                  </div>
+                  <div className="w-full space-y-2 rounded-md bg-white p-3">
+                    <div className="h-3 max-w-[90%] rounded-sm bg-[#ecedef]" />
+                    <div className="h-3 max-w-[50%] rounded-sm bg-[#ecedef]" />
+                  </div>
+                </div>
+                <p className="font-medium text-center text-muted-foreground">
+                  No comments yet
+                </p>
+              </div>
             )}
           </div>
         </div>
