@@ -2,11 +2,81 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { likeComment, undoLikeComment } from '@/services/comment';
 import { IComment } from '@/types/comment';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDistance } from 'date-fns';
 import { ThumbsUpIcon, UserRound } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const Comment = ({ comment }: { comment: IComment }) => {
+  const queryClient = useQueryClient();
+  const { slug } = useParams<{ slug: string }>();
+  const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const feedbackId = searchParams.get('f');
+  const [liked, setLiked] = useState<boolean>(false);
+  const [likes, setLikes] = useState<number>(comment.commentLikes.length);
+
+  const likeCommentMutation = useMutation({
+    mutationFn: likeComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feedback', feedbackId] });
+    },
+    onError: () => {
+      toast.error('Failed to like');
+      setLiked(!liked);
+      setLikes((prev) => prev - 1);
+    },
+  });
+
+  const undoLikeCommentMutation = useMutation({
+    mutationFn: undoLikeComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feedback', feedbackId] });
+    },
+    onError: () => {
+      toast.error('Failed to remove like');
+    },
+  });
+
+  const handleLikeAndUndoLike = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    if (!session?.user) {
+      toast.info('You need to be logged in to like a comment');
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    setLiked(!liked);
+    if (liked) {
+      setLikes((prev) => prev - 1);
+      undoLikeCommentMutation.mutate({
+        slug,
+        feedbackId: feedbackId as string,
+        commentId: comment.id,
+      });
+    } else {
+      setLikes((prev) => prev + 1);
+      likeCommentMutation.mutate({
+        slug,
+        feedbackId: feedbackId as string,
+        commentId: comment.id,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const hasLiked = comment.commentLikes.some(
+      (like) => like.likedBy === session?.user?.id
+    );
+    setLiked(hasLiked);
+  }, [comment, session?.user?.id]);
+
   return (
     <div className="flex items-start space-x-3">
       <Avatar className="size-8 rounded-full">
@@ -36,12 +106,14 @@ const Comment = ({ comment }: { comment: IComment }) => {
           <Button
             size="sm"
             className={cn(
-              'rounded-full px-2.5 h-6 shadow-none bg-muted hover:bg-primary/20 text-muted-foreground hover:text-primary'
-              // 'bg-primary/20 text-primary hover:bg-muted hover:text-muted-foreground'
+              'rounded-full px-2.5 h-6 shadow-none bg-muted hover:bg-primary/20 text-muted-foreground hover:text-primary',
+              liked &&
+                'bg-primary/20 text-primary hover:bg-muted hover:text-muted-foreground'
             )}
+            onClick={handleLikeAndUndoLike}
           >
             <ThumbsUpIcon className={cn('size-3 mr-1')} />
-            25
+            {likes}
           </Button>
         </div>
       </div>

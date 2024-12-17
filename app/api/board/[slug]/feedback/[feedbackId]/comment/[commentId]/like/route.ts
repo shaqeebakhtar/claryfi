@@ -58,7 +58,7 @@ export const DELETE = async (
     return new Response('Comment not found', { status: 404 });
   }
 
-  const undolike = await db.commentLike.delete({
+  const undoLike = await db.commentLike.delete({
     where: {
       likedBy_likedCommentId: {
         likedBy: session.user.id,
@@ -67,5 +67,5 @@ export const DELETE = async (
     },
   });
 
-  return Response.json({ undolike }, { status: 200 });
+  return Response.json({ undoLike }, { status: 200 });
 };

@@ -32,6 +32,7 @@ export const GET = async (
       comments: {
         include: {
           user: true,
+          commentLikes: true,
         },
       },
       tags: {
