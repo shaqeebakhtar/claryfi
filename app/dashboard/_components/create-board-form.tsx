@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { checkSlugExists, createBoard } from '@/data-access/board';
 import { boardSchema } from '@/validations/board';
 import slugify from '@sindresorhus/slugify';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -22,6 +21,7 @@ import { useDebounce } from '@uidotdev/usehooks';
 import { CircleCheck, CircleX, Loader } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { checkSlugExists, createBoard } from '@/services/admin/board';
 
 type CreateBoardFormProps = {
   closeDialog: () => void;

@@ -20,10 +20,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { feedbackSchema } from '@/validations/feedback';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { updateFeedback } from '@/data-access/feedback';
 import { useParams } from 'next/navigation';
 import { Loader } from 'lucide-react';
 import { Feedback } from '@prisma/client';
+import { updateFeedback } from '@/services/admin/feedback';
 
 type FeedbackDialogFormProps = {
   closeDialog: () => void;
