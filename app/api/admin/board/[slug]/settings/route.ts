@@ -39,6 +39,7 @@ export const PATCH = async (
 
   const validateFields = settingsFormSchema
     .pick({
+      logo: true,
       name: true,
       slug: true,
       url: true,
@@ -53,6 +54,7 @@ export const PATCH = async (
   }
 
   const {
+    logo,
     name,
     slug: newSlug,
     url,
@@ -68,6 +70,7 @@ export const PATCH = async (
         slug: currSlug,
       },
       data: {
+        logoUrl: logo,
         name,
         slug: newSlug,
         websiteUrl: url,

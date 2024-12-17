@@ -19,6 +19,7 @@ export const getBoardMetaDataBySlug = async ({
 
 export const updateBoardMetaData = async ({
   slug,
+  logo,
   name,
   newSlug,
   websiteUrl,
@@ -27,6 +28,7 @@ export const updateBoardMetaData = async ({
 }: {
   slug: string;
   name?: string;
+  logo?: string | null;
   newSlug?: string;
   websiteUrl?: string;
   hideBranding?: boolean;
@@ -39,6 +41,7 @@ export const updateBoardMetaData = async ({
     },
     body: JSON.stringify({
       name,
+      logo,
       slug: newSlug,
       url: websiteUrl,
       hide_branding: hideBranding,

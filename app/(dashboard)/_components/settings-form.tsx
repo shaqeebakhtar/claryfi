@@ -63,6 +63,7 @@ const SettingsForm = () => {
     mutate({
       name: data.name,
       slug,
+      logo: data.logo,
       newSlug: data.slug,
       websiteUrl: data.url,
       brandColor: data.color,

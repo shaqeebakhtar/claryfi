@@ -8,6 +8,7 @@ import { getPublicBoardBySlug } from '@/services/open/board';
 import { useQuery } from '@tanstack/react-query';
 import { LoaderIcon, Zap } from 'lucide-react';
 import { signIn, useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, useParams, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -57,12 +58,35 @@ const Layout = ({
             <div className="w-full flex items-center gap-8 justify-between">
               <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg text-center text-sm font-medium uppercase grid items-center select-none">
-                    {board?.name.slice(0, 2)}
-                  </div>
-                  <h2 className="max-w-48 truncate font-semibold leading-5">
-                    {board?.name}
-                  </h2>
+                  {board?.logoUrl ? (
+                    <div className="overflow-hidden h-8 w-8 rounded-lg">
+                      <Image
+                        src={board?.logoUrl}
+                        alt="Preview"
+                        className="h-full w-full rounded-[inherit] object-cover"
+                        width="32"
+                        height="32"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-8 h-8 bg-primary/10 text-primary rounded-lg text-center text-sm font-medium uppercase grid items-center select-none">
+                      {board?.name.slice(0, 2)}
+                    </div>
+                  )}
+                  {board?.websiteUrl ? (
+                    <Link
+                      href={board.websiteUrl}
+                      className="font-semibold leading-5"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {board?.name}
+                    </Link>
+                  ) : (
+                    <h2 className="max-w-48 truncate font-semibold leading-5">
+                      {board?.name}
+                    </h2>
+                  )}
                 </div>
                 <ul className="flex items-center gap-2">
                   <li>

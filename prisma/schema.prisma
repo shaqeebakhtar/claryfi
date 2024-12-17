@@ -46,7 +46,7 @@ model Account {
 
 model Board {
   id           String   @id @default(cuid())
-  logoUrl      String?
+  logoUrl      String   @db.Text()
   name         String
   slug         String   @unique
   websiteUrl   String?

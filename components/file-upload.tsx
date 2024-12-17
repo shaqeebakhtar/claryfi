@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, compressImage } from '@/lib/utils';
 import { VariantProps, cva } from 'class-variance-authority';
 import { Loader, UploadCloud } from 'lucide-react';
 import Image from 'next/image';
@@ -138,15 +138,27 @@ export const FileUpload = ({
     }
 
     if (readFile) {
-      const reader = new FileReader();
-      reader.onload = (e) =>
-        onChange?.({ src: e.target?.result as string, file });
-      reader.readAsDataURL(file);
+      // const reader = new FileReader();
+      // reader.readAsDataURL(file);
+      // reader.onload = (e) => {
+      //   onChange?.({ src: e.target?.result as string, file });
+      // };
+      // return;
 
-      return;
+      try {
+        const compressedImg = await compressImage(file);
+
+        onChange?.({
+          src: compressedImg,
+          file,
+        });
+      } catch (error) {
+        toast.error('Image compression failed');
+        return;
+      }
+    } else {
+      onChange?.({ file });
     }
-
-    onChange?.({ file });
   };
 
   return (
