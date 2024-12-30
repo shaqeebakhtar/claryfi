@@ -70,7 +70,7 @@ export const PATCH = async (
         slug: currSlug,
       },
       data: {
-        logoUrl: logo,
+        logoUrl: logo as string,
         name,
         slug: newSlug,
         websiteUrl: url,
