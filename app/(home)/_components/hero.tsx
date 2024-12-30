@@ -36,9 +36,9 @@ const Hero = () => {
           alt="App Demo"
           draggable="false"
           className="w-full h-full object-cover bg-center rounded-sm"
-          height="100"
-          src="/placeholder.svg"
-          width="100"
+          height="800"
+          src="/claryfi-dashboard.png"
+          width="1200"
         />
       </div>
     </section>

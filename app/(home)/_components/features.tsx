@@ -18,9 +18,9 @@ const Features = () => {
               alt="Feature Image"
               draggable="false"
               className="w-full object-cover bg-center rounded-sm aspect-video"
-              height="100"
-              src="/placeholder.svg"
-              width="100"
+              height="500"
+              src="/claryfi-collect-features.png"
+              width="1000"
             />
           </div>
           <div className="space-y-1">
@@ -38,10 +38,10 @@ const Features = () => {
             <Image
               alt="Feature Image"
               draggable="false"
-              className="w-full object-cover bg-center rounded-sm aspect-video md:aspect-[3/2.05]"
-              height="100"
-              src="/placeholder.svg"
-              width="100"
+              className="w-full object-contain bg-center rounded-sm aspect-video md:aspect-[3/2.05]"
+              height="500"
+              src="/priotize.png"
+              width="1000"
             />
           </div>
           <div className="space-y-1">
@@ -59,10 +59,10 @@ const Features = () => {
             <Image
               alt="Feature Image"
               draggable="false"
-              className="w-full object-cover bg-center rounded-sm aspect-video md:aspect-[3/2.05]"
-              height="100"
-              src="/placeholder.svg"
-              width="100"
+              className="w-full object-contain bg-center rounded-sm aspect-video md:aspect-[3/2.05]"
+              height="500"
+              src="/priotize.png"
+              width="1000"
             />
           </div>
           <div className="space-y-1">
@@ -77,14 +77,14 @@ const Features = () => {
         </div>
         <div className="flex flex-col justify-start gap-5 bg-gray-50 w-full md:col-span-6 rounded-md ring-1 ring-inset ring-gray-800/5 p-4">
           <div className="relative rounded-md overflow-hidden">
-            <div className="absolute left-0 bottom-0 right-0 h-20 bg-gradient-to-b from-gray-50/5 to-gray-100" />
+            <div className="absolute left-0 bottom-0 right-0 h-20 bg-gradient-to-b from-gray-50/0 to-gray-900/10" />
             <Image
               alt="Feature Image"
               draggable="false"
-              className="w-full object-cover bg-center rounded-sm aspect-video"
-              height="100"
-              src="/placeholder.svg"
-              width="100"
+              className="w-full object-cover bg-center rounded-sm aspect-video md:aspect-[3/2.05]"
+              height="500"
+              src="/claryfi-comments.png"
+              width="1000"
             />
           </div>
           <div className="space-y-1">
